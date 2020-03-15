@@ -108,10 +108,10 @@ namespace RadLibrary.Logging
                 // Python styled dictionary output
                 case IDictionary dictionary:
                 {
-                    var str = "[";
+                    var str = "{";
                     foreach (var o in dictionary) str += HandleArgument(o) + ", ";
 
-                    return str.Remove(str.Length - 2) + "]";
+                    return str.Remove(str.Length - 2) + "}";
                 }
                 case DictionaryEntry pair:
                     return HandleArgument(pair.Key) + ": " + HandleArgument(pair.Value);

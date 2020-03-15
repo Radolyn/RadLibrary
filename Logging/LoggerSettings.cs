@@ -43,7 +43,7 @@ namespace RadLibrary.Logging
         ///   <para>The logger prefix</para>
         ///   <para>Must contain {0}, {1} and {2} (date, <see cref="Logger"/> name, log type)</para>
         /// </summary>
-        public string LoggerPrefix = "[{0, 13:c} {1, 16:c} {2, 12:c}]";
+        public string LoggerPrefix = "[{0, 13:c} {1, 14:c} {2, 12:c}]";
 
         /// <summary>The log level</summary>
         public LogType LogLevel = LogType.Verbose;
