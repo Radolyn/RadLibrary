@@ -12,6 +12,8 @@ logger.Error("Error");
 logger.Verbose(new List<string> { "Yes", "No", "Maybe" });
 ```
 
+![Sample image](.github/sample.png)
+
 # Logging sample with custom settings
 ```csharp
 var logger = LoggerUtils.GetLogger("Program");
