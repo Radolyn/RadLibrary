@@ -7,6 +7,7 @@
         Information,
         Warning,
         Error,
+        Success,
         Exception,
         Deprecated
     }

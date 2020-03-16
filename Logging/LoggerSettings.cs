@@ -6,7 +6,7 @@ using System;
 
 namespace RadLibrary.Logging
 {
-    /// <summary>Defines settings for <see cref="Logger"/></summary>
+    /// <summary>Defines settings for <see cref="Logger" /></summary>
     public class LoggerSettings
     {
         /// <summary>The verbose message color</summary>
@@ -21,6 +21,9 @@ namespace RadLibrary.Logging
         /// <summary>The error message color</summary>
         public ConsoleColor ErrorColor = ConsoleColor.Red;
 
+        /// <summary>The success message color</summary>
+        public ConsoleColor SuccessColor = ConsoleColor.Green;
+
         /// <summary>The exception message color</summary>
         public ConsoleColor ExceptionColor = ConsoleColor.DarkRed;
 
@@ -28,20 +31,20 @@ namespace RadLibrary.Logging
         public ConsoleColor DeprecatedColor = ConsoleColor.DarkYellow;
 
         /// <summary>
-        ///   <para>The exception string.</para>
-        ///   <para>Must contain {0} and {1} (<see cref="Exception"/> type, <see cref="Logger"/> name)</para>
+        ///     <para>The exception string.</para>
+        ///     <para>Must contain {0}, {1} and {2} (<see cref="Exception" /> type, stack trace, message)</para>
         /// </summary>
-        public string ExceptionString = "{0} in: {1}";
+        public string ExceptionString = "{0}. Stack trace:\n{1}.\nMessage: {2}";
 
         /// <summary>
-        ///   <para>The deprecated string.</para>
-        ///   <para>Must contain {0} and {1} (what's deprecated, replacement)</para>
+        ///     <para>The deprecated string.</para>
+        ///     <para>Must contain {0} and {1} (what's deprecated, replacement)</para>
         /// </summary>
         public string DeprecatedString = "{0} is deprecated, use {1} instead.";
 
         /// <summary>
-        ///   <para>The logger prefix</para>
-        ///   <para>Must contain {0}, {1} and {2} (date, <see cref="Logger"/> name, log type)</para>
+        ///     <para>The logger prefix</para>
+        ///     <para>Must contain {0}, {1} and {2} (date, <see cref="Logger" /> name, log type)</para>
         /// </summary>
         public string LoggerPrefix = "[{0, 13:c} {1, 14:c} {2, 12:c}]";
 
