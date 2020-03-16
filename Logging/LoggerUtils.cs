@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
 
 #endregion
 
@@ -70,11 +69,15 @@ namespace RadLibrary.Logging
             Environment.Exit(-1);
         }
 
+        /// <summary>  Coverts input to bool.</summary>
+        /// <param name="input">The input.</param>
+        /// <param name="_default">Defines default result if input == "".</param>
+        /// <returns></returns>
         public static bool InputToBool(string input, bool _default = true)
         {
             input = input.ToLower();
 
-            var yes = new[] { "yes", "y", "д", "да" };
+            var yes = new[] {"yes", "y", "д", "да"};
 
             return input == "" ? _default : yes.Contains(input);
         }
