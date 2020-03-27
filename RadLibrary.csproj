@@ -8,6 +8,22 @@
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <AssemblyVersion>1.0.*</AssemblyVersion>
     <Deterministic>false</Deterministic>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>AlexeyZavar</Authors>
+    <Company>Radolyn</Company>
+    <Description>Universal library for our programs
+</Description>
+    <Copyright>© 2020 Radolyn</Copyright>
+    <PackageProjectUrl></PackageProjectUrl>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <RepositoryUrl>https://github.com/Radolyn/RadLibrary</RepositoryUrl>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
