@@ -157,7 +157,7 @@ namespace RadLibrary.Logging
                 case IList list:
                 {
                     var str = "[";
-                    foreach (var o in list) str += HandleArgument(o, recursion) + ", ";
+                    foreach (var item in list) str += HandleArgument(item, recursion) + ", ";
 
                     return str.Remove(str.Length - 2) + "]";
                 }
@@ -165,7 +165,7 @@ namespace RadLibrary.Logging
                 case IDictionary dictionary:
                 {
                     var str = "{";
-                    foreach (var o in dictionary) str += HandleArgument(o, recursion) + ", ";
+                    foreach (var item in dictionary) str += HandleArgument(item, recursion) + ", ";
 
                     return str.Remove(str.Length - 2) + "}";
                 }
