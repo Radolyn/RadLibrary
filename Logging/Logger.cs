@@ -134,7 +134,6 @@ namespace RadLibrary.Logging
 
         /// <summary>Handles the argument.</summary>
         /// <param name="arg">The argument.</param>
-        /// ///
         /// <param name="recursion">The recursion.</param>
         /// <returns>Returns formatted string</returns>
         private string HandleArgument(object arg, int recursion = 0)
