@@ -53,5 +53,15 @@ namespace RadLibrary.Logging
 
         /// <summary>The time format</summary>
         public string TimeFormat = "HH:mm:ss:ffff";
+
+        /// <summary>
+        ///     The argument recursion limit.
+        /// </summary>
+        public int RecursionLimit = 10;
+
+        /// <summary>
+        ///     The error upon reaching recursion limit.
+        /// </summary>
+        public bool ErrorOnRecursionLimit = false;
     }
 }

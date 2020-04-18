@@ -71,15 +71,15 @@ namespace RadLibrary.Logging
 
         /// <summary>  Coverts input to bool.</summary>
         /// <param name="input">The input.</param>
-        /// <param name="_default">Defines default result if input == "".</param>
+        /// <param name="defaultResult">Defines default result if input == "".</param>
         /// <returns></returns>
-        public static bool InputToBool(string input, bool _default = true)
+        public static bool InputToBool(string input, bool defaultResult = true)
         {
             input = input.ToLower();
 
             var yes = new[] {"yes", "y", "д", "да"};
 
-            return input == "" ? _default : yes.Contains(input);
+            return input == "" ? defaultResult : yes.Contains(input);
         }
     }
 }

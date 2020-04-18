@@ -2,6 +2,9 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,6 +25,9 @@ namespace RadLibrary.Logging
             Settings = settings;
         }
 
+        /// <summary>
+        ///     Locks console for writing (may cause delays).
+        /// </summary>
         private static readonly object ConsoleWriterLock = new object();
 
         /// <summary>Gets or sets the settings.</summary>
@@ -32,6 +38,18 @@ namespace RadLibrary.Logging
         /// <value>The name.</value>
         public string Name { get; }
 
+        /// <summary>
+        ///     The custom argument handler delegate
+        /// </summary>
+        /// <param name="obj">The object.</param>
+        public delegate object CustomHandlerDelegate(object obj);
+
+        /// <summary>
+        ///     The custom handlers dictionary
+        /// </summary>
+        public readonly Dictionary<Type, CustomHandlerDelegate> CustomHandlers =
+            new Dictionary<Type, CustomHandlerDelegate>();
+
         /// <summary>Logs the specified type.</summary>
         /// <param name="type">The type.</param>
         /// <param name="args">The arguments.</param>
@@ -40,6 +58,8 @@ namespace RadLibrary.Logging
         {
             if (type < Settings.LogLevel)
                 return;
+
+            var s = new StringBuilder();
 
             lock (ConsoleWriterLock)
             {
@@ -51,27 +71,32 @@ namespace RadLibrary.Logging
                 {
                     for (var i = 1; i < args.Length; i++)
                         if (str.Contains("{" + (i - 1) + "}"))
-                            str = str.Replace("{" + (i - 1) + "}", args[i].ToString());
+                            str = str.Replace("{" + (i - 1) + "}", HandleArgument(args[i]));
 
 
-                    Console.Write(str);
+                    s.Append(str);
                 }
                 else
                 {
-                    foreach (var arg in args)
+                    foreach (var handledArgument in args.Select(arg => HandleArgument(arg)))
                     {
-                        var handledArgument = HandleArgument(arg);
-                        Console.Write(handledArgument);
-                        Console.Write(" ");
+                        s.Append(handledArgument);
+                        s.Append(" ");
                     }
                 }
 
-                Console.Write(Environment.NewLine);
+                Console.WriteLine(s.ToString());
                 Console.ResetColor();
             }
         }
 
-        public void PrintPrefix(LogType type, bool rewrite = false)
+        /// <summary>
+        ///     Prints prefix.
+        /// </summary>
+        /// <param name="type">The logger type.</param>
+        /// <param name="rewrite">The rewrite.</param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        private void PrintPrefix(LogType type, bool rewrite = false)
         {
             switch (type)
             {
@@ -93,7 +118,7 @@ namespace RadLibrary.Logging
                 case LogType.Exception:
                     Console.ForegroundColor = Settings.ExceptionColor;
                     break;
-                case LogType.Deprecated:
+                case LogType.Deprecation:
                     Console.ForegroundColor = Settings.DeprecatedColor;
                     break;
                 default:
@@ -109,11 +134,22 @@ namespace RadLibrary.Logging
 
         /// <summary>Handles the argument.</summary>
         /// <param name="arg">The argument.</param>
+        /// ///
+        /// <param name="recursion">The recursion.</param>
         /// <returns>Returns formatted string</returns>
-        private string HandleArgument(object arg)
+        private string HandleArgument(object arg, int recursion = 0)
         {
             if (arg == null)
                 return "null";
+
+            if (recursion >= Settings.RecursionLimit)
+                if (Settings.ErrorOnRecursionLimit)
+                    throw new StackOverflowException();
+                else
+                    return "...";
+
+            recursion++;
+
             switch (arg)
             {
                 case DateTime date:
@@ -122,7 +158,7 @@ namespace RadLibrary.Logging
                 case IList list:
                 {
                     var str = "[";
-                    foreach (var o in list) str += HandleArgument(o) + ", ";
+                    foreach (var o in list) str += HandleArgument(o, recursion) + ", ";
 
                     return str.Remove(str.Length - 2) + "]";
                 }
@@ -130,17 +166,16 @@ namespace RadLibrary.Logging
                 case IDictionary dictionary:
                 {
                     var str = "{";
-                    foreach (var o in dictionary) str += HandleArgument(o) + ", ";
+                    foreach (var o in dictionary) str += HandleArgument(o, recursion) + ", ";
 
                     return str.Remove(str.Length - 2) + "}";
                 }
                 case DictionaryEntry pair:
-                    return HandleArgument(pair.Key) + ": " + HandleArgument(pair.Value);
+                    return HandleArgument(pair.Key, recursion) + ": " + HandleArgument(pair.Value, recursion);
                 default:
-                    // @TODO: Custom handler
-                    // CustomHandler(arg);
-
-                    return arg.ToString();
+                    return CustomHandlers.ContainsKey(arg.GetType())
+                        ? HandleArgument(CustomHandlers[arg.GetType()].Invoke(arg), recursion)
+                        : arg.ToString();
             }
         }
 
@@ -191,14 +226,14 @@ namespace RadLibrary.Logging
         }
 
         /// <summary>Logs the deprecated part of code</summary>
-        /// <param name="old">Deprecated object</param>
+        /// <param name="old">Deprecation object</param>
         /// <param name="replacement">Replacement</param>
         /// <exception cref="FormatException"><see cref="LoggerSettings.ExceptionString" /> doesn't contains {0}</exception>
         public void Deprecated(object old, object replacement)
         {
             if (!Settings.DeprecatedString.Contains("{0}"))
                 throw new FormatException();
-            Log(LogType.Deprecated, Settings.DeprecatedString, old, replacement);
+            Log(LogType.Deprecation, Settings.DeprecatedString, old, replacement);
         }
 
         /// <summary>Gets the input.</summary>

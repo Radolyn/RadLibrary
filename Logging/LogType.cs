@@ -9,6 +9,6 @@
         Error,
         Success,
         Exception,
-        Deprecated
+        Deprecation
     }
 }
