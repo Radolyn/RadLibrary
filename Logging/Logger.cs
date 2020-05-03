@@ -103,7 +103,7 @@ namespace RadLibrary.Logging
         }
 
         /// <summary>
-        ///     Prints prefix.
+        ///     Returns prefix.
         /// </summary>
         /// <param name="type">The logger type.</param>
         /// <param name="rewrite">The rewrite.</param>
@@ -117,6 +117,11 @@ namespace RadLibrary.Logging
             return rewrite ? "\r" + str : str;
         }
 
+        /// <summary>
+        ///     Sets color in console.
+        /// </summary>
+        /// <param name="type">The logger type.</param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         private void SetColor(LogType type)
         {
             switch (type)

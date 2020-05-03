@@ -81,6 +81,9 @@
             _manager.Save();
         }
 
+        /// <summary>
+        ///     Notices about configuration update
+        /// </summary>
         public event ConfigurationUpdated ConfigurationUpdated;
 
         /// <summary>

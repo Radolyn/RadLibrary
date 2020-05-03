@@ -69,7 +69,7 @@ namespace RadLibrary.Logging
             Environment.Exit(-1);
         }
 
-        /// <summary>  Coverts input to bool.</summary>
+        /// <summary>Converts input to bool.</summary>
         /// <param name="input">The input.</param>
         /// <param name="defaultResult">Defines default result if input == "".</param>
         /// <returns></returns>
