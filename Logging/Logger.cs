@@ -21,6 +21,14 @@ namespace RadLibrary.Logging
         public Logger(string name, LoggerSettings settings)
         {
             Console.CursorVisible = false;
+
+            // fix custom consoles behaviour (Terminus, etc.) 
+            Console.CancelKeyPress += (sender, args) =>
+            {
+                Console.CursorVisible = true;
+                Console.ForegroundColor = ConsoleColor.Gray;
+            };
+
             Name = name;
             Settings = settings;
         }
@@ -59,15 +67,18 @@ namespace RadLibrary.Logging
             if (type < Settings.LogLevel)
                 return;
 
+            if (args == null)
+                args = new object[] {"<empty object>"};
+
             var s = new StringBuilder();
+
+            var prefix = GetPrefix(type);
 
             lock (ConsoleWriterLock)
             {
-                PrintPrefix(type);
-
                 var str = args[0]?.ToString();
 
-                if (str?.Contains("{0}") == true)
+                if (str?.Contains("{0}") == true && args.Length != 0)
                 {
                     for (var i = 1; i < args.Length; i++)
                         if (str.Contains("{" + (i - 1) + "}"))
@@ -85,7 +96,8 @@ namespace RadLibrary.Logging
                     }
                 }
 
-                Console.WriteLine(s.ToString());
+                SetColor(type);
+                Console.WriteLine(prefix + s);
                 Console.ResetColor();
             }
         }
@@ -96,7 +108,16 @@ namespace RadLibrary.Logging
         /// <param name="type">The logger type.</param>
         /// <param name="rewrite">The rewrite.</param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        private void PrintPrefix(LogType type, bool rewrite = false)
+        private string GetPrefix(LogType type, bool rewrite = false)
+        {
+            var date = DateTime.Now.ToString(Settings.TimeFormat);
+
+            var str = string.Format(Settings.LoggerPrefix + " ", date, Name, type.ToString());
+
+            return rewrite ? "\r" + str : str;
+        }
+
+        private void SetColor(LogType type)
         {
             switch (type)
             {
@@ -124,12 +145,6 @@ namespace RadLibrary.Logging
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
-
-            if (rewrite)
-                Console.Write("\r");
-
-            Console.Write(Settings.LoggerPrefix + " ", DateTime.Now.ToString(Settings.TimeFormat), Name,
-                type.ToString());
         }
 
         /// <summary>Handles the argument.</summary>
@@ -241,43 +256,49 @@ namespace RadLibrary.Logging
         /// <returns>Returns user's input</returns>
         public string GetInput(LogType type = LogType.Warning, string prefix = "")
         {
-            Console.CursorVisible = true;
-
-            PrintPrefix(type);
-            Console.Write(prefix + ">>> ");
-
-            var stop = false;
-
-            var leftStart = Console.CursorLeft;
-            var topStart = Console.CursorTop;
-
-            Task.Run(() =>
+            lock (ConsoleWriterLock)
             {
-                while (!stop)
+                Console.CursorVisible = true;
+
+                var logPrefix = GetPrefix(type);
+                SetColor(type);
+                Console.Write(logPrefix + prefix + ">>> ");
+
+                var stop = false;
+
+                var leftStart = Console.CursorLeft;
+                var topStart = Console.CursorTop;
+
+                Task.Run(() =>
                 {
-                    Thread.Sleep(1000);
-                    var left = Console.CursorLeft;
-                    var top = Console.CursorTop;
-                    Console.SetCursorPosition(leftStart, topStart);
-                    PrintPrefix(type, true);
-                    Console.SetCursorPosition(left, top);
-                }
-            });
+                    while (!stop)
+                    {
+                        Thread.Sleep(2000);
+                        var left = Console.CursorLeft;
+                        var top = Console.CursorTop;
+                        SetColor(type);
+                        Console.SetCursorPosition(leftStart, topStart);
+                        Console.Write(GetPrefix(type, true));
+                        Console.SetCursorPosition(left, top);
+                    }
+                });
 
-            var input = Console.ReadLine();
+                var input = Console.ReadLine() ?? "";
 
-            stop = true;
+                stop = true;
 
-            var leftEnd = (leftStart + input.Length) % Console.WindowWidth;
-            var topEnd = (leftStart + input.Length) / Console.WindowWidth;
+                var leftEnd = (leftStart + input.Length) % Console.WindowWidth;
+                var topEnd = (leftStart + input.Length) / Console.WindowWidth;
 
-            Console.SetCursorPosition(leftEnd, topEnd + topStart);
+                Console.SetCursorPosition(leftEnd, topEnd + topStart);
 
-            Console.Write(" <<<" + Environment.NewLine);
+                SetColor(type);
+                Console.Write(" <<<" + Environment.NewLine);
 
-            Console.CursorVisible = false;
+                Console.CursorVisible = false;
 
-            return input;
+                return input;
+            }
         }
     }
 }

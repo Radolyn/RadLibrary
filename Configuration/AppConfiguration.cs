@@ -1,28 +1,31 @@
 ﻿namespace RadLibrary.Configuration
 {
+    public delegate void ConfigurationUpdated();
+
     /// <summary>
-    /// Allows to create and work with configuration files
+    ///     Allows to create and work with configuration files
     /// </summary>
     /// <typeparam name="T">The configuration manager</typeparam>
     public class AppConfiguration<T> where T : IConfigurationManager, new()
     {
         /// <summary>
-        /// The configuration manager
+        ///     The configuration manager
         /// </summary>
         private readonly IConfigurationManager _manager;
 
         /// <summary>
-        /// Initializes configuration manager
+        ///     Initializes configuration manager
         /// </summary>
         /// <param name="name">The name</param>
         public AppConfiguration(string name)
         {
             _manager = new T();
             _manager.Setup(name);
+            _manager.ConfigurationUpdated += () => ConfigurationUpdated?.Invoke();
         }
-        
+
         /// <summary>
-        /// Removes key from configuration
+        ///     Removes key from configuration
         /// </summary>
         /// <param name="key">The key</param>
         public void RemoveKey(string key)
@@ -31,7 +34,7 @@
         }
 
         /// <summary>
-        /// Gets boolean
+        ///     Gets boolean
         /// </summary>
         /// <param name="key">The key</param>
         /// <returns>bool</returns>
@@ -39,9 +42,9 @@
         {
             return _manager.GetBool(key);
         }
-        
+
         /// <summary>
-        /// Gets integer
+        ///     Gets integer
         /// </summary>
         /// <param name="key">The key</param>
         /// <returns>int</returns>
@@ -49,9 +52,9 @@
         {
             return _manager.GetInteger(key);
         }
-        
+
         /// <summary>
-        /// Sets bool
+        ///     Sets bool
         /// </summary>
         /// <param name="key">The key</param>
         /// <param name="value">The value</param>
@@ -59,9 +62,9 @@
         {
             _manager.SetBool(key, value);
         }
-        
+
         /// <summary>
-        /// Sets integer
+        ///     Sets integer
         /// </summary>
         /// <param name="key">The key</param>
         /// <param name="value">The value</param>
@@ -71,15 +74,17 @@
         }
 
         /// <summary>
-        /// Saves configuration
+        ///     Saves configuration
         /// </summary>
         public void Save()
         {
             _manager.Save();
         }
 
+        public event ConfigurationUpdated ConfigurationUpdated;
+
         /// <summary>
-        /// Gets or sets string
+        ///     Gets or sets string
         /// </summary>
         /// <param name="key">The key</param>
         public string this[string key]
