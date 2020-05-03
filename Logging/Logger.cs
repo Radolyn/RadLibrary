@@ -98,7 +98,7 @@ namespace RadLibrary.Logging
 
                 var message = s.ToString();
 
-                if (Settings.FormatJsonLike)
+                if (Settings.FormatJsonLike && message.Contains('{') && message.Contains('['))
                     message = FormatJson(message);
                 
                 SetColor(type);
