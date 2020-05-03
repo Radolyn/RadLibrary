@@ -96,8 +96,21 @@ namespace RadLibrary.Logging
                     }
                 }
 
+                var message = s.ToString();
+                
                 SetColor(type);
-                Console.WriteLine(prefix + s);
+
+                if (message.Contains("\n"))
+                {
+                    var messages = message.Split('\n');
+                    foreach (var msg in messages)
+                    {
+                        Console.WriteLine(prefix + msg);
+                    }
+                }
+                else
+                    Console.WriteLine(prefix + message);
+                
                 Console.ResetColor();
             }
         }
