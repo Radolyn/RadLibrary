@@ -63,5 +63,10 @@ namespace RadLibrary.Logging
         ///     The error upon reaching recursion limit.
         /// </summary>
         public bool ErrorOnRecursionLimit = false;
+
+        /// <summary>
+        ///     Format json like output
+        /// </summary>
+        public bool FormatJsonLike = true;
     }
 }

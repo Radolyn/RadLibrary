@@ -97,6 +97,9 @@ namespace RadLibrary.Logging
                 }
 
                 var message = s.ToString();
+
+                if (Settings.FormatJsonLike)
+                    message = FormatJson(message);
                 
                 SetColor(type);
 
@@ -163,6 +166,36 @@ namespace RadLibrary.Logging
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
+        }
+        
+        /// <summary>
+        ///     Formats output
+        /// </summary>
+        /// <param name="json">The output</param>
+        /// <returns>The formatted output</returns>
+        public static string FormatJson(string json)
+        {
+            // https://stackoverflow.com/questions/4580397/json-formatter-in-c answer by Vince Panuccio (big thanks! :d)
+            const string indentString = "  ";
+            var indentation = 0;
+            var quoteCount = 0;
+            var result =
+                from ch in json
+                let quotes = ch == '"' ? quoteCount++ : quoteCount
+                let lineBreak = ch == ',' && quotes % 2 == 0
+                    ? ch + Environment.NewLine + string.Concat(Enumerable.Repeat(indentString, indentation))
+                    : null
+                let openChar = ch == '{' || ch == '['
+                    ? ch + Environment.NewLine + string.Concat(Enumerable.Repeat(indentString, ++indentation))
+                    : ch.ToString()
+                let closeChar = ch == '}' || ch == ']'
+                    ? Environment.NewLine + string.Concat(Enumerable.Repeat(indentString, --indentation)) + ch
+                    : ch.ToString()
+                select lineBreak ?? (openChar.Length > 1
+                    ? openChar
+                    : closeChar);
+
+            return string.Concat(result);
         }
 
         /// <summary>Handles the argument.</summary>
