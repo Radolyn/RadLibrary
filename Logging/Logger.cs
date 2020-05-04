@@ -67,7 +67,7 @@ namespace RadLibrary.Logging
             if (type < Settings.LogLevel)
                 return;
 
-            if (args == null)
+            if (args?.Length == 0)
                 args = new object[] {"<empty object>"};
 
             var s = new StringBuilder();
