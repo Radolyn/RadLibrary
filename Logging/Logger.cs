@@ -78,12 +78,13 @@ namespace RadLibrary.Logging
             {
                 var str = args[0]?.ToString();
 
-                if (str?.Contains("{0}") == true && args.Length != 0)
+                if (Settings.StringFormatRegex.IsMatch(str) && args.Length != 0)
                 {
-                    for (var i = 1; i < args.Length; i++)
-                        if (str.Contains("{" + (i - 1) + "}"))
-                            str = str.Replace("{" + (i - 1) + "}", HandleArgument(args[i]));
+                    var handled = args.Skip(1).Select(arg => HandleArgument(arg)).ToArray();
 
+                    // nah it can't
+                    // ReSharper disable once CoVariantArrayConversion
+                    str = string.Format(str, handled);
 
                     s.Append(str);
                 }
@@ -100,20 +101,19 @@ namespace RadLibrary.Logging
 
                 if (Settings.FormatJsonLike && message.Contains('{') && message.Contains('['))
                     message = FormatJson(message);
-                
+
                 SetColor(type);
 
                 if (message.Contains("\n"))
                 {
                     var messages = message.Split('\n');
-                    foreach (var msg in messages)
-                    {
-                        Console.WriteLine(prefix + msg);
-                    }
+                    foreach (var msg in messages) Console.WriteLine(prefix + msg);
                 }
                 else
+                {
                     Console.WriteLine(prefix + message);
-                
+                }
+
                 Console.ResetColor();
             }
         }
@@ -167,7 +167,7 @@ namespace RadLibrary.Logging
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
-        
+
         /// <summary>
         ///     Formats output
         /// </summary>

@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using System.Text.RegularExpressions;
 
 #endregion
 
@@ -68,5 +69,10 @@ namespace RadLibrary.Logging
         ///     Format json like output
         /// </summary>
         public bool FormatJsonLike = true;
+
+        /// <summary>
+        ///     Regex that string need to match for string.Format
+        /// </summary>
+        public Regex StringFormatRegex = new Regex("[{][0-9]*[:,]*\\w*[}]");
     }
 }
