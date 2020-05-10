@@ -59,13 +59,13 @@ namespace RadLibrary.Logging
             _exceptionLogger = logger;
         }
 
-        /// <summary>Prints the exception.</summary>
+        /// <summary>Prints the exception and kills process.</summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="UnhandledExceptionEventArgs" /> instance containing the event data.</param>
         private static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             if (e.ExceptionObject is Exception ex)
-                _exceptionLogger?.Exception(ex, ex.StackTrace);
+                _exceptionLogger?.Exception(ex);
             Environment.Exit(-1);
         }
 

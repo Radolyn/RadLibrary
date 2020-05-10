@@ -31,6 +31,12 @@ namespace RadLibrary.Logging
         /// <summary>The deprecated message color</summary>
         public ConsoleColor DeprecatedColor = ConsoleColor.DarkYellow;
 
+        /// <summary>The input message color</summary>
+        public ConsoleColor InputColor = ConsoleColor.Yellow;
+
+        /// <summary>The input message color</summary>
+        public ConsoleColor PredictionColor = ConsoleColor.DarkYellow;
+
         /// <summary>
         ///     <para>The exception string.</para>
         ///     <para>Must contain {0}, {1} and {2} (<see cref="Exception" /> type, stack trace, message)</para>

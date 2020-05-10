@@ -9,6 +9,7 @@
         Error,
         Success,
         Exception,
-        Deprecation
+        Deprecation,
+        Input
     }
 }
