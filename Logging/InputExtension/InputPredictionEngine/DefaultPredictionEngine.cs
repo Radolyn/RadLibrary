@@ -1,16 +1,21 @@
 ﻿#region
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using RadLibrary.Logging.InputPredictionEngine;
 
 #endregion
 
-namespace RadLibrary.Logging.InputPredictionEngine
+namespace RadLibrary.Logging.InputExtension.InputPredictionEngine
 {
+    /// <summary>
+    ///     Default prediction engine. Predicts only files and "yes" or "no"
+    /// </summary>
     public class DefaultPredictionEngine : IPredictionEngine
     {
-        public string Predict(string input)
+        public string Predict(string input, Logger logger)
         {
             switch (input)
             {
@@ -22,8 +27,15 @@ namespace RadLibrary.Logging.InputPredictionEngine
                 case "y":
                     return "yes";
                 default:
-                    return PredictPath(input);
+                    var historyPrediction = PredictHistory(input, logger);
+                    return historyPrediction ?? PredictPath(input);
             }
+        }
+
+        private string PredictHistory(string input, Logger logger)
+        {
+            var history = logger.InputHistory.Where(s => s.StartsWith(input));
+            return history.FirstOrDefault();
         }
 
         private string PredictPath(string input)

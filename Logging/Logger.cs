@@ -59,7 +59,7 @@ namespace RadLibrary.Logging
         public readonly Dictionary<Type, CustomHandlerDelegate> CustomHandlers =
             new Dictionary<Type, CustomHandlerDelegate>();
 
-        private readonly List<string> InputHistory = new List<string> {""};
+        public readonly List<string> InputHistory = new List<string> {""};
 
         /// <summary>Logs the specified type.</summary>
         /// <param name="type">The type.</param>
@@ -127,7 +127,7 @@ namespace RadLibrary.Logging
         /// <param name="type">The logger type.</param>
         /// <param name="rewrite">The rewrite.</param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        private string GetPrefix(LogType type, bool rewrite = false)
+        internal string GetPrefix(LogType type, bool rewrite = false)
         {
             var date = DateTime.Now.ToString(Settings.TimeFormat);
 
@@ -141,7 +141,7 @@ namespace RadLibrary.Logging
         /// </summary>
         /// <param name="type">The logger type.</param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        private void SetColor(LogType type)
+        internal void SetColor(LogType type)
         {
             switch (type)
             {
@@ -179,7 +179,7 @@ namespace RadLibrary.Logging
         /// </summary>
         /// <param name="json">The output</param>
         /// <returns>The formatted output</returns>
-        public static string FormatJson(string json)
+        internal static string FormatJson(string json)
         {
             // https://stackoverflow.com/questions/4580397/json-formatter-in-c answer by Vince Panuccio (big thanks! :d)
             const string indentString = "  ";
@@ -310,8 +310,7 @@ namespace RadLibrary.Logging
         /// <param name="type">The type.</param>
         /// <param name="prefix">The prefix.</param>
         /// <returns>Returns user's input</returns>
-        [Obsolete("Use GetInput instead")]
-        public string GetInputOld(LogType type = LogType.Warning, string prefix = "")
+        public string GetInputSimple(LogType type = LogType.Warning, string prefix = "")
         {
             lock (ConsoleWriterLock)
             {
@@ -356,246 +355,6 @@ namespace RadLibrary.Logging
 
                 return input;
             }
-        }
-
-        /// <summary>Gets the input with predictions.</summary>
-        /// <param name="prefix">The prefix.</param>
-        /// <param name="type">The type.</param>
-        /// <param name="engine">The prediction engine.</param>
-        /// <returns>Returns user's input</returns>
-        public string GetInput(string prefix = null, LogType type = LogType.Input,
-            IPredictionEngine engine = null)
-        {
-            prefix = prefix == null ? ">>> " : prefix + " >>> ";
-
-            Console.Write(GetPrefix(type));
-            Console.Write(prefix);
-
-            var startTop = Console.CursorTop;
-            var startLeft = Console.CursorLeft;
-
-            var currentTop = Console.CursorTop;
-            var currentLeft = Console.CursorLeft;
-
-            var sb = new StringBuilder();
-
-            var history = InputHistory.Count;
-
-            var longestStr = 0;
-
-            void Update(string prediction = "")
-            {
-                var s = sb.ToString();
-
-                if (prediction?.Length > longestStr)
-                    longestStr = prediction.Length;
-                if (sb.Length > longestStr)
-                    longestStr = sb.Length;
-
-                Console.CursorVisible = false;
-
-                Rewrite();
-
-                Console.SetCursorPosition(0, startTop);
-
-                Console.Write(GetPrefix(type, true));
-                Console.Write(prefix);
-
-                if (prediction?.StartsWith(s) == true)
-                {
-                    Console.ForegroundColor = Settings.PredictionColor;
-                    Console.Write(prediction);
-                }
-
-                Console.SetCursorPosition(startLeft, startTop);
-
-                Console.ForegroundColor = Settings.InputColor;
-
-                Console.Write(s);
-
-                Console.SetCursorPosition(currentLeft, currentTop);
-
-                Console.CursorVisible = true;
-            }
-
-            void Rewrite()
-            {
-                Console.SetCursorPosition(0, startTop);
-                Console.Write(string.Concat(Enumerable.Repeat(" ", longestStr + startLeft)));
-                Console.SetCursorPosition(currentLeft, currentTop);
-            }
-
-            void Finish()
-            {
-                Update();
-
-                var pos = GetEndPosition();
-
-                Console.SetCursorPosition(pos.Item1, pos.Item2);
-
-                SetColor(type);
-                Console.Write(" <<<" + Environment.NewLine);
-            }
-
-            Tuple<int, int> GetEndPosition()
-            {
-                var s = sb.Length;
-
-                var leftEnd = (startLeft + s) % Console.BufferWidth;
-                var topEnd = (startLeft + s) / Console.BufferWidth;
-
-                return new Tuple<int, int>(leftEnd, topEnd + startTop);
-            }
-
-            int GetCurrentPosition()
-            {
-                if (currentTop == startTop)
-                    return currentLeft - startLeft - 1;
-
-                var fullyFilled = (currentTop - startTop - 1) * Console.BufferWidth;
-
-                var l = Console.BufferWidth - startLeft - 1;
-
-                return l + fullyFilled + currentLeft;
-            }
-
-            void SetEndPosition()
-            {
-                var (left, top) = GetEndPosition();
-
-                currentLeft = left;
-                currentTop = top;
-            }
-
-            void GoLeft()
-            {
-                if (currentLeft == startLeft && currentTop == startTop)
-                    return;
-
-                if (currentLeft == 0)
-                {
-                    currentTop -= 1;
-                    currentLeft = Console.BufferWidth - 1;
-                }
-                else
-                {
-                    --currentLeft;
-                }
-            }
-
-            void GoRight(bool check = true)
-            {
-                if (currentLeft == sb.Length + startLeft && check)
-                    return;
-                if (currentLeft == Console.BufferWidth - 1)
-                {
-                    // fix custom consoles behaviour (Terminus, etc.) 
-                    ++Console.BufferHeight;
-                    currentTop += 1;
-                    currentLeft = 0;
-                }
-                else
-                {
-                    currentLeft = Console.CursorLeft + 1;
-                    currentTop = Console.CursorTop;
-                }
-            }
-
-            Update();
-
-            while (true)
-            {
-                var prediction = engine?.Predict(sb.ToString());
-
-                Update(prediction);
-
-                var ch = Console.ReadKey(true);
-
-                if (ch.KeyChar == -1) break;
-                if (ch.Key >= ConsoleKey.NumPad0 && ch.Key <= ConsoleKey.NumPad9
-                    || ch.Key == ConsoleKey.Clear || ch.Key == ConsoleKey.Insert
-                    || ch.Key >= ConsoleKey.PageUp && ch.Key <= ConsoleKey.Home) continue;
-                switch (ch.Key)
-                {
-                    case ConsoleKey.Backspace:
-                    {
-                        if (currentLeft == startLeft)
-                            continue;
-
-                        sb.Remove(GetCurrentPosition(), 1);
-
-                        GoLeft();
-
-                        continue;
-                    }
-                    case ConsoleKey.LeftArrow:
-                        GoLeft();
-
-                        break;
-                    case ConsoleKey.RightArrow:
-                        GoRight();
-
-                        break;
-                    case ConsoleKey.UpArrow:
-                        if (history == 0) break;
-
-                        history--;
-
-                        sb.Clear();
-                        sb.Append(InputHistory[history]);
-
-                        Console.SetCursorPosition(startLeft, startTop);
-                        if (InputHistory[history].Length > longestStr)
-                            longestStr = InputHistory[history].Length;
-
-                        SetEndPosition();
-
-                        break;
-                    case ConsoleKey.DownArrow:
-                        if (history == InputHistory.Count - 1) break;
-
-                        history++;
-
-                        sb.Clear();
-                        sb.Append(InputHistory[history]);
-
-                        if (InputHistory[history].Length > longestStr)
-                            longestStr = InputHistory[history].Length;
-
-                        SetEndPosition();
-
-                        break;
-                    case ConsoleKey.Tab:
-                        if (sb.Length >= prediction?.Length)
-                            break;
-                        sb.Clear();
-                        sb.Append(prediction);
-
-                        SetEndPosition();
-
-                        break;
-                    default:
-                        if (ch.KeyChar == '\r' || ch.KeyChar == '\n')
-                            // return
-                            goto ret;
-
-                        GoRight(false);
-
-                        if (sb.Length == 0)
-                            sb.Append(ch.KeyChar);
-                        else
-                            sb.Insert(GetCurrentPosition(), ch.KeyChar);
-                        continue;
-                }
-            }
-
-            ret:
-            Finish();
-
-            var res = sb.Length > 0 ? sb.ToString() : "";
-            InputHistory.Add(res);
-
-            return res;
         }
     }
 }
