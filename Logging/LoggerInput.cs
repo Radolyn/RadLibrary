@@ -1,24 +1,33 @@
-﻿using System;
+﻿#region
+
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using RadLibrary.Logging.InputPredictionEngine;
 
-namespace RadLibrary.Logging.InputExtension
+#endregion
+
+namespace RadLibrary.Logging
 {
-    public static class InputExtension
+    public partial class Logger
     {
+        public readonly List<string> InputHistory = new List<string> {""};
+
         /// <summary>Gets the input with predictions.</summary>
         /// <param name="logger">The logger.</param>
         /// <param name="prefix">The prefix.</param>
         /// <param name="type">The type.</param>
         /// <param name="engine">The prediction engine.</param>
         /// <returns>Returns user's input</returns>
-        public static string GetInput(this Logger logger, string prefix = null, LogType type = LogType.Input,
+        public string GetInput(string prefix = null, LogType type = LogType.Input,
             IPredictionEngine engine = null)
         {
             prefix = prefix == null ? ">>> " : prefix + " >>> ";
 
-            Console.Write(logger.GetPrefix(type));
+            Console.Write(GetPrefix(type));
             Console.Write(prefix);
 
             var startTop = Console.CursorTop;
@@ -29,7 +38,7 @@ namespace RadLibrary.Logging.InputExtension
 
             var sb = new StringBuilder();
 
-            var history = logger.InputHistory.Count;
+            var history = InputHistory.Count;
 
             var longestStr = 0;
 
@@ -48,15 +57,15 @@ namespace RadLibrary.Logging.InputExtension
 
                 Console.SetCursorPosition(0, startTop);
 
-                Console.Write(logger.GetPrefix(type, true));
+                Console.Write(GetPrefix(type, true));
                 Console.Write(prefix);
 
-                Console.ForegroundColor = logger.Settings.PredictionColor;
+                Console.ForegroundColor = Settings.PredictionColor;
                 Console.Write(prediction);
 
                 Console.SetCursorPosition(startLeft, startTop);
 
-                Console.ForegroundColor = logger.Settings.InputColor;
+                Console.ForegroundColor = Settings.InputColor;
 
                 Console.Write(s);
 
@@ -76,11 +85,11 @@ namespace RadLibrary.Logging.InputExtension
             {
                 Update();
 
-                var pos = GetEndPosition();
+                var (left, top) = GetEndPosition();
 
-                Console.SetCursorPosition(pos.Item1, pos.Item2);
+                Console.SetCursorPosition(left, top);
 
-                logger.SetColor(type);
+                SetColor(type);
                 Console.Write(" <<<" + Environment.NewLine);
             }
 
@@ -152,7 +161,7 @@ namespace RadLibrary.Logging.InputExtension
 
             while (true)
             {
-                var prediction = engine?.Predict(sb.ToString(), logger);
+                var prediction = engine?.Predict(sb.ToString(), this);
 
                 Update(prediction);
 
@@ -189,25 +198,25 @@ namespace RadLibrary.Logging.InputExtension
                         history--;
 
                         sb.Clear();
-                        sb.Append(logger.InputHistory[history]);
+                        sb.Append(InputHistory[history]);
 
                         Console.SetCursorPosition(startLeft, startTop);
-                        if (logger.InputHistory[history].Length > longestStr)
-                            longestStr = logger.InputHistory[history].Length;
+                        if (InputHistory[history].Length > longestStr)
+                            longestStr = InputHistory[history].Length;
 
                         SetEndPosition();
 
                         break;
                     case ConsoleKey.DownArrow:
-                        if (history == logger.InputHistory.Count - 1) break;
+                        if (history == InputHistory.Count - 1) break;
 
                         history++;
 
                         sb.Clear();
-                        sb.Append(logger.InputHistory[history]);
+                        sb.Append(InputHistory[history]);
 
-                        if (logger.InputHistory[history].Length > longestStr)
-                            longestStr = logger.InputHistory[history].Length;
+                        if (InputHistory[history].Length > longestStr)
+                            longestStr = InputHistory[history].Length;
 
                         SetEndPosition();
 
@@ -240,9 +249,60 @@ namespace RadLibrary.Logging.InputExtension
             Finish();
 
             var res = sb.Length > 0 ? sb.ToString() : "";
-            logger.InputHistory.Add(res);
+            InputHistory.Add(res);
 
             return res;
+        }
+
+        /// <summary>Gets the input.</summary>
+        /// <param name="type">The type.</param>
+        /// <param name="prefix">The prefix.</param>
+        /// <returns>Returns user's input</returns>
+        public string GetInputSimple(LogType type = LogType.Warning, string prefix = "")
+        {
+            lock (ConsoleWriterLock)
+            {
+                Console.CursorVisible = true;
+
+                var logPrefix = GetPrefix(type);
+                SetColor(type);
+                Console.Write(logPrefix + prefix + ">>> ");
+
+                var stop = false;
+
+                var leftStart = Console.CursorLeft;
+                var topStart = Console.CursorTop;
+                
+                Task.Run(() =>
+                {
+                    while (!stop)
+                    {
+                        var left = Console.CursorLeft;
+                        var top = Console.CursorTop;
+                        SetColor(type);
+                        Console.SetCursorPosition(leftStart, topStart);
+                        Console.Write(GetPrefix(type, true));
+                        Console.SetCursorPosition(left, top);
+                        Thread.Sleep(2000);
+                    }
+                });
+
+                var input = Console.ReadLine() ?? "";
+
+                stop = true;
+
+                var leftEnd = (leftStart + input.Length) % Console.WindowWidth;
+                var topEnd = (leftStart + input.Length) / Console.WindowWidth;
+
+                Console.SetCursorPosition(leftEnd, topEnd + topStart);
+
+                SetColor(type);
+                Console.Write(" <<<" + Environment.NewLine);
+
+                Console.CursorVisible = false;
+
+                return input;
+            }
         }
     }
 }

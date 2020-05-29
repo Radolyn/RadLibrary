@@ -1,14 +1,12 @@
 ﻿#region
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using RadLibrary.Logging.InputPredictionEngine;
 
 #endregion
 
-namespace RadLibrary.Logging.InputExtension.InputPredictionEngine
+namespace RadLibrary.Logging.InputPredictionEngine
 {
     /// <summary>
     ///     Default prediction engine. Predicts only files and "yes" or "no"

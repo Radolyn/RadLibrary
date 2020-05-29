@@ -5,16 +5,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using RadLibrary.Logging.InputPredictionEngine;
+using RadLibrary.Configuration;
 
 #endregion
 
 namespace RadLibrary.Logging
 {
     /// <summary>Defines the logger</summary>
-    public class Logger
+    public partial class Logger
     {
         /// <summary>Initializes a new instance of the <see cref="Logger" /> class.</summary>
         /// <param name="name">The name.</param>
@@ -27,7 +25,13 @@ namespace RadLibrary.Logging
             Console.CancelKeyPress += (sender, args) =>
             {
                 Console.CursorVisible = true;
-                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.ResetColor();
+            };
+
+            AppDomain.CurrentDomain.ProcessExit += (sender, args) =>
+            {
+                Console.CursorVisible = true;
+                Console.ResetColor();
             };
 
             Name = name;
@@ -58,8 +62,6 @@ namespace RadLibrary.Logging
         /// </summary>
         public readonly Dictionary<Type, CustomHandlerDelegate> CustomHandlers =
             new Dictionary<Type, CustomHandlerDelegate>();
-
-        public readonly List<string> InputHistory = new List<string> {""};
 
         /// <summary>Logs the specified type.</summary>
         /// <param name="type">The type.</param>
@@ -247,113 +249,6 @@ namespace RadLibrary.Logging
                     return CustomHandlers.ContainsKey(arg.GetType())
                         ? HandleArgument(CustomHandlers[arg.GetType()].Invoke(arg), recursion)
                         : arg.ToString();
-            }
-        }
-
-        /// <summary>Alias for <see cref="Log" /> (Verbose)</summary>
-        /// <param name="args">The arguments.</param>
-        public void Verbose(params object[] args)
-        {
-            Log(LogType.Verbose, args);
-        }
-
-        /// <summary>Alias for <see cref="Log" /> (Information)</summary>
-        /// <param name="args">The arguments.</param>
-        public void Info(params object[] args)
-        {
-            Log(LogType.Information, args);
-        }
-
-        /// <summary>Alias for <see cref="Log" /> (Warning)</summary>
-        /// <param name="args">The arguments.</param>
-        public void Warn(params object[] args)
-        {
-            Log(LogType.Warning, args);
-        }
-
-        /// <summary>Alias for <see cref="Log" /> (Error)</summary>
-        /// <param name="args">The arguments.</param>
-        public void Error(params object[] args)
-        {
-            Log(LogType.Error, args);
-        }
-
-        /// <summary>Alias for <see cref="Log" /> (Success)</summary>
-        /// <param name="args">The arguments.</param>
-        public void Success(params object[] args)
-        {
-            Log(LogType.Success, args);
-        }
-
-        /// <summary>Logs the specified exception</summary>
-        /// <param name="ex">The exception</param>
-        /// <exception cref="FormatException"><see cref="LoggerSettings.ExceptionString" /> doesn't contains {0}</exception>
-        public void Exception(Exception ex)
-        {
-            if (!Settings.StringFormatRegex.IsMatch(Settings.ExceptionString))
-                throw new FormatException();
-            Log(LogType.Exception, Settings.ExceptionString, ex.GetType(), ex.StackTrace, ex.Message);
-        }
-
-        /// <summary>Logs the deprecated part of code</summary>
-        /// <param name="old">Deprecation object</param>
-        /// <param name="replacement">Replacement</param>
-        /// <exception cref="FormatException"><see cref="LoggerSettings.ExceptionString" /> doesn't contains {0}</exception>
-        public void Deprecated(object old, object replacement)
-        {
-            if (!Settings.DeprecatedString.Contains("{0}"))
-                throw new FormatException();
-            Log(LogType.Deprecation, Settings.DeprecatedString, old, replacement);
-        }
-
-        /// <summary>Gets the input.</summary>
-        /// <param name="type">The type.</param>
-        /// <param name="prefix">The prefix.</param>
-        /// <returns>Returns user's input</returns>
-        public string GetInputSimple(LogType type = LogType.Warning, string prefix = "")
-        {
-            lock (ConsoleWriterLock)
-            {
-                Console.CursorVisible = true;
-
-                var logPrefix = GetPrefix(type);
-                SetColor(type);
-                Console.Write(logPrefix + prefix + ">>> ");
-
-                var stop = false;
-
-                var leftStart = Console.CursorLeft;
-                var topStart = Console.CursorTop;
-
-                Task.Run(() =>
-                {
-                    while (!stop)
-                    {
-                        var left = Console.CursorLeft;
-                        var top = Console.CursorTop;
-                        SetColor(type);
-                        Console.SetCursorPosition(leftStart, topStart);
-                        Console.Write(GetPrefix(type, true));
-                        Console.SetCursorPosition(left, top);
-                        Thread.Sleep(2000);
-                    }
-                });
-
-                var input = Console.ReadLine() ?? "";
-
-                stop = true;
-
-                var leftEnd = (leftStart + input.Length) % Console.WindowWidth;
-                var topEnd = (leftStart + input.Length) / Console.WindowWidth;
-
-                Console.SetCursorPosition(leftEnd, topEnd + topStart);
-
-                SetColor(type);
-                Console.Write(" <<<" + Environment.NewLine);
-
-                Console.CursorVisible = false;
-
-                return input;
             }
         }
     }

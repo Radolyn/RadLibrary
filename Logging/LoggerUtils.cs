@@ -24,12 +24,14 @@ namespace RadLibrary.Logging
         /// <returns>Returns <see cref="Logger" /></returns>
         public static Logger GetLogger(string name)
         {
-            if (name.Length < 3)
-                throw new ArgumentException("Name can't be less than 4 symbols", name);
             if (Loggers.Any(logger1 => logger1.Name == name))
                 return Loggers.Single(logger1 => logger1.Name == name);
+            if (name.Length < 3)
+                throw new ArgumentException("Name can't be less than 4 symbols", name);
+
             var logger = new Logger(name, new LoggerSettings());
             Loggers.Add(logger);
+
             return logger;
         }
 
@@ -46,6 +48,7 @@ namespace RadLibrary.Logging
             logger.Verbose("RadLibrary version:", libVersion, buildDate, Environment.Is64BitProcess ? "x64" : "x32");
             logger.Verbose("Running on:", RuntimeInformation.OSDescription,
                 Environment.Is64BitOperatingSystem ? "x64" : "x32");
+
             if (verbose) logger.Verbose("Environment variables:", Environment.GetEnvironmentVariables());
         }
 
@@ -54,7 +57,9 @@ namespace RadLibrary.Logging
         public static void RegisterExceptionHandler(string name = "RadLibrary")
         {
             var logger = GetLogger(name);
+
             logger.Verbose("Registering exception handler...");
+
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;
             _exceptionLogger = logger;
         }
@@ -66,6 +71,8 @@ namespace RadLibrary.Logging
         {
             if (e.ExceptionObject is Exception ex)
                 _exceptionLogger?.Exception(ex);
+
+            Console.ResetColor();
             Environment.Exit(-1);
         }
 
