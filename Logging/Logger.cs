@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 #endregion
 
@@ -121,15 +122,37 @@ namespace RadLibrary.Logging
                 if (Settings.FormatJsonLike && message.Contains('{') && message.Contains('['))
                     message = FormatJson(message);
 
-                if (message.Contains("\n"))
+                void Print()
                 {
-                    var messages = message.Split('\n');
-                    foreach (var msg in messages)
-                        Console.WriteLine((prefix + msg).Colorize(GetColor(type)).ResetColorAfter());
+                    if (message.Contains("\n"))
+                    {
+                        var messages = message.Split('\n');
+                        _lastMessageSize = CountSize(messages);
+                        foreach (var msg in messages)
+                            Console.WriteLine((prefix + msg).Colorize(GetColor(type)).ResetColorAfter());
+                    }
+                    else
+                    {
+                        _lastMessageSize = CountSize(prefix + message);
+                        Console.WriteLine((prefix + message).Colorize(GetColor(type)).ResetColorAfter());
+                    }
+                }
+
+                if (_inputInProgress)
+                {
+                    _inputReRenderingNeeded = true;
+
+                    SpinWait.SpinUntil(() => !_inputReRenderingNeeded);
+
+                    Print();
+
+                    _inputReRenderingFinished = true;
+
+                    SpinWait.SpinUntil(() => !_inputReRenderingFinished);
                 }
                 else
                 {
-                    Console.WriteLine((prefix + message).Colorize(GetColor(type)).ResetColorAfter());
+                    Print();
                 }
             }
         }
@@ -148,6 +171,16 @@ namespace RadLibrary.Logging
                 .Colorize(GetColor(type));
 
             return rewrite ? "\r" + str : str;
+        }
+
+        private static int CountSize(string msg)
+        {
+            return msg.Length / Console.BufferWidth + 1;
+        }
+
+        private static int CountSize(IEnumerable<string> messages)
+        {
+            return messages.Sum(CountSize);
         }
 
         /// <summary>
@@ -225,7 +258,7 @@ namespace RadLibrary.Logging
                 else
                     return "...";
 
-            recursion++;
+            ++recursion;
 
             switch (arg)
             {
