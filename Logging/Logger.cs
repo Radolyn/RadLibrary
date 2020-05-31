@@ -3,22 +3,45 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
-using RadLibrary.Configuration;
 
 #endregion
 
 namespace RadLibrary.Logging
 {
+    /// <summary>
+    ///     The custom argument handler delegate
+    /// </summary>
+    /// <param name="obj">The object.</param>
+    public delegate object CustomHandlerDelegate(object obj);
+
     /// <summary>Defines the logger</summary>
     public partial class Logger
     {
+        /// <summary>
+        ///     Locks console for writing (may cause delays).
+        /// </summary>
+        private static readonly object ConsoleWriterLock = new object();
+
+        /// <summary>
+        ///     Locks input
+        /// </summary>
+        private static bool _inputInProgress;
+
+        /// <summary>
+        ///     The custom handlers dictionary
+        /// </summary>
+        public readonly Dictionary<Type, CustomHandlerDelegate> CustomHandlers =
+            new Dictionary<Type, CustomHandlerDelegate>();
+
         /// <summary>Initializes a new instance of the <see cref="Logger" /> class.</summary>
         /// <param name="name">The name.</param>
         /// <param name="settings">The settings.</param>
-        public Logger(string name, LoggerSettings settings)
+        public Logger(string name, LoggerSettings settings, int loggerThread = 0)
         {
+            Colorizer.Initialize();
             Console.CursorVisible = false;
 
             // fix custom consoles behaviour (Terminus, etc.) 
@@ -26,42 +49,33 @@ namespace RadLibrary.Logging
             {
                 Console.CursorVisible = true;
                 Console.ResetColor();
+                Console.WriteLine("".ResetColorAfter());
             };
 
             AppDomain.CurrentDomain.ProcessExit += (sender, args) =>
             {
                 Console.CursorVisible = true;
                 Console.ResetColor();
+                Console.WriteLine("".ResetColorAfter());
             };
 
             Name = name;
             Settings = settings;
+            LoggerThread = loggerThread;
         }
-
-        /// <summary>
-        ///     Locks console for writing (may cause delays).
-        /// </summary>
-        private static readonly object ConsoleWriterLock = new object();
 
         /// <summary>Gets or sets the settings.</summary>
         /// <value>The settings.</value>
         public LoggerSettings Settings { get; set; }
 
+        /// <summary>
+        ///     Logger thread
+        /// </summary>
+        public int LoggerThread { get; }
+
         /// <summary>Gets the name.</summary>
         /// <value>The name.</value>
         public string Name { get; }
-
-        /// <summary>
-        ///     The custom argument handler delegate
-        /// </summary>
-        /// <param name="obj">The object.</param>
-        public delegate object CustomHandlerDelegate(object obj);
-
-        /// <summary>
-        ///     The custom handlers dictionary
-        /// </summary>
-        public readonly Dictionary<Type, CustomHandlerDelegate> CustomHandlers =
-            new Dictionary<Type, CustomHandlerDelegate>();
 
         /// <summary>Logs the specified type.</summary>
         /// <param name="type">The type.</param>
@@ -107,19 +121,16 @@ namespace RadLibrary.Logging
                 if (Settings.FormatJsonLike && message.Contains('{') && message.Contains('['))
                     message = FormatJson(message);
 
-                SetColor(type);
-
                 if (message.Contains("\n"))
                 {
                     var messages = message.Split('\n');
-                    foreach (var msg in messages) Console.WriteLine(prefix + msg);
+                    foreach (var msg in messages)
+                        Console.WriteLine((prefix + msg).Colorize(GetColor(type)).ResetColorAfter());
                 }
                 else
                 {
-                    Console.WriteLine(prefix + message);
+                    Console.WriteLine((prefix + message).Colorize(GetColor(type)).ResetColorAfter());
                 }
-
-                Console.ResetColor();
             }
         }
 
@@ -133,44 +144,37 @@ namespace RadLibrary.Logging
         {
             var date = DateTime.Now.ToString(Settings.TimeFormat);
 
-            var str = string.Format(Settings.LoggerPrefix + " ", date, Name, type.ToString());
+            var str = string.Format(Settings.LoggerPrefix + " ", date, Name, type.ToString(), LoggerThread)
+                .Colorize(GetColor(type));
 
             return rewrite ? "\r" + str : str;
         }
 
         /// <summary>
-        ///     Sets color in console.
+        ///     Gets color
         /// </summary>
         /// <param name="type">The logger type.</param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        internal void SetColor(LogType type)
+        internal Color GetColor(LogType type)
         {
             switch (type)
             {
                 case LogType.Verbose:
-                    Console.ForegroundColor = Settings.VerboseColor;
-                    break;
+                    return Settings.VerboseColor;
                 case LogType.Information:
-                    Console.ForegroundColor = Settings.InformationColor;
-                    break;
+                    return Settings.InformationColor;
                 case LogType.Warning:
-                    Console.ForegroundColor = Settings.WarningColor;
-                    break;
+                    return Settings.WarningColor;
                 case LogType.Error:
-                    Console.ForegroundColor = Settings.ErrorColor;
-                    break;
+                    return Settings.ErrorColor;
                 case LogType.Success:
-                    Console.ForegroundColor = Settings.SuccessColor;
-                    break;
+                    return Settings.SuccessColor;
                 case LogType.Exception:
-                    Console.ForegroundColor = Settings.ExceptionColor;
-                    break;
+                    return Settings.ExceptionColor;
                 case LogType.Deprecation:
-                    Console.ForegroundColor = Settings.DeprecatedColor;
-                    break;
+                    return Settings.DeprecatedColor;
                 case LogType.Input:
-                    Console.ForegroundColor = Settings.InputColor;
-                    break;
+                    return Settings.InputColor;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }

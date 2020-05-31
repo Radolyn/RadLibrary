@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using System.Drawing;
 using System.Text.RegularExpressions;
 
 #endregion
@@ -11,31 +12,31 @@ namespace RadLibrary.Logging
     public class LoggerSettings
     {
         /// <summary>The verbose message color</summary>
-        public ConsoleColor VerboseColor = ConsoleColor.DarkGray;
+        public Color VerboseColor = Color.DarkGray;
 
         /// <summary>The information message color</summary>
-        public ConsoleColor InformationColor = ConsoleColor.Cyan;
+        public Color InformationColor = Colorizer.HexToColor("#2196F3");
 
         /// <summary>The warning message color</summary>
-        public ConsoleColor WarningColor = ConsoleColor.Yellow;
+        public Color WarningColor = Colorizer.HexToColor("#FFEB3B");
 
         /// <summary>The error message color</summary>
-        public ConsoleColor ErrorColor = ConsoleColor.Red;
+        public Color ErrorColor = Color.LightCoral;
 
         /// <summary>The success message color</summary>
-        public ConsoleColor SuccessColor = ConsoleColor.Green;
+        public Color SuccessColor = Color.SeaGreen;
 
         /// <summary>The exception message color</summary>
-        public ConsoleColor ExceptionColor = ConsoleColor.DarkRed;
+        public Color ExceptionColor = Colorizer.HexToColor("#FF3D00");
 
         /// <summary>The deprecated message color</summary>
-        public ConsoleColor DeprecatedColor = ConsoleColor.DarkYellow;
+        public Color DeprecatedColor = Color.Orange;
 
         /// <summary>The input message color</summary>
-        public ConsoleColor InputColor = ConsoleColor.Yellow;
+        public Color InputColor = Colorizer.HexToColor("#FDD835");
 
-        /// <summary>The input message color</summary>
-        public ConsoleColor PredictionColor = ConsoleColor.DarkYellow;
+        /// <summary>The prediction message color</summary>
+        public Color PredictionColor = Color.Orange;
 
         /// <summary>
         ///     <para>The exception string.</para>
@@ -51,9 +52,9 @@ namespace RadLibrary.Logging
 
         /// <summary>
         ///     <para>The logger prefix</para>
-        ///     <para>Must contain {0}, {1} and {2} (date, <see cref="Logger" /> name, log type)</para>
+        ///     <para>Must contain {0}, {1}, {2} and {3} (date, <see cref="Logger" /> name, log type, thread)</para>
         /// </summary>
-        public string LoggerPrefix = "[{0, 13:c} {1, 14:c} {2, 12:c}]";
+        public string LoggerPrefix = "[{0, 13:c} {1, 14:c} {2, 12:c} TH-{3, 1:0}]";
 
         /// <summary>The log level</summary>
         public LogType LogLevel = LogType.Verbose;

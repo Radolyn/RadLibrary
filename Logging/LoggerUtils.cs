@@ -22,14 +22,17 @@ namespace RadLibrary.Logging
         /// <summary>Gets the logger or creates if not exists.</summary>
         /// <param name="name">The name.</param>
         /// <returns>Returns <see cref="Logger" /></returns>
-        public static Logger GetLogger(string name)
+        public static Logger GetLogger(string name, int thread = 0)
         {
-            if (Loggers.Any(logger1 => logger1.Name == name))
-                return Loggers.Single(logger1 => logger1.Name == name);
+            var pred = Loggers.FirstOrDefault(logger1 => logger1.Name == name && logger1.LoggerThread == thread);
+
+            if (pred != null)
+                return pred;
+
             if (name.Length < 3)
                 throw new ArgumentException("Name can't be less than 4 symbols", name);
 
-            var logger = new Logger(name, new LoggerSettings());
+            var logger = new Logger(name, new LoggerSettings(), thread);
             Loggers.Add(logger);
 
             return logger;
