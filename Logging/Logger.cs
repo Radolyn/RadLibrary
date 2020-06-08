@@ -7,17 +7,12 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using RadLibrary.Configuration;
 
 #endregion
 
 namespace RadLibrary.Logging
 {
-    /// <summary>
-    ///     The custom argument handler delegate
-    /// </summary>
-    /// <param name="obj">The object.</param>
-    public delegate object CustomHandlerDelegate(object obj);
-
     /// <summary>Defines the logger</summary>
     public partial class Logger
     {
@@ -31,11 +26,8 @@ namespace RadLibrary.Logging
         /// </summary>
         private static bool _inputInProgress;
 
-        /// <summary>
-        ///     The custom handlers dictionary
-        /// </summary>
-        public readonly Dictionary<Type, CustomHandlerDelegate> CustomHandlers =
-            new Dictionary<Type, CustomHandlerDelegate>();
+        private static readonly LogType _environmentLogType = (LogType) Enum.Parse(typeof(LogType),
+            Environment.GetEnvironmentVariable("LOGGING_LEVEL") ?? "Verbose");
 
         /// <summary>Initializes a new instance of the <see cref="Logger" /> class.</summary>
         /// <param name="name">The name.</param>
@@ -84,7 +76,7 @@ namespace RadLibrary.Logging
         /// <exception cref="ArgumentOutOfRangeException">type is null</exception>
         public void Log(LogType type, params object[] args)
         {
-            if (type < Settings.LogLevel)
+            if (type < Settings.LogLevel || type < _environmentLogType)
                 return;
 
             if (args?.Length == 0)
@@ -94,36 +86,38 @@ namespace RadLibrary.Logging
 
             var prefix = GetPrefix(type);
 
+            var str = args[0]?.ToString();
+
+            if (Settings.StringFormatRegex.IsMatch(str) && args.Length != 0)
+            {
+                var handled = args.Skip(1).Select(arg => HandleArgument(arg)).ToArray();
+
+                // nah it can't
+                // ReSharper disable once CoVariantArrayConversion
+                str = string.Format(str, handled);
+
+                s.Append(str);
+            }
+            else
+            {
+                foreach (var handledArgument in args.Select(arg => HandleArgument(arg)))
+                {
+                    s.Append(handledArgument);
+                    s.Append(" ");
+                }
+            }
+
+            var message = s.ToString();
+
+            if (Settings.FormatJsonLike && Settings.JsonRegex.IsMatch(message))
+                message = FormatJson(message);
+
             lock (ConsoleWriterLock)
             {
-                var str = args[0]?.ToString();
-
-                if (Settings.StringFormatRegex.IsMatch(str) && args.Length != 0)
-                {
-                    var handled = args.Skip(1).Select(arg => HandleArgument(arg)).ToArray();
-
-                    // nah it can't
-                    // ReSharper disable once CoVariantArrayConversion
-                    str = string.Format(str, handled);
-
-                    s.Append(str);
-                }
-                else
-                {
-                    foreach (var handledArgument in args.Select(arg => HandleArgument(arg)))
-                    {
-                        s.Append(handledArgument);
-                        s.Append(" ");
-                    }
-                }
-
-                var message = s.ToString();
-
-                if (Settings.FormatJsonLike && message.Contains('{') && message.Contains('['))
-                    message = FormatJson(message);
-
                 void Print()
                 {
+                    message = message.Replace("\r\n", "\n");
+                    
                     if (message.Contains("\n"))
                     {
                         var messages = message.Split('\n');
@@ -136,6 +130,12 @@ namespace RadLibrary.Logging
                         _lastMessageSize = CountSize(prefix + message);
                         Console.WriteLine((prefix + message).Colorize(GetColor(type)).ResetColorAfter());
                     }
+                }
+
+                if (_progressBarInProgress)
+                {
+                    Console.Write("\r" + string.Concat(Enumerable.Repeat(" ", _lastIteration.Length)) + "\r");
+                    Console.SetCursorPosition(0, Console.BufferHeight - 3);
                 }
 
                 if (_inputInProgress)
@@ -154,6 +154,12 @@ namespace RadLibrary.Logging
                 {
                     Print();
                 }
+
+                if (_progressBarInProgress)
+                {
+                    _lastMessageSize = CountSize(_lastIteration);
+                    Console.Write(_lastIteration);
+                }
             }
         }
 
@@ -163,7 +169,7 @@ namespace RadLibrary.Logging
         /// <param name="type">The logger type.</param>
         /// <param name="rewrite">The rewrite.</param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        internal string GetPrefix(LogType type, bool rewrite = false)
+        private string GetPrefix(LogType type, bool rewrite = false)
         {
             var date = DateTime.Now.ToString(Settings.TimeFormat);
 
@@ -188,7 +194,7 @@ namespace RadLibrary.Logging
         /// </summary>
         /// <param name="type">The logger type.</param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        internal Color GetColor(LogType type)
+        private Color GetColor(LogType type)
         {
             switch (type)
             {
@@ -218,7 +224,7 @@ namespace RadLibrary.Logging
         /// </summary>
         /// <param name="json">The output</param>
         /// <returns>The formatted output</returns>
-        internal static string FormatJson(string json)
+        private static string FormatJson(string json)
         {
             // https://stackoverflow.com/questions/4580397/json-formatter-in-c answer by Vince Panuccio (big thanks! :d)
             const string indentString = "  ";
@@ -282,10 +288,10 @@ namespace RadLibrary.Logging
                 }
                 case DictionaryEntry pair:
                     return HandleArgument(pair.Key, recursion) + ": " + HandleArgument(pair.Value, recursion);
+                case AppConfiguration configuration:
+                    return HandleArgument(configuration.Parameters, recursion);
                 default:
-                    return CustomHandlers.ContainsKey(arg.GetType())
-                        ? HandleArgument(CustomHandlers[arg.GetType()].Invoke(arg), recursion)
-                        : arg.ToString();
+                    return arg.ToString();
             }
         }
     }

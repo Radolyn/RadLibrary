@@ -1,12 +1,18 @@
-﻿namespace RadLibrary.Configuration
+﻿#region
+
+using System.Collections.Generic;
+
+#endregion
+
+namespace RadLibrary.Configuration
 {
     public delegate void ConfigurationUpdated();
 
     /// <summary>
     ///     Allows to create and work with configuration files
     /// </summary>
-    /// <typeparam name="T">The configuration manager</typeparam>
-    public class AppConfiguration<T> where T : IConfigurationManager, new()
+    /// <typeparam name="TManager">The configuration manager</typeparam>
+    public class AppConfiguration
     {
         /// <summary>
         ///     The configuration manager
@@ -14,14 +20,33 @@
         private readonly IConfigurationManager _manager;
 
         /// <summary>
+        ///     Enables or disables hot reload
+        /// </summary>
+        public bool HotReload
+        {
+            get => _manager.HotReload;
+            set => _manager.HotReload = value;
+        }
+
+        /// <summary>
+        ///     Returns all parameters (read-only)
+        /// </summary>
+        public Dictionary<string, Parameter> Parameters => _manager.GetParameters();
+
+        /// <summary>
         ///     Initializes configuration manager
         /// </summary>
         /// <param name="name">The name</param>
-        public AppConfiguration(string name)
+        private AppConfiguration(string name, IConfigurationManager manager)
         {
-            _manager = new T();
+            _manager = manager;
             _manager.Setup(name);
             _manager.ConfigurationUpdated += () => ConfigurationUpdated?.Invoke();
+        }
+
+        public static AppConfiguration Initialize<TManager>(string name) where TManager : IConfigurationManager, new()
+        {
+            return new AppConfiguration(name, new TManager());
         }
 
         /// <summary>
@@ -71,6 +96,11 @@
         public void SetInteger(string key, int value)
         {
             _manager.SetInteger(key, value);
+        }
+
+        public void SetComment(string key, string comment)
+        {
+            _manager.SetComment(key, comment);
         }
 
         /// <summary>

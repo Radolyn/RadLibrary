@@ -14,6 +14,9 @@ namespace RadLibrary.Logging
 {
     public partial class Logger
     {
+        /// <summary>
+        ///     List that contains all inputs from current logger
+        /// </summary>
         public readonly List<string> InputHistory = new List<string> {""};
 
         private static bool _inputReRenderingNeeded;

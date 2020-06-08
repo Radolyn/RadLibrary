@@ -31,7 +31,7 @@ namespace RadLibrary
         /// <exception cref="Win32Exception">If failed to set color mode</exception>
         public static void Initialize()
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (!Utilities.IsWindows())
                 return;
 
             // todo: support for old terminals ($COLORTERM)
@@ -67,7 +67,7 @@ namespace RadLibrary
         /// <returns>Colorized string</returns>
         public static string Colorize(this string str, Color color)
         {
-            return Colorize(str, color.R, color.G, color.B);
+            return color.IsEmpty ? str : Colorize(str, color.R, color.G, color.B);
         }
 
         /// <summary>
@@ -130,7 +130,9 @@ namespace RadLibrary
         ///     Converts hex color to <see cref="Color" />
         /// </summary>
         /// <param name="hex">Hex string</param>
-        /// <returns><see cref="Color" />></returns>
+        /// <returns>
+        ///     <see cref="Color" />
+        /// </returns>
         public static Color HexToColor(string hex)
         {
             hex = hex.Replace("#", "");

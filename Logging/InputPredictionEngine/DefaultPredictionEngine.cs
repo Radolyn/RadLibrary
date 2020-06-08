@@ -13,6 +13,7 @@ namespace RadLibrary.Logging.InputPredictionEngine
     /// </summary>
     public class DefaultPredictionEngine : IPredictionEngine
     {
+        /// <inheritdoc />
         public string Predict(string input, Logger logger)
         {
             switch (input)

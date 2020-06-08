@@ -1,8 +1,20 @@
-﻿namespace RadLibrary.Configuration
+﻿#region
+
+using System.Collections.Generic;
+
+#endregion
+
+namespace RadLibrary.Configuration
 {
     public interface IConfigurationManager
     {
+        event ConfigurationUpdated ConfigurationUpdated;
+
+        bool HotReload { get; set; }
+
         void Setup(string name);
+
+        Dictionary<string, Parameter> GetParameters();
 
         string GetString(string key);
         int GetInteger(string key);
@@ -12,9 +24,9 @@
         void SetInteger(string key, int value);
         void SetBool(string key, bool value);
 
-        void RemoveKey(string key);
+        void SetComment(string key, string comment);
 
-        event ConfigurationUpdated ConfigurationUpdated;
+        void RemoveKey(string key);
 
         void Save();
     }
