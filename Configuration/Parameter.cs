@@ -26,7 +26,7 @@
         /// <inheritdoc />
         public override string ToString()
         {
-            return $"{{Value: {Value}, Comment:{Comment.Replace("# ", " ")}}}";
+            return $"Value: {Value}, Comment:{Comment.Replace("# ", " ")}";
         }
     }
 }

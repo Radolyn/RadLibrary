@@ -4,47 +4,87 @@ All-In-One library
 
 ## Features
 
-- Logger
-- Input predictions
+- Customizable logger
+  - Custom colors
+  - Prints dictionaries and lists like in Python
+  - Integrated with configuration manager
 - Configuration manager
+  - Comments support
+  - Casts support
+- Input predictions
+  - Custom engine support
 
-## Logging sample
+## Getting started
+
+### Logging sample
 
 ```csharp
-var logger = LoggerUtils.GetLogger("Program");
+var logger = LoggerUtils.GetLogger("RadTest");
+
 logger.Verbose("Verbose");
 logger.Info("Info");
 logger.Warn("Warn");
 logger.Error("Error");
+logger.Exception(new Exception());
 logger.Verbose(new List<string> { "Yes", "No", "Maybe" });
+logger.Info("{\"song\":\"Song name\",\"artist\":\"Radolyn\",\"start\":0,\"end\":9999999999999,\"paused\":false}");
 ```
 
-![Sample image](.github/sample.png)
+![Sample image](https://radolyn.com/shared/radlibrary_1.png)
 
-## Logging sample with custom settings
+### Logging sample with custom settings
 
 ```csharp
-var logger = LoggerUtils.GetLogger("Program");
-var settings = new LoggerSettings
-{
-    LogLevel = LogType.Information,
-    InformationColor = ConsoleColor.DarkCyan
-};
-logger.Settings = settings;
-logger.Info("New color test");
+var logger = LoggerUtils.GetLogger("RadTest");
+
+logger.Settings.FormatJsonLike = false;
+logger.Settings.InformationColor = Color.Teal;
+logger.Settings.ExceptionColor = Color.DeepSkyBlue;
+
+logger.Verbose("Verbose");
+logger.Info("Info");
+logger.Warn("Warn");
+logger.Error("Error");
+logger.Exception(new Exception());
+logger.Verbose(new List<string> { "Yes", "No", "Maybe" });
+
+logger.Info(
+"{\"song\":\"Song name\",\"artist\":\"Radolyn\",\"start\":0,\"end\":9999999999999,\"paused\":false}");
 ```
 
-## User input with predictions
+![Sample image](https://radolyn.com/shared/radlibrary_2.png)
+
+### User input with predictions
 
 ```csharp
 // default engine will only predict files and "yes" or "no"
-var input = logger.GetInput(engine: new DefaultPredictionEngine());
+var logger = LoggerUtils.GetLogger("RadTest");
+
+var name = logger.GetInput("Path to Visual Studio:", engine: new DefaultPredictionEngine());
+logger.Info("Your path is: {0}", name);
 ```
 
-## Configuration sample
+![Sample gif](https://radolyn.com/shared/radlibrary_predictions.gif)
+
+### Configuration sample
 
 ```csharp
-// "cfg" is a filename in this case
-var cfg = new AppConfiguration<FileManager>("cfg");
-cfg.ConfigurationUpdated += () => logger.Success("Updated! {0}", cfg["entry"]);
+var logger = LoggerUtils.GetLogger("RadTest");
+var config = AppConfiguration.Initialize<FileManager>("tester");
+
+config["ip"] = "127.0.0.1";
+config.SetBool("autorun", true);
+config["url"] = "https://radolyn.com";
+
+config.SetComment("ip", "Server IP");
+config.SetComment("autorun", "Start program on Windows start");
+config.SetComment("url", "Our main site");
+
+config.Save();
+
+logger.Info(config);
 ```
+
+![Sample image](https://radolyn.com/shared/radlibrary_3.png)
+
+![Sample image](https://radolyn.com/shared/radlibrary_4.png)
