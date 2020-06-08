@@ -81,7 +81,7 @@ namespace RadLibrary.Logging
         ///     Regex that string need to match for json-like formatting
         ///     Use @"(?&lt;=\"")([^\s,].*?)(?=\"")|null" to format json only
         /// </summary>
-        public Regex JsonRegex = new Regex(@"(?<=)([^\s,].*?)(?=)|null");
+        public Regex JsonRegex = new Regex(@"{.*\s*:\s*.*}");
 
         /// <summary>
         ///     Regex that string need to match for string.Format
