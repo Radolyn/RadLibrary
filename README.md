@@ -1,5 +1,7 @@
 # RadLibrary
 
+[![NuGet](https://img.shields.io/nuget/v/RadLibrary.svg)](https://www.nuget.org/packages/RadLibrary/)
+
 All-In-One library
 
 ## Features
@@ -8,6 +10,7 @@ All-In-One library
   - Custom colors
   - Prints dictionaries and lists like in Python
   - Integrated with configuration manager
+  - Thread-safe
 - Configuration manager
   - Comments support
   - Casts support
