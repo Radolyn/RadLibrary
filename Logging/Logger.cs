@@ -3,305 +3,145 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading;
+using System.Text.RegularExpressions;
 using RadLibrary.Configuration;
+using RadLibrary.Logging.Helpers;
 
 #endregion
 
 namespace RadLibrary.Logging
 {
-    /// <summary>Defines the logger</summary>
-    public partial class Logger
+    public abstract partial class Logger
     {
         /// <summary>
-        ///     Locks console for writing (may cause delays).
+        ///     Gets or sets settings
         /// </summary>
-        private static readonly object ConsoleWriterLock = new object();
-
-        /// <summary>
-        ///     Locks input
-        /// </summary>
-        private static bool _inputInProgress;
-
-        private readonly List<ILoggerExtension> _extensions;
-
-        private static readonly LogType EnvironmentLogType = (LogType) Enum.Parse(typeof(LogType),
-            Environment.GetEnvironmentVariable("LOGGING_LEVEL") ?? "Verbose");
-
-        /// <summary>Initializes a new instance of the <see cref="Logger" /> class.</summary>
-        /// <param name="name">The name.</param>
-        /// <param name="settings">The settings.</param>
-        /// <param name="loggerThread">The logger num</param>
-        /// <param name="extensions">The logger extensions</param>
-        internal Logger(string name, LoggerSettings settings, int loggerThread = 0,
-            List<ILoggerExtension> extensions = null)
-        {
-            Colorizer.Initialize();
-            Console.CursorVisible = false;
-
-            // fix custom consoles behaviour (Terminus, etc.) 
-            Console.CancelKeyPress += (sender, args) =>
-            {
-                Console.CursorVisible = true;
-                Console.ResetColor();
-                Console.WriteLine("".ResetColorAfter());
-            };
-
-            AppDomain.CurrentDomain.ProcessExit += (sender, args) =>
-            {
-                Console.CursorVisible = true;
-                Console.ResetColor();
-                Console.WriteLine("".ResetColorAfter());
-            };
-
-            Name = name;
-            Settings = settings;
-            LoggerThread = loggerThread;
-            _extensions = extensions;
-        }
-
-        /// <summary>Gets or sets the settings.</summary>
-        /// <value>The settings.</value>
         public LoggerSettings Settings { get; set; }
 
-        /// <summary>
-        ///     Logger thread
-        /// </summary>
-        public int LoggerThread { get; }
-
-        /// <summary>Gets the name.</summary>
-        /// <value>The name.</value>
-        public string Name { get; }
-
-        /// <summary>Logs the specified type.</summary>
-        /// <param name="type">The type.</param>
-        /// <param name="args">The arguments.</param>
-        /// <exception cref="ArgumentOutOfRangeException">type is null</exception>
-        public void Log(LogType type, params object[] args)
-        {
-            if (type < Settings.LogLevel || type < EnvironmentLogType)
-                return;
-
-            if (args?.Length == 0)
-                args = new object[] {"<empty object>"};
-
-            var s = new StringBuilder();
-
-            var prefix = GetPrefix(type);
-
-            var str = args[0]?.ToString();
-
-            if (Settings.StringFormatRegex.IsMatch(str) && args.Length != 0)
-            {
-                var handled = args.Skip(1).Select(arg => HandleArgument(arg)).ToArray();
-
-                // nah it can't
-                // ReSharper disable once CoVariantArrayConversion
-                str = string.Format(str, handled);
-
-                s.Append(str);
-            }
-            else
-            {
-                foreach (var handledArgument in args.Select(arg => HandleArgument(arg)))
-                {
-                    s.Append(handledArgument);
-                    s.Append(" ");
-                }
-            }
-
-            var message = s.ToString();
-
-            if (Settings.FormatJsonLike && Settings.JsonRegex.IsMatch(message))
-                message = FormatJson(message);
-
-            var original = message;
-
-            lock (ConsoleWriterLock)
-            {
-                void Print()
-                {
-                    message = message.Replace("\r\n", "\n");
-
-                    if (message.Contains("\n"))
-                    {
-                        var messages = message.Split('\n');
-                        message = string.Concat(messages.Select(msg => prefix + msg + Environment.NewLine))
-                            .Colorize(GetColor(type)).ResetColorAfter();
-                        _lastMessageSize = CountSize(message);
-                        Console.Write(message);
-                    }
-                    else
-                    {
-                        message = prefix + message;
-                        _lastMessageSize = CountSize(message);
-                        Console.WriteLine(message.Colorize(GetColor(type)).ResetColorAfter());
-                    }
-                }
-
-                if (_progressBarInProgress)
-                {
-                    Console.Write("\r" + string.Concat(Enumerable.Repeat(" ", _lastIteration.Length)) + "\r");
-                    Console.SetCursorPosition(0, Console.BufferHeight - 3);
-                }
-
-                if (_inputInProgress)
-                {
-                    _inputReRenderingNeeded = true;
-
-                    SpinWait.SpinUntil(() => !_inputReRenderingNeeded);
-
-                    Print();
-
-                    _inputReRenderingFinished = true;
-
-                    SpinWait.SpinUntil(() => !_inputReRenderingFinished);
-                }
-                else
-                {
-                    Print();
-                }
-
-                if (_progressBarInProgress)
-                {
-                    _lastMessageSize = CountSize(_lastIteration);
-                    Console.Write(_lastIteration);
-                }
-            }
-
-            foreach (var extension in _extensions) extension?.Log(original, message, Settings);
-        }
+        private readonly Regex _jsonRegex = new Regex(@"{.*\s*:\s*.*}");
 
         /// <summary>
-        ///     Returns prefix.
+        ///     Initializes logger
         /// </summary>
-        /// <param name="type">The logger type.</param>
-        /// <param name="rewrite">The rewrite.</param>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        private string GetPrefix(LogType type, bool rewrite = false)
-        {
-            var date = DateTime.Now.ToString(Settings.TimeFormat);
-
-            var str = string.Format(Settings.LoggerPrefix + " ", date, Name, type.ToString(), LoggerThread)
-                .Colorize(GetColor(type));
-
-            return rewrite ? "\r" + str : str;
-        }
-
-        private static int CountSize(string msg)
-        {
-            return msg.Length / Console.BufferWidth + 1;
-        }
-
-        // private static int CountSize(IEnumerable<string> messages)
-        // {
-        //     return messages.Sum(CountSize);
-        // }
+        /// <param name="args">Arguments</param>
+        public abstract void Initialize(params object[] args);
 
         /// <summary>
-        ///     Gets color
+        ///     The log action
         /// </summary>
-        /// <param name="type">The logger type.</param>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        private Color GetColor(LogType type)
+        /// <param name="type">Log type</param>
+        /// <param name="message">The original message</param>
+        /// <param name="formatted">The formatted message (see <see cref="Settings" />)</param>
+        public abstract void Log(LogType type, string message, string formatted);
+
+        private void PrivateLog(LogType type, string message)
         {
-            switch (type)
-            {
-                case LogType.Verbose:
-                    return Settings.VerboseColor;
-                case LogType.Information:
-                    return Settings.InformationColor;
-                case LogType.Warning:
-                    return Settings.WarningColor;
-                case LogType.Error:
-                    return Settings.ErrorColor;
-                case LogType.Success:
-                    return Settings.SuccessColor;
-                case LogType.Exception:
-                    return Settings.ExceptionColor;
-                case LogType.Deprecation:
-                    return Settings.DeprecatedColor;
-                case LogType.Input:
-                    return Settings.InputColor;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
+            Log(type, message, Format(type, message));
         }
 
-        /// <summary>
-        ///     Formats output
-        /// </summary>
-        /// <param name="json">The output</param>
-        /// <returns>The formatted output</returns>
+        private string Format(LogType type, string message)
+        {
+            // todo: use lock
+            var formatter = new StringFormatter(Settings.LogFormat);
+
+            message = message.Replace("\r\n", "\n");
+
+            formatter.Add("{time}", DateTime.Now.ToString(Settings.TimeFormat));
+            formatter.Add("{level}", Normalize(type.ToString(), 5));
+            formatter.Add("{name}", Normalize(Settings.Name, LoggerSettings.NameMaxLength));
+            formatter.Add("{message}", message);
+
+            var s = formatter.ToString();
+
+            if (_jsonRegex.IsMatch(s) && Settings.FormatJson)
+                s = FormatJson(s);
+
+            if (!s.Contains('\n'))
+                return s;
+
+            var padding = string.Concat(Enumerable.Repeat(" ", s.IndexOf(message, StringComparison.Ordinal)));
+
+            var messages = s.Split('\n').Aggregate((current, item) =>
+                current + Environment.NewLine + padding + item);
+
+            return messages;
+        }
+
         private static string FormatJson(string json)
         {
-            // https://stackoverflow.com/questions/4580397/json-formatter-in-c answer by Vince Panuccio (big thanks! :d)
-            const string indentString = "  ";
+            // https://stackoverflow.com/a/57100143
             var indentation = 0;
             var quoteCount = 0;
+            var escapeCount = 0;
+            const string indent = "  ";
+
             var result =
-                from ch in json
-                let quotes = ch == '"' ? quoteCount++ : quoteCount
-                let lineBreak = ch == ',' && quotes % 2 == 0
-                    ? ch + Environment.NewLine + string.Concat(Enumerable.Repeat(indentString, indentation))
+                from ch in json ?? string.Empty
+                let escaped = (ch == '\\' ? escapeCount++ : escapeCount > 0 ? escapeCount-- : escapeCount) > 0
+                let quotes = ch == '"' && !escaped ? quoteCount++ : quoteCount
+                let unquoted = quotes % 2 == 0
+                let colon = ch == ':' && unquoted ? ": " : null
+                let noSpace = char.IsWhiteSpace(ch) && unquoted ? string.Empty : null
+                let lineBreak = ch == ',' && unquoted
+                    ? ch + Environment.NewLine + string.Concat(Enumerable.Repeat(indent, indentation))
                     : null
-                let openChar = ch == '{' || ch == '['
-                    ? ch + Environment.NewLine + string.Concat(Enumerable.Repeat(indentString, ++indentation))
+                let openChar = (ch == '{' || ch == '[') && unquoted
+                    ? ch + Environment.NewLine + string.Concat(Enumerable.Repeat(indent, ++indentation))
                     : ch.ToString()
-                let closeChar = ch == '}' || ch == ']'
-                    ? Environment.NewLine + string.Concat(Enumerable.Repeat(indentString, --indentation)) + ch
+                let closeChar = (ch == '}' || ch == ']') && unquoted
+                    ? Environment.NewLine + string.Concat(Enumerable.Repeat(indent, --indentation)) + ch
                     : ch.ToString()
-                select lineBreak ?? (openChar.Length > 1
-                    ? openChar
-                    : closeChar);
+                select colon ?? noSpace ?? lineBreak ?? (
+                    openChar.Length > 1 ? openChar : closeChar
+                );
 
             return string.Concat(result);
         }
 
-        /// <summary>Handles the argument.</summary>
-        /// <param name="arg">The argument.</param>
-        /// <param name="recursion">The recursion.</param>
-        /// <returns>Returns formatted string</returns>
-        private string HandleArgument(object arg, int recursion = 0)
+        private static string Normalize(string name, int length)
         {
+            var s = string.Format("{0, " + length + "}", name);
+            return s.Length <= length ? s : ".." + s.Substring(s.Length - length + 2);
+        }
+
+        private string ParseArguments(params object[] args)
+        {
+            if (args == null)
+                return "null";
+
+            var sb = new StringBuilder();
+
+            foreach (var arg in args) sb.Append(ArgumentToString(arg) + " ");
+
+            return sb.ToString();
+        }
+
+        private string ArgumentToString(object arg, int iteration = 0)
+        {
+            ++iteration;
+
             if (arg == null)
                 return "null";
 
-            if (recursion >= Settings.RecursionLimit)
-                if (Settings.ErrorOnRecursionLimit)
-                    throw new StackOverflowException();
-                else
-                    return "...";
-
-            ++recursion;
+            if (iteration >= Settings.MaxRecursion)
+                return "...";
 
             switch (arg)
             {
-                case DateTime date:
-                    return date.ToString(Settings.TimeFormat);
                 // Python styled list output
-                case IList list:
+                case IEnumerable list:
                 {
                     var str = list.Cast<object>().Aggregate("[",
-                        (current, item) => current + HandleArgument(item, recursion) + ", ");
+                        (current, item) => current + ArgumentToString(item, iteration) + ", ");
 
                     return str.Remove(str.Length - 2) + "]";
                 }
-                // Python styled dictionary output
-                case IDictionary dictionary:
-                {
-                    var str = dictionary.Cast<object>().Aggregate("{",
-                        (current, item) => current + HandleArgument(item, recursion) + ", ");
-
-                    return str.Remove(str.Length - 2) + "}";
-                }
-                case DictionaryEntry pair:
-                    return HandleArgument(pair.Key, recursion) + ": " + HandleArgument(pair.Value, recursion);
+                case Exception ex:
+                    return $"{ex.Source}: {ex.GetType()}, {ex.Message}{Environment.NewLine}Stack trace:\n{ex.StackTrace}";
                 case AppConfiguration configuration:
-                    return HandleArgument(configuration.Parameters, recursion);
+                    return ArgumentToString(configuration.Parameters, iteration);
                 default:
                     return arg.ToString();
             }

@@ -1,15 +1,15 @@
 ﻿namespace RadLibrary.Logging
 {
-    /// <summary>Defines the log types</summary>
+    /// <summary>
+    ///     The log type
+    /// </summary>
     public enum LogType
     {
-        Verbose,
-        Information,
-        Warning,
+        Trace,
+        Debug,
+        Info,
+        Warn,
         Error,
-        Success,
-        Exception,
-        Deprecation,
-        Input
+        Fatal
     }
 }

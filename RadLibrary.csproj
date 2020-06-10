@@ -18,6 +18,7 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/Radolyn/RadLibrary</RepositoryUrl>
     <PackageVersion>1.1.1</PackageVersion>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,6 +26,15 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+    <None Remove="old\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="old\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="old\**" />
   </ItemGroup>
 
 </Project>

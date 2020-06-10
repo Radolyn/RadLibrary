@@ -1,67 +1,119 @@
-﻿#region
-
-using System;
-
-#endregion
-
-namespace RadLibrary.Logging
+﻿namespace RadLibrary.Logging
 {
     public partial class Logger
     {
-        /// <summary>Alias for <see cref="Log" /> (Verbose)</summary>
-        /// <param name="args">The arguments.</param>
-        public void Verbose(params object[] args)
+        /// <summary>
+        ///     The trace message
+        /// </summary>
+        /// <param name="args">The arguments</param>
+        public void Trace(params object[] args)
         {
-            Log(LogType.Verbose, args);
+            PrivateLog(LogType.Trace, ParseArguments(args));
         }
 
-        /// <summary>Alias for <see cref="Log" /> (Information)</summary>
-        /// <param name="args">The arguments.</param>
+        /// <summary>
+        ///     The trace message
+        /// </summary>
+        /// <param name="message">The format (will be formatted with string.Format) or message</param>
+        /// <param name="args">The arguments to pass in string.Format</param>
+        public void Trace(string message, params object[] args)
+        {
+            PrivateLog(LogType.Trace, string.Format(message, args));
+        }
+
+        /// <summary>
+        ///     The debug message
+        /// </summary>
+        /// <param name="args">The arguments</param>
+        public void Debug(params object[] args)
+        {
+            PrivateLog(LogType.Debug, ParseArguments(args));
+        }
+
+        /// <summary>
+        ///     The debug message
+        /// </summary>
+        /// <param name="message">The format (will be formatted with string.Format) or message</param>
+        /// <param name="args">The arguments to pass in string.Format</param>
+        public void Debug(string message, params object[] args)
+        {
+            PrivateLog(LogType.Debug, string.Format(message, args));
+        }
+
+        /// <summary>
+        ///     The information message
+        /// </summary>
+        /// <param name="args">The arguments</param>
         public void Info(params object[] args)
         {
-            Log(LogType.Information, args);
+            PrivateLog(LogType.Info, ParseArguments(args));
         }
 
-        /// <summary>Alias for <see cref="Log" /> (Warning)</summary>
-        /// <param name="args">The arguments.</param>
+        /// <summary>
+        ///     The information message
+        /// </summary>
+        /// <param name="message">The format (will be formatted with string.Format) or message</param>
+        /// <param name="args">The arguments to pass in string.Format</param>
+        public void Info(string message, params object[] args)
+        {
+            PrivateLog(LogType.Info, string.Format(message, args));
+        }
+
+        /// <summary>
+        ///     The warning message
+        /// </summary>
+        /// <param name="args">The arguments</param>
         public void Warn(params object[] args)
         {
-            Log(LogType.Warning, args);
+            PrivateLog(LogType.Warn, ParseArguments(args));
         }
 
-        /// <summary>Alias for <see cref="Log" /> (Error)</summary>
-        /// <param name="args">The arguments.</param>
+        /// <summary>
+        ///     The warning message
+        /// </summary>
+        /// <param name="message">The format (will be formatted with string.Format) or message</param>
+        /// <param name="args">The arguments to pass in string.Format</param>
+        public void Warn(string message, params object[] args)
+        {
+            PrivateLog(LogType.Warn, string.Format(message, args));
+        }
+
+        /// <summary>
+        ///     The error message
+        /// </summary>
+        /// <param name="args">The arguments</param>
         public void Error(params object[] args)
         {
-            Log(LogType.Error, args);
+            PrivateLog(LogType.Error, ParseArguments(args));
         }
 
-        /// <summary>Alias for <see cref="Log" /> (Success)</summary>
-        /// <param name="args">The arguments.</param>
-        public void Success(params object[] args)
+        /// <summary>
+        ///     The error message
+        /// </summary>
+        /// <param name="message">The format (will be formatted with string.Format) or message</param>
+        /// <param name="args">The arguments to pass in string.Format</param>
+        public void Error(string message, params object[] args)
         {
-            Log(LogType.Success, args);
+            PrivateLog(LogType.Error, string.Format(message, args));
         }
 
-        /// <summary>Logs the specified exception</summary>
-        /// <param name="ex">The exception</param>
-        /// <exception cref="FormatException"><see cref="LoggerSettings.ExceptionString" /> doesn't contains {0}</exception>
-        public void Exception(Exception ex)
+        /// <summary>
+        ///     The fatal message
+        /// </summary>
+        /// <param name="args">The arguments</param>
+        public void Fatal(params object[] args)
         {
-            if (!Settings.StringFormatRegex.IsMatch(Settings.ExceptionString))
-                throw new FormatException();
-            Log(LogType.Exception, Settings.ExceptionString, ex.GetType(), ex.StackTrace, ex.Message);
+            PrivateLog(LogType.Fatal, ParseArguments(args));
         }
 
-        /// <summary>Logs the deprecated part of code</summary>
-        /// <param name="old">Deprecation object</param>
-        /// <param name="replacement">Replacement</param>
-        /// <exception cref="FormatException"><see cref="LoggerSettings.ExceptionString" /> doesn't contains {0}</exception>
-        public void Deprecated(object old, object replacement)
+        /// <summary>
+        ///     The fatal message
+        /// </summary>
+        /// <param name="message">The format (will be formatted with string.Format) or message</param>
+        /// <param name="args">The arguments to pass in string.Format</param>
+        public void Fatal(string message, params object[] args)
         {
-            if (!Settings.DeprecatedString.Contains("{0}"))
-                throw new FormatException();
-            Log(LogType.Deprecation, Settings.DeprecatedString, old, replacement);
+            PrivateLog(LogType.Fatal, string.Format(message, args));
         }
     }
 }

@@ -12,6 +12,8 @@ namespace RadLibrary
 {
     public static class Colorizer
     {
+        private static bool _isInitialized;
+
         private const int StdOutputHandle = -11;
         private const uint EnableVirtualTerminalProcessing = 0x0004;
         private const uint DisableNewlineAutoReturn = 0x0008;
@@ -31,7 +33,7 @@ namespace RadLibrary
         /// <exception cref="Win32Exception">If failed to set color mode</exception>
         public static void Initialize()
         {
-            if (!Utilities.IsWindows())
+            if (!Utilities.IsWindows() || _isInitialized)
                 return;
 
             // todo: support for old terminals ($COLORTERM)
@@ -44,6 +46,8 @@ namespace RadLibrary
             if (!SetConsoleMode(iStdOut, outConsoleMode))
                 throw new Win32Exception(
                     $"Failed to set output console mode, error code: {Marshal.GetLastWin32Error()}");
+
+            _isInitialized = true;
         }
 
         /// <summary>
@@ -56,7 +60,7 @@ namespace RadLibrary
         /// <returns>Colorized string</returns>
         public static string Colorize(this string str, uint r, uint g, uint b)
         {
-            return $"\x1b[38;2;{r};{g};{b}m" + str;
+            return $"\x1b[38;2;{r};{g};{b}m" + str + "\x1b[0m";
         }
 
         /// <summary>
@@ -91,7 +95,7 @@ namespace RadLibrary
         /// <returns>Colorized string</returns>
         public static string ColorizeBackground(this string str, uint r, uint g, uint b)
         {
-            return $"\x1b[48;2;{r};{g};{b}m" + str;
+            return $"\x1b[48;2;{r};{g};{b}m" + str + "\x1b[0m";
         }
 
         /// <summary>
@@ -114,16 +118,6 @@ namespace RadLibrary
         public static string ColorizeBackground(this string str, string hex)
         {
             return ColorizeBackground(str, HexToColor(hex));
-        }
-
-        /// <summary>
-        ///     Removes color settings after string
-        /// </summary>
-        /// <param name="str">The string</param>
-        /// <returns>Colorized string</returns>
-        public static string ResetColorAfter(this string str)
-        {
-            return str + "\x1b[0m";
         }
 
         /// <summary>
