@@ -47,8 +47,6 @@ namespace RadLibrary.Logging
 
             var final = outPrefix + complete;
 
-            if (iteration == settings.Total) _progressBarInProgress = false;
-
             lock (ConsoleWriterLock)
             {
                 if (iteration == settings.Total)

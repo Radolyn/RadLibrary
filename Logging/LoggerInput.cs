@@ -24,7 +24,7 @@ namespace RadLibrary.Logging
 
         private static int _lastMessageSize;
 
-        private static readonly object _inputWriterLock = new object();
+        private static readonly object InputWriterLock = new object();
 
         /// <summary>Gets the input with predictions.</summary>
         /// <param name="prefix">The prefix.</param>
@@ -67,7 +67,7 @@ namespace RadLibrary.Logging
                 if (sb.Length > longestStr)
                     longestStr = sb.Length;
 
-                lock (_inputWriterLock)
+                lock (InputWriterLock)
                 {
                     Console.CursorVisible = false;
 
@@ -189,7 +189,7 @@ namespace RadLibrary.Logging
                 {
                     SpinWait.SpinUntil(() => _inputReRenderingNeeded);
 
-                    lock (_inputWriterLock)
+                    lock (InputWriterLock)
                     {
                         Console.SetCursorPosition(0, startTop);
                         Console.Write(

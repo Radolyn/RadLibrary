@@ -19,10 +19,17 @@ namespace RadLibrary.Logging
         /// <summary>The exception logger</summary>
         private static Logger _exceptionLogger;
 
+        /// <summary>
+        ///     Extensions for all loggers
+        /// </summary>
+        public static readonly List<ILoggerExtension> Extensions = new List<ILoggerExtension>();
+
         /// <summary>Gets the logger or creates if not exists.</summary>
         /// <param name="name">The name.</param>
+        /// <param name="thread">The thread num</param>
+        /// <param name="settings">The logger settings</param>
         /// <returns>Returns <see cref="Logger" /></returns>
-        public static Logger GetLogger(string name, int thread = 0)
+        public static Logger GetLogger(string name, int thread = 0, LoggerSettings settings = null)
         {
             var pred = Loggers.FirstOrDefault(logger1 => logger1.Name == name && logger1.LoggerThread == thread);
 
@@ -32,7 +39,7 @@ namespace RadLibrary.Logging
             if (name.Length < 3)
                 throw new ArgumentException("Name can't be less than 4 symbols", name);
 
-            var logger = new Logger(name, new LoggerSettings(), thread);
+            var logger = new Logger(name, settings ?? new LoggerSettings(), thread, Extensions);
             Loggers.Add(logger);
 
             return logger;
@@ -76,6 +83,7 @@ namespace RadLibrary.Logging
                 _exceptionLogger?.Exception(ex);
 
             Console.ResetColor();
+            Console.CursorVisible = true;
             Environment.Exit(-1);
         }
 

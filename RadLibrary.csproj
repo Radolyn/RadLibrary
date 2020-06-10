@@ -11,13 +11,13 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>AlexeyZavar</Authors>
     <Company>Radolyn</Company>
-    <Description>Universal library for our programs
+    <Description>Colorized logging &amp; configuration manager
 </Description>
     <Copyright>© 2020 Radolyn</Copyright>
     <PackageProjectUrl></PackageProjectUrl>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/Radolyn/RadLibrary</RepositoryUrl>
-    <PackageVersion>1.1.0</PackageVersion>
+    <PackageVersion>1.1.1</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>

@@ -11,7 +11,6 @@ namespace RadLibrary.Configuration
     /// <summary>
     ///     Allows to create and work with configuration files
     /// </summary>
-    /// <typeparam name="TManager">The configuration manager</typeparam>
     public class AppConfiguration
     {
         /// <summary>
@@ -37,6 +36,7 @@ namespace RadLibrary.Configuration
         ///     Initializes configuration manager
         /// </summary>
         /// <param name="name">The name</param>
+        /// <param name="manager">The manager</param>
         private AppConfiguration(string name, IConfigurationManager manager)
         {
             _manager = manager;

@@ -26,13 +26,18 @@ namespace RadLibrary.Logging
         /// </summary>
         private static bool _inputInProgress;
 
-        private static readonly LogType _environmentLogType = (LogType) Enum.Parse(typeof(LogType),
+        private readonly List<ILoggerExtension> _extensions;
+
+        private static readonly LogType EnvironmentLogType = (LogType) Enum.Parse(typeof(LogType),
             Environment.GetEnvironmentVariable("LOGGING_LEVEL") ?? "Verbose");
 
         /// <summary>Initializes a new instance of the <see cref="Logger" /> class.</summary>
         /// <param name="name">The name.</param>
         /// <param name="settings">The settings.</param>
-        public Logger(string name, LoggerSettings settings, int loggerThread = 0)
+        /// <param name="loggerThread">The logger num</param>
+        /// <param name="extensions">The logger extensions</param>
+        internal Logger(string name, LoggerSettings settings, int loggerThread = 0,
+            List<ILoggerExtension> extensions = null)
         {
             Colorizer.Initialize();
             Console.CursorVisible = false;
@@ -55,6 +60,7 @@ namespace RadLibrary.Logging
             Name = name;
             Settings = settings;
             LoggerThread = loggerThread;
+            _extensions = extensions;
         }
 
         /// <summary>Gets or sets the settings.</summary>
@@ -76,7 +82,7 @@ namespace RadLibrary.Logging
         /// <exception cref="ArgumentOutOfRangeException">type is null</exception>
         public void Log(LogType type, params object[] args)
         {
-            if (type < Settings.LogLevel || type < _environmentLogType)
+            if (type < Settings.LogLevel || type < EnvironmentLogType)
                 return;
 
             if (args?.Length == 0)
@@ -112,23 +118,27 @@ namespace RadLibrary.Logging
             if (Settings.FormatJsonLike && Settings.JsonRegex.IsMatch(message))
                 message = FormatJson(message);
 
+            var original = message;
+
             lock (ConsoleWriterLock)
             {
                 void Print()
                 {
                     message = message.Replace("\r\n", "\n");
-                    
+
                     if (message.Contains("\n"))
                     {
                         var messages = message.Split('\n');
-                        _lastMessageSize = CountSize(messages);
-                        foreach (var msg in messages)
-                            Console.WriteLine((prefix + msg).Colorize(GetColor(type)).ResetColorAfter());
+                        message = string.Concat(messages.Select(msg => prefix + msg + Environment.NewLine))
+                            .Colorize(GetColor(type)).ResetColorAfter();
+                        _lastMessageSize = CountSize(message);
+                        Console.Write(message);
                     }
                     else
                     {
-                        _lastMessageSize = CountSize(prefix + message);
-                        Console.WriteLine((prefix + message).Colorize(GetColor(type)).ResetColorAfter());
+                        message = prefix + message;
+                        _lastMessageSize = CountSize(message);
+                        Console.WriteLine(message.Colorize(GetColor(type)).ResetColorAfter());
                     }
                 }
 
@@ -161,6 +171,8 @@ namespace RadLibrary.Logging
                     Console.Write(_lastIteration);
                 }
             }
+
+            foreach (var extension in _extensions) extension?.Log(original, message, Settings);
         }
 
         /// <summary>
@@ -184,10 +196,10 @@ namespace RadLibrary.Logging
             return msg.Length / Console.BufferWidth + 1;
         }
 
-        private static int CountSize(IEnumerable<string> messages)
-        {
-            return messages.Sum(CountSize);
-        }
+        // private static int CountSize(IEnumerable<string> messages)
+        // {
+        //     return messages.Sum(CountSize);
+        // }
 
         /// <summary>
         ///     Gets color
