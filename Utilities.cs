@@ -34,10 +34,12 @@ namespace RadLibrary
         /// </summary>
         /// <param name="encoding">The encoding</param>
         /// <param name="clearConsole">If set to true, console will be cleared after allocation</param>
-        public static void AllocateConsole(Encoding encoding, bool clearConsole = true)
+        public static void AllocateConsole(Encoding encoding = null, bool clearConsole = true)
         {
             if (!IsWindows())
                 return;
+            
+            encoding ??= Encoding.UTF8;
 
             AllocConsole();
 
@@ -59,6 +61,21 @@ namespace RadLibrary
         public static bool IsWindows()
         {
             return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+        }
+
+        /// <summary>
+        /// Call in the start of program to prevent from running more than 1 instance
+        /// </summary>
+        /// <param name="name">The name</param>
+        /// <param name="message">Action that will be invoked if there's already one instance running</param>
+        public static void OnlyOneInstance(string name, Action message = null)
+        {
+            var mutex = new Mutex(true, name);
+
+            if (mutex.WaitOne(TimeSpan.Zero, true)) return;
+            
+            message?.Invoke();
+            Environment.Exit(1);
         }
     }
 }

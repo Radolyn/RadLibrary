@@ -36,7 +36,8 @@ namespace RadLibrary.Logging
 
         private void PrivateLog(LogType type, string message)
         {
-            Log(type, message, Format(type, message));
+            if (LoggerSettings.EnvironmentLoggingLevel <= type || Settings.LoggingLevel <= type)
+                Log(type, message, Format(type, message));
         }
 
         private string Format(LogType type, string message)
