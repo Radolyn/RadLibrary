@@ -9,7 +9,7 @@ using System.Text;
 namespace RadLibrary.Logging.Loggers
 {
     /// <summary>
-    /// Logger that prints logs in file. Arguments: filename (opt.), FileMode (opt.)
+    ///     Logger that prints logs in file. Arguments: filename (opt.), FileMode (opt.)
     /// </summary>
     public class FileLogger : Logger
     {

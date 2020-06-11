@@ -8,8 +8,9 @@ using System.Linq;
 namespace RadLibrary.Logging.Loggers
 {
     /// <summary>
-    /// Logger that does nothing by itself, but if you pass some loggers in arguments, it'll log in them. Arguments: pass all loggers that you want to log in.
-    /// If you want to change settings, it'll change settings of all loggers that you passed in.
+    ///     Logger that does nothing by itself, but if you pass some loggers in arguments, it'll log in them. Arguments: pass
+    ///     all loggers that you want to log in.
+    ///     If you want to change settings, it'll change settings of all loggers that you passed in.
     /// </summary>
     public class MultiLogger : Logger
     {
@@ -27,10 +28,7 @@ namespace RadLibrary.Logging.Loggers
                     return;
                 }
 
-                foreach (var logger in _loggers)
-                {
-                    logger.Settings = value;
-                }
+                foreach (var logger in _loggers) logger.Settings = value;
             }
         }
 

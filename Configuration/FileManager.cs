@@ -18,11 +18,13 @@ namespace RadLibrary.Configuration
 
         private DateTime _lastUpdate;
 
+        /// <inheritdoc />
         public event ConfigurationUpdated ConfigurationUpdated;
 
         private bool _hotReload;
         private FileSystemWatcher _watcher;
 
+        /// <inheritdoc />
         public bool HotReload
         {
             get => _hotReload;
@@ -49,7 +51,7 @@ namespace RadLibrary.Configuration
 
                     Thread.Sleep(5);
                     ReloadConfiguration();
-                    ConfigurationUpdated?.Invoke();
+                    ConfigurationUpdated?.Invoke(this);
                 };
                 _watcher.Error += (sender, args) => HotReload = false;
 
@@ -57,6 +59,7 @@ namespace RadLibrary.Configuration
             }
         }
 
+        /// <inheritdoc />
         public void Setup(string filename)
         {
             _config = new Dictionary<string, Parameter>();
@@ -65,6 +68,7 @@ namespace RadLibrary.Configuration
             ReloadConfiguration();
         }
 
+        /// <inheritdoc />
         public Dictionary<string, Parameter> GetParameters()
         {
             // clone
@@ -114,21 +118,25 @@ namespace RadLibrary.Configuration
             _lastUpdate = DateTime.Now;
         }
 
+        /// <inheritdoc />
         public string GetString(string key)
         {
             return _config.ContainsKey(key) ? _config[key].Value : null;
         }
 
+        /// <inheritdoc />
         public int GetInteger(string key)
         {
             return int.Parse(GetString(key) ?? "0");
         }
 
+        /// <inheritdoc />
         public bool GetBool(string key)
         {
             return bool.Parse(GetString(key) ?? "0");
         }
 
+        /// <inheritdoc />
         public void SetString(string key, string value)
         {
             if (_config.ContainsKey(key))
@@ -137,16 +145,19 @@ namespace RadLibrary.Configuration
                 _config.Add(key, new Parameter(value, null));
         }
 
+        /// <inheritdoc />
         public void SetInteger(string key, int value)
         {
             SetString(key, value.ToString());
         }
 
+        /// <inheritdoc />
         public void SetBool(string key, bool value)
         {
             SetString(key, value.ToString());
         }
 
+        /// <inheritdoc />
         public void SetComment(string key, string comment)
         {
             comment = "# " + comment.Replace("\r\n", "# ").Replace("\n", "# ");
@@ -156,12 +167,14 @@ namespace RadLibrary.Configuration
                 _config.Add(key, new Parameter("", comment));
         }
 
+        /// <inheritdoc />
         public void RemoveKey(string key)
         {
             if (_config.ContainsKey(key))
                 _config.Remove(key);
         }
 
+        /// <inheritdoc />
         public void Save()
         {
             var s = new StringBuilder();

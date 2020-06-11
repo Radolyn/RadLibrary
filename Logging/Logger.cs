@@ -2,11 +2,9 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using RadLibrary.Configuration;
 using RadLibrary.Logging.Helpers;
 
 #endregion
@@ -47,7 +45,7 @@ namespace RadLibrary.Logging
             var formatter = new StringFormatter(Settings.LogFormat);
 
             message = message.Replace("\r\n", "\n");
-            
+
             if (_jsonRegex.IsMatch(message) && Settings.FormatJson)
                 message = FormatJson(message);
 
@@ -147,13 +145,10 @@ namespace RadLibrary.Logging
 
                     sb.Append("{");
 
-                    foreach (DictionaryEntry entry in dictionary)
-                    {
-                        sb.Append(ArgumentToString(entry, iteration));
-                    }
+                    foreach (DictionaryEntry entry in dictionary) sb.Append(ArgumentToString(entry, iteration));
 
                     var str = sb.ToString();
-                    
+
                     return str.Remove(str.Length - 2) + "}";
                 }
                 case DictionaryEntry pair:

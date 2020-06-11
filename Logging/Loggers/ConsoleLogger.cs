@@ -8,7 +8,7 @@ using System.Drawing;
 namespace RadLibrary.Logging.Loggers
 {
     /// <summary>
-    /// Logger that prints logs in console. Arguments: no
+    ///     Logger that prints logs in console. Arguments: no
     /// </summary>
     public class ConsoleLogger : Logger
     {

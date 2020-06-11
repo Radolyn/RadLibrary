@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace RadLibrary.Configuration
 {
-    public delegate void ConfigurationUpdated();
+    public delegate void ConfigurationUpdated(IConfigurationManager config);
 
     /// <summary>
     ///     Allows to create and work with configuration files
@@ -41,12 +41,29 @@ namespace RadLibrary.Configuration
         {
             _manager = manager;
             _manager.Setup(name);
-            _manager.ConfigurationUpdated += () => ConfigurationUpdated?.Invoke();
+            _manager.ConfigurationUpdated += configurationManager => ConfigurationUpdated?.Invoke(configurationManager);
         }
 
+        /// <summary>
+        /// Creates <see cref="AppConfiguration"/> with specified <see cref="IConfigurationManager"/>
+        /// </summary>
+        /// <param name="name">The name</param>
+        /// <typeparam name="TManager">The manager</typeparam>
+        /// <returns><see cref="AppConfiguration"/></returns>
         public static AppConfiguration Initialize<TManager>(string name) where TManager : IConfigurationManager, new()
         {
             return new AppConfiguration(name, new TManager());
+        }
+
+        /// <summary>
+        /// Creates <see cref="AppConfiguration"/> with specified <see cref="IConfigurationManager"/>
+        /// </summary>
+        /// <param name="name">The name</param>
+        /// <param name="manager">The manager</param>
+        /// <returns><see cref="AppConfiguration"/></returns>
+        public static AppConfiguration Initialize(string name, IConfigurationManager manager)
+        {
+            return new AppConfiguration(name, manager);
         }
 
         /// <summary>
