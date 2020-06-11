@@ -20,6 +20,9 @@ namespace RadLibrary.Logging
 
         private readonly Regex _jsonRegex = new Regex(@"(({)|(\[)).*\s*:\s*.*((})|(\]))");
 
+        private StringFormatter _formatter;
+        private readonly object _formatterLock = new object();
+
         /// <summary>
         ///     Initializes logger
         /// </summary>
@@ -42,20 +45,30 @@ namespace RadLibrary.Logging
 
         private string Format(LogType type, string message)
         {
-            // todo: use lock
-            var formatter = new StringFormatter(Settings.LogFormat);
-
+            if (_formatter == null)
+            {
+                lock (_formatterLock)
+                {
+                    _formatter = new StringFormatter(Settings.LogFormat);
+                    _formatter.Set("{name}", Normalize(Settings.Name, LoggerSettings.NameMaxLength));
+                }
+            }
+            
             message = message.Replace("\r\n", "\n");
 
             if (_jsonRegex.IsMatch(message) && Settings.FormatJson)
                 message = FormatJson(message);
 
-            formatter.Add("{time}", DateTime.Now.ToString(Settings.TimeFormat));
-            formatter.Add("{level}", Normalize(type.ToString(), 5));
-            formatter.Add("{name}", Normalize(Settings.Name, LoggerSettings.NameMaxLength));
-            formatter.Add("{message}", message);
+            string s;
 
-            var s = formatter.ToString();
+            lock (_formatterLock)
+            {
+                _formatter.Set("{level}", Normalize(type.ToString(), 5));
+                _formatter.Set("{time}", DateTime.Now.ToString(Settings.TimeFormat));
+                _formatter.Set("{message}", message);
+
+                s = _formatter.ToString();
+            }
 
             if (!s.Contains('\n'))
                 return s;

@@ -20,9 +20,12 @@ namespace RadLibrary.Logging.Helpers
             Parameters = new Dictionary<string, string>();
         }
 
-        public void Add(string key, string val)
+        public void Set(string key, string val)
         {
-            Parameters.Add(key, val);
+            if (!Parameters.ContainsKey(key))
+                Parameters.Add(key, val);
+            else
+                Parameters[key] = val;
         }
 
         public override string ToString()
