@@ -18,9 +18,9 @@ namespace RadLibrary.Logging
         /// <summary>
         ///     Gets or sets settings
         /// </summary>
-        public LoggerSettings Settings { get; set; }
+        public virtual LoggerSettings Settings { get; set; }
 
-        private readonly Regex _jsonRegex = new Regex(@"{.*\s*:\s*.*}");
+        private readonly Regex _jsonRegex = new Regex(@"(({)|(\[)).*\s*:\s*.*((})|(\]))");
 
         /// <summary>
         ///     Initializes logger
@@ -47,6 +47,9 @@ namespace RadLibrary.Logging
             var formatter = new StringFormatter(Settings.LogFormat);
 
             message = message.Replace("\r\n", "\n");
+            
+            if (_jsonRegex.IsMatch(message) && Settings.FormatJson)
+                message = FormatJson(message);
 
             formatter.Add("{time}", DateTime.Now.ToString(Settings.TimeFormat));
             formatter.Add("{level}", Normalize(type.ToString(), 5));
@@ -54,9 +57,6 @@ namespace RadLibrary.Logging
             formatter.Add("{message}", message);
 
             var s = formatter.ToString();
-
-            if (_jsonRegex.IsMatch(s) && Settings.FormatJson)
-                s = FormatJson(s);
 
             if (!s.Contains('\n'))
                 return s;
@@ -130,18 +130,34 @@ namespace RadLibrary.Logging
 
             switch (arg)
             {
+                case DateTime date:
+                    return date.ToString(Settings.TimeFormat);
                 // Python styled list output
-                case IEnumerable list:
+                case IList list:
                 {
                     var str = list.Cast<object>().Aggregate("[",
                         (current, item) => current + ArgumentToString(item, iteration) + ", ");
 
                     return str.Remove(str.Length - 2) + "]";
                 }
-                case Exception ex:
-                    return $"{ex.Source}: {ex.GetType()}, {ex.Message}{Environment.NewLine}Stack trace:\n{ex.StackTrace}";
-                case AppConfiguration configuration:
-                    return ArgumentToString(configuration.Parameters, iteration);
+                // Python styled dictionary output
+                case IDictionary dictionary:
+                {
+                    var sb = new StringBuilder();
+
+                    sb.Append("{");
+
+                    foreach (DictionaryEntry entry in dictionary)
+                    {
+                        sb.Append(ArgumentToString(entry, iteration));
+                    }
+
+                    var str = sb.ToString();
+                    
+                    return str.Remove(str.Length - 2) + "}";
+                }
+                case DictionaryEntry pair:
+                    return ArgumentToString(pair.Key, iteration) + ": " + ArgumentToString(pair.Value, iteration);
                 default:
                     return arg.ToString();
             }

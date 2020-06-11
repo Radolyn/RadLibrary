@@ -13,7 +13,7 @@ using RadLibrary.Logging.Loggers;
 namespace RadLibrary.Logging
 {
     /// <summary>
-    ///     Logger creator & configurator
+    ///     Logger creator and configurator
     /// </summary>
     public static class LogManager
     {

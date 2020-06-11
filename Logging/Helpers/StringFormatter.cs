@@ -8,7 +8,7 @@ using System.Linq;
 namespace RadLibrary.Logging.Helpers
 {
     // https://stackoverflow.com/a/36778184
-    public sealed class StringFormatter
+    internal sealed class StringFormatter
     {
         private string Format { get; }
 
