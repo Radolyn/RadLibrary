@@ -172,10 +172,10 @@ namespace RadLibrary.Logging
 
         private static Logger CreateLogger(LoggerSettings settings)
         {
-            var pred = _loggers.Find(x => x.Settings == settings);
+            var predicate = _loggers.Find(x => x.Settings == settings);
 
-            if (pred != null)
-                return pred;
+            if (predicate != null)
+                return predicate;
 
             VerifySettings(settings);
 

@@ -14,8 +14,6 @@ All-In-One library
 - Configuration manager
   - Comments support
   - Casts support
-- Input predictions
-  - Custom engine support
 
 ## Getting started
 
@@ -54,20 +52,6 @@ logger.Verbose(new List<string> { "Yes", "No", "Maybe" });
 logger.Info(
 "{\"song\":\"Song name\",\"artist\":\"Radolyn\",\"start\":0,\"end\":9999999999999,\"paused\":false}");
 ```
-
-![Sample image](https://radolyn.com/shared/radlibrary_2.png)
-
-### User input with predictions
-
-```csharp
-// default engine will only predict files and "yes" or "no"
-var logger = LoggerUtils.GetLogger("RadTest");
-
-var name = logger.GetInput("Path to Visual Studio:", engine: new DefaultPredictionEngine());
-logger.Info("Your path is: {0}", name);
-```
-
-![Sample gif](https://radolyn.com/shared/radlibrary_predictions.gif)
 
 ### Configuration sample
 

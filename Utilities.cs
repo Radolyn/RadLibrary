@@ -38,7 +38,7 @@ namespace RadLibrary
         {
             if (!IsWindows())
                 return;
-            
+
             encoding ??= Encoding.UTF8;
 
             AllocConsole();
@@ -64,7 +64,7 @@ namespace RadLibrary
         }
 
         /// <summary>
-        /// Call in the start of program to prevent from running more than 1 instance
+        ///     Call in the start of program to prevent from running more than 1 instance
         /// </summary>
         /// <param name="name">The name</param>
         /// <param name="message">Action that will be invoked if there's already one instance running</param>
@@ -73,7 +73,7 @@ namespace RadLibrary
             var mutex = new Mutex(true, name);
 
             if (mutex.WaitOne(TimeSpan.Zero, true)) return;
-            
+
             message?.Invoke();
             Environment.Exit(1);
         }

@@ -45,22 +45,26 @@ namespace RadLibrary.Configuration
         }
 
         /// <summary>
-        /// Creates <see cref="AppConfiguration"/> with specified <see cref="IConfigurationManager"/>
+        ///     Creates <see cref="AppConfiguration" /> with specified <see cref="IConfigurationManager" />
         /// </summary>
         /// <param name="name">The name</param>
         /// <typeparam name="TManager">The manager</typeparam>
-        /// <returns><see cref="AppConfiguration"/></returns>
+        /// <returns>
+        ///     <see cref="AppConfiguration" />
+        /// </returns>
         public static AppConfiguration Initialize<TManager>(string name) where TManager : IConfigurationManager, new()
         {
             return new AppConfiguration(name, new TManager());
         }
 
         /// <summary>
-        /// Creates <see cref="AppConfiguration"/> with specified <see cref="IConfigurationManager"/>
+        ///     Creates <see cref="AppConfiguration" /> with specified <see cref="IConfigurationManager" />
         /// </summary>
         /// <param name="name">The name</param>
         /// <param name="manager">The manager</param>
-        /// <returns><see cref="AppConfiguration"/></returns>
+        /// <returns>
+        ///     <see cref="AppConfiguration" />
+        /// </returns>
         public static AppConfiguration Initialize(string name, IConfigurationManager manager)
         {
             return new AppConfiguration(name, manager);

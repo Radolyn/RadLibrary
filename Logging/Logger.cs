@@ -46,14 +46,12 @@ namespace RadLibrary.Logging
         private string Format(LogType type, string message)
         {
             if (_formatter == null)
-            {
                 lock (_formatterLock)
                 {
                     _formatter = new StringFormatter(Settings.LogFormat);
                     _formatter.Set("{name}", Normalize(Settings.Name, LoggerSettings.NameMaxLength));
                 }
-            }
-            
+
             message = message.Replace("\r\n", "\n");
 
             if (_jsonRegex.IsMatch(message) && Settings.FormatJson)
@@ -142,16 +140,10 @@ namespace RadLibrary.Logging
 
             switch (arg)
             {
+                case string s when iteration > 1:
+                    return $"\"{s}\"";
                 case DateTime date:
                     return date.ToString(Settings.TimeFormat);
-                // Python styled list output
-                case IList list:
-                {
-                    var str = list.Cast<object>().Aggregate("[",
-                        (current, item) => current + ArgumentToString(item, iteration) + ", ");
-
-                    return str.Remove(str.Length - 2) + "]";
-                }
                 // Python styled dictionary output
                 case IDictionary dictionary:
                 {
@@ -163,7 +155,15 @@ namespace RadLibrary.Logging
 
                     var str = sb.ToString();
 
-                    return str.Remove(str.Length - 2) + "}";
+                    return str + "}";
+                }
+                // Python styled list output
+                case IEnumerable list:
+                {
+                    var str = list.Cast<object>().Aggregate("[",
+                        (current, item) => current + ArgumentToString(item, iteration) + ", ");
+
+                    return str.Remove(str.Length - 2) + "]";
                 }
                 case DictionaryEntry pair:
                     return ArgumentToString(pair.Key, iteration) + ": " + ArgumentToString(pair.Value, iteration);

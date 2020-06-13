@@ -49,15 +49,17 @@ namespace RadLibrary.Logging
         public bool FormatJson = true;
 
         /// <summary>
-        /// The logging level
+        ///     The logging level
         /// </summary>
         public LogType LoggingLevel = LogType.Info;
-        
+
         // todo: optimize
         /// <summary>
-        /// The environment-set logging level
+        ///     The environment-set logging level
         /// </summary>
-        internal static readonly LogType EnvironmentLoggingLevel = (LogType)Enum.Parse(typeof(LogType),
-            (Enum.TryParse<LogType>(Environment.GetEnvironmentVariable("LOGGING_LEVEL"), out _) ? Environment.GetEnvironmentVariable("LOGGING_LEVEL") : "Info") ?? "Info", true);
+        internal static readonly LogType EnvironmentLoggingLevel = (LogType) Enum.Parse(typeof(LogType),
+            (Enum.TryParse<LogType>(Environment.GetEnvironmentVariable("LOGGING_LEVEL"), out _)
+                ? Environment.GetEnvironmentVariable("LOGGING_LEVEL")
+                : "Info") ?? "Info", true);
     }
 }
