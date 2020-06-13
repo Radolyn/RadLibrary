@@ -167,6 +167,8 @@ namespace RadLibrary.Logging
                 }
                 case DictionaryEntry pair:
                     return ArgumentToString(pair.Key, iteration) + ": " + ArgumentToString(pair.Value, iteration);
+                case Exception exception:
+                    return $"{exception.Source}: {exception.GetType()}.\nMessage: {exception.Message}\nStack trace:\n{exception.StackTrace}";
                 default:
                     return arg.ToString();
             }

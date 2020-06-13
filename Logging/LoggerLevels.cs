@@ -18,7 +18,7 @@
         /// <param name="args">The arguments to pass in string.Format</param>
         public void Trace(string message, params object[] args)
         {
-            PrivateLog(LogType.Trace, string.Format(message, args));
+            PrivateLog(LogType.Trace, args.Length == 0 ? message : string.Format(message, args));
         }
 
         /// <summary>
@@ -37,7 +37,7 @@
         /// <param name="args">The arguments to pass in string.Format</param>
         public void Debug(string message, params object[] args)
         {
-            PrivateLog(LogType.Debug, string.Format(message, args));
+            PrivateLog(LogType.Debug, args.Length == 0 ? message : string.Format(message, args));
         }
 
         /// <summary>
@@ -56,7 +56,7 @@
         /// <param name="args">The arguments to pass in string.Format</param>
         public void Info(string message, params object[] args)
         {
-            PrivateLog(LogType.Info, string.Format(message, args));
+            PrivateLog(LogType.Info, args.Length == 0 ? message : string.Format(message, args));
         }
 
         /// <summary>
@@ -75,7 +75,7 @@
         /// <param name="args">The arguments to pass in string.Format</param>
         public void Warn(string message, params object[] args)
         {
-            PrivateLog(LogType.Warn, string.Format(message, args));
+            PrivateLog(LogType.Warn, args.Length == 0 ? message : string.Format(message, args));
         }
 
         /// <summary>
@@ -94,7 +94,7 @@
         /// <param name="args">The arguments to pass in string.Format</param>
         public void Error(string message, params object[] args)
         {
-            PrivateLog(LogType.Error, string.Format(message, args));
+            PrivateLog(LogType.Error, args.Length == 0 ? message : string.Format(message, args));
         }
 
         /// <summary>
@@ -113,7 +113,7 @@
         /// <param name="args">The arguments to pass in string.Format</param>
         public void Fatal(string message, params object[] args)
         {
-            PrivateLog(LogType.Fatal, string.Format(message, args));
+            PrivateLog(LogType.Fatal, args.Length == 0 ? message : string.Format(message, args));
         }
     }
 }
