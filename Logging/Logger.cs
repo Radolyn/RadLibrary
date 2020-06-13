@@ -5,6 +5,7 @@ using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using RadLibrary.Configuration;
 using RadLibrary.Logging.Helpers;
 
 #endregion
@@ -151,9 +152,11 @@ namespace RadLibrary.Logging
 
                     sb.Append("{");
 
-                    foreach (DictionaryEntry entry in dictionary) sb.Append(ArgumentToString(entry, iteration));
+                    foreach (DictionaryEntry entry in dictionary) sb.Append(ArgumentToString(entry, iteration) + ", ");
 
                     var str = sb.ToString();
+
+                    str = str.Remove(str.Length - 2);
 
                     return str + "}";
                 }
@@ -169,6 +172,10 @@ namespace RadLibrary.Logging
                     return ArgumentToString(pair.Key, iteration) + ": " + ArgumentToString(pair.Value, iteration);
                 case Exception exception:
                     return $"{exception.Source}: {exception.GetType()}.\nMessage: {exception.Message}\nStack trace:\n{exception.StackTrace}";
+                case AppConfiguration configuration:
+                    return ArgumentToString(configuration.Parameters, iteration);
+                case Parameter parameter:
+                    return $"[\"value\": \"{parameter.Value}\", \"comment\": \"{parameter.Comment.Replace("# ", "")}\"]";
                 default:
                     return arg.ToString();
             }

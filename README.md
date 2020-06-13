@@ -20,43 +20,65 @@ All-In-One library
 ### Logging sample
 
 ```csharp
-var logger = LoggerUtils.GetLogger("RadTest");
+var logger = LogManager.GetMethodLogger();
 
-logger.Verbose("Verbose");
+logger.Trace("Trace");
+logger.Debug("Debug");
 logger.Info("Info");
 logger.Warn("Warn");
 logger.Error("Error");
-logger.Exception(new Exception());
-logger.Verbose(new List<string> { "Yes", "No", "Maybe" });
+
+try
+{
+  int.Parse("sadasd");
+}
+catch (Exception e)
+{
+  logger.Fatal(e);
+}
+
+logger.Info(new List<string> { "Yes", "No", "Maybe" });
 logger.Info("{\"song\":\"Song name\",\"artist\":\"Radolyn\",\"start\":0,\"end\":9999999999999,\"paused\":false}");
+
 ```
 
-![Sample image](https://radolyn.com/shared/radlibrary_1.png)
+![Sample image](.github/1.png)
 
-### Logging sample with custom settings
+### Multilogger sample
 
 ```csharp
-var logger = LoggerUtils.GetLogger("RadTest");
+var consoleLogger = LogManager.GetMethodLogger();
+var fileLogger = LogManager.GetMethodLogger<FileLogger>();
 
-logger.Settings.FormatJsonLike = false;
-logger.Settings.InformationColor = Color.Teal;
-logger.Settings.ExceptionColor = Color.DeepSkyBlue;
+var logger = LogManager.GetClassLogger<MultiLogger>(consoleLogger, fileLogger);
 
-logger.Verbose("Verbose");
+logger.Trace("Trace");
+logger.Debug("Debug");
 logger.Info("Info");
 logger.Warn("Warn");
 logger.Error("Error");
-logger.Exception(new Exception());
-logger.Verbose(new List<string> { "Yes", "No", "Maybe" });
 
-logger.Info(
-"{\"song\":\"Song name\",\"artist\":\"Radolyn\",\"start\":0,\"end\":9999999999999,\"paused\":false}");
+try
+{
+int.Parse("sadasd");
+}
+catch (Exception e)
+{
+logger.Fatal(e);
+}
+
+logger.Info(new List<string> { "Yes", "No", "Maybe" });
+logger.Info("{\"song\":\"Song name\",\"artist\":\"Radolyn\",\"start\":0,\"end\":9999999999999,\"paused\":false}");
+
 ```
+
+![Sample image](.github/2.png)
+![Sample image](.github/3.png)
 
 ### Configuration sample
 
 ```csharp
-var logger = LoggerUtils.GetLogger("RadTest");
+var logger = LogManager.GetMethodLogger();
 var config = AppConfiguration.Initialize<FileManager>("tester");
 
 config["ip"] = "127.0.0.1";
@@ -72,6 +94,6 @@ config.Save();
 logger.Info(config);
 ```
 
-![Sample image](https://radolyn.com/shared/radlibrary_3.png)
+![Sample image](.github/4.png)
 
-![Sample image](https://radolyn.com/shared/radlibrary_4.png)
+![Sample image](.github/5.png)
