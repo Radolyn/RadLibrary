@@ -19,7 +19,7 @@ namespace RadLibrary.Logging
         /// </summary>
         public virtual LoggerSettings Settings { get; set; }
 
-        private readonly Regex _jsonRegex = new Regex(@"(({)|(\[)).*\s*:\s*.*((})|(\]))");
+        private readonly Regex _jsonRegex = new Regex(@"(({)|(\[)).*\s*:\s*.*((})|(\]))", RegexOptions.Compiled);
 
         private StringFormatter _formatter;
         private readonly object _formatterLock = new object();

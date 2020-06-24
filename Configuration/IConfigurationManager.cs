@@ -28,7 +28,7 @@ namespace RadLibrary.Configuration
         ///     Returns COPY of all parameters
         /// </summary>
         /// <returns></returns>
-        Dictionary<string, Parameter> GetParameters();
+        IReadOnlyList<Parameter> GetParameters();
 
         /// <summary>
         ///     Gets string from configuration

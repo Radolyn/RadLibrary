@@ -60,11 +60,11 @@ logger.Error("Error");
 
 try
 {
-int.Parse("sadasd");
+  int.Parse("sadasd");
 }
 catch (Exception e)
 {
-logger.Fatal(e);
+  logger.Fatal(e);
 }
 
 logger.Info(new List<string> { "Yes", "No", "Maybe" });

@@ -1,6 +1,7 @@
 ﻿#region
 
 using System.Collections.Generic;
+using RadLibrary.Configuration.Scheme;
 
 #endregion
 
@@ -30,7 +31,7 @@ namespace RadLibrary.Configuration
         /// <summary>
         ///     Returns all parameters (read-only)
         /// </summary>
-        public Dictionary<string, Parameter> Parameters => _manager.GetParameters();
+        public IReadOnlyList<Parameter> Parameters => _manager.GetParameters();
 
         /// <summary>
         ///     Initializes configuration manager
@@ -122,6 +123,11 @@ namespace RadLibrary.Configuration
         public void SetComment(string key, string comment)
         {
             _manager.SetComment(key, comment);
+        }
+
+        public void EnsureScheme(ConfigurationScheme scheme)
+        {
+            scheme.Ensure(this);
         }
 
         /// <summary>

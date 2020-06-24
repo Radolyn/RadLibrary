@@ -3,17 +3,16 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
 
 #endregion
 
-namespace RadLibrary.Configuration
+namespace RadLibrary.Configuration.Managers
 {
     public class FileManager : IConfigurationManager
     {
-        private Dictionary<string, Parameter> _config;
+        private List<Parameter> _config;
         private string _filename;
 
         private DateTime _lastUpdate;
@@ -62,18 +61,17 @@ namespace RadLibrary.Configuration
         /// <inheritdoc />
         public void Setup(string filename)
         {
-            _config = new Dictionary<string, Parameter>();
+            _config = new List<Parameter>();
             _filename = filename + ".conf";
 
             ReloadConfiguration();
         }
 
         /// <inheritdoc />
-        public Dictionary<string, Parameter> GetParameters()
+        public IReadOnlyList<Parameter> GetParameters()
         {
             // clone
-            return _config.ToDictionary(entry => entry.Key,
-                entry => entry.Value);
+            return _config;
         }
 
         private void ReloadConfiguration()
@@ -84,7 +82,7 @@ namespace RadLibrary.Configuration
             if (!File.Exists(_filename))
                 File.Create(_filename).Close();
 
-            _config = new Dictionary<string, Parameter>();
+            _config = new List<Parameter>();
 
             var text = File.ReadAllLines(_filename);
 
@@ -106,11 +104,13 @@ namespace RadLibrary.Configuration
 
                 if (split.Length == 1)
                     split = new[] {split[0], ""};
-
-                if (!_config.ContainsKey(split[0]))
-                    _config.Add(split[0], new Parameter(split[1], sb.ToString()));
+                
+                var pred = _config.Find(p => p.Key == split[0]);
+                
+                if (pred == null)
+                    _config.Add(new Parameter(split[0], split[1], sb.ToString()));
                 else
-                    _config[split[0]] = new Parameter(split[1], sb.ToString());
+                    throw new ArgumentException("Duplicated parameter", split[0]);
 
                 sb.Clear();
             }
@@ -121,7 +121,8 @@ namespace RadLibrary.Configuration
         /// <inheritdoc />
         public string GetString(string key)
         {
-            return _config.ContainsKey(key) ? _config[key].Value : null;
+            var param = _config.Find(p => p.Key == key);
+            return param?.Value;
         }
 
         /// <inheritdoc />
@@ -139,10 +140,12 @@ namespace RadLibrary.Configuration
         /// <inheritdoc />
         public void SetString(string key, string value)
         {
-            if (_config.ContainsKey(key))
-                _config[key].Value = value;
+            var pred = _config.Find(p => p.Key == key);
+            
+            if (pred != null)
+                pred.Value = value;
             else
-                _config.Add(key, new Parameter(value, null));
+                _config.Add(new Parameter(key, value, null));
         }
 
         /// <inheritdoc />
@@ -161,32 +164,35 @@ namespace RadLibrary.Configuration
         public void SetComment(string key, string comment)
         {
             comment = "# " + comment.Replace("\r\n", "# ").Replace("\n", "# ");
-            if (_config.ContainsKey(key))
-                _config[key].Comment = comment;
+            var pred = _config.Find(p => p.Key == key);
+            
+            if (pred != null)
+                pred.Comment = comment;
             else
-                _config.Add(key, new Parameter("", comment));
+                _config.Add(new Parameter(key, "", comment));
         }
 
         /// <inheritdoc />
         public void RemoveKey(string key)
         {
-            if (_config.ContainsKey(key))
-                _config.Remove(key);
+            var pred = _config.Find(p => p.Key == key);
+            if (pred != null)
+                _config.Remove(pred);
         }
 
         /// <inheritdoc />
         public void Save()
         {
             var s = new StringBuilder();
-            foreach (var pair in _config)
-                if (pair.Value.Comment == "")
+            foreach (var param in _config)
+                if (param.Comment == "")
                 {
-                    s.Append(pair.Key + "=" + pair.Value.Value);
+                    s.Append(param.Key + "=" + param.Value);
                 }
                 else
                 {
-                    s.AppendLine(pair.Value.Comment);
-                    s.AppendLine(pair.Key + "=" + pair.Value.Value + "\n");
+                    s.AppendLine(param.Comment);
+                    s.AppendLine(param.Key + "=" + param.Value + "\n");
                 }
 
             File.WriteAllText(_filename, s.ToString());
