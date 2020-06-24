@@ -6,7 +6,7 @@
         ///     The key
         /// </summary>
         public string Key { get; internal set; }
-        
+
         /// <summary>
         ///     The value
         /// </summary>
@@ -18,15 +18,14 @@
         public string Comment { get; internal set; }
 
         /// <summary>
-        /// Initializes class
+        ///     Initializes class
         /// </summary>
         public Parameter()
         {
-            
         }
 
         /// <summary>
-        ///     Initializes class with specified value & comment
+        ///     Initializes class with specified key, value & comment
         /// </summary>
         /// <param name="key">The key</param>
         /// <param name="value">The value</param>

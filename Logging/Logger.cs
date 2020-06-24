@@ -171,11 +171,13 @@ namespace RadLibrary.Logging
                 case DictionaryEntry pair:
                     return ArgumentToString(pair.Key, iteration) + ": " + ArgumentToString(pair.Value, iteration);
                 case Exception exception:
-                    return $"{exception.Source}: {exception.GetType()}.\nMessage: {exception.Message}\nStack trace:\n{exception.StackTrace}";
+                    return
+                        $"{exception.Source}: {exception.GetType()}.\nMessage: {exception.Message}\nStack trace:\n{exception.StackTrace}";
                 case AppConfiguration configuration:
                     return ArgumentToString(configuration.Parameters, iteration);
                 case Parameter parameter:
-                    return $"[\"value\": \"{parameter.Value}\", \"comment\": \"{parameter.Comment.Replace("# ", "")}\"]";
+                    return
+                        $"[\"value\": \"{parameter.Value}\", \"comment\": \"{parameter.Comment.Replace("# ", "")}\"]";
                 default:
                     return arg.ToString();
             }

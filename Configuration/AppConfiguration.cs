@@ -1,5 +1,6 @@
 ﻿#region
 
+using System;
 using System.Collections.Generic;
 using RadLibrary.Configuration.Scheme;
 
@@ -125,7 +126,13 @@ namespace RadLibrary.Configuration
             _manager.SetComment(key, comment);
         }
 
-        public void EnsureScheme(ConfigurationScheme scheme)
+        /// <summary>
+        ///     Ensures configuration
+        /// </summary>
+        /// <param name="scheme">The scheme</param>
+        /// <param name="safe">Throw exception on bad parameter</param>
+        /// <exception cref="ArgumentException">Occurs when parameter not found -or- when parameter has invalid type</exception>
+        public void EnsureScheme(ConfigurationScheme scheme, bool safe = true)
         {
             scheme.Ensure(this);
         }

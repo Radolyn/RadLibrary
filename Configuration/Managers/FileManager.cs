@@ -104,9 +104,9 @@ namespace RadLibrary.Configuration.Managers
 
                 if (split.Length == 1)
                     split = new[] {split[0], ""};
-                
+
                 var pred = _config.Find(p => p.Key == split[0]);
-                
+
                 if (pred == null)
                     _config.Add(new Parameter(split[0], split[1], sb.ToString()));
                 else
@@ -141,7 +141,7 @@ namespace RadLibrary.Configuration.Managers
         public void SetString(string key, string value)
         {
             var pred = _config.Find(p => p.Key == key);
-            
+
             if (pred != null)
                 pred.Value = value;
             else
@@ -165,7 +165,7 @@ namespace RadLibrary.Configuration.Managers
         {
             comment = "# " + comment.Replace("\r\n", "# ").Replace("\n", "# ");
             var pred = _config.Find(p => p.Key == key);
-            
+
             if (pred != null)
                 pred.Comment = comment;
             else
