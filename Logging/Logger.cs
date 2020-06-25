@@ -166,7 +166,10 @@ namespace RadLibrary.Logging
                     var str = list.Cast<object>().Aggregate("[",
                         (current, item) => current + ArgumentToString(item, iteration) + ", ");
 
-                    return str.Remove(str.Length - 2) + "]";
+                    if (str.Length > 2)
+                        return str.Remove(str.Length - 2) + "]";
+                    
+                    return "[]";
                 }
                 case DictionaryEntry pair:
                     return ArgumentToString(pair.Key, iteration) + ": " + ArgumentToString(pair.Value, iteration);
@@ -177,7 +180,7 @@ namespace RadLibrary.Logging
                     return ArgumentToString(configuration.Parameters, iteration);
                 case Parameter parameter:
                     return
-                        $"[\"value\": \"{parameter.Value}\", \"comment\": \"{parameter.Comment.Replace("# ", "")}\"]";
+                        $"[\"value\": \"{parameter.Value}\", \"comment\": \"{parameter.Comment?.Replace("# ", "")}\"]";
                 default:
                     return arg.ToString();
             }

@@ -123,7 +123,8 @@ namespace RadLibrary.Configuration
 
         public void SetComment(string key, string comment)
         {
-            _manager.SetComment(key, comment);
+            if (comment != null)
+                _manager.SetComment(key, comment);
         }
 
         /// <summary>
@@ -135,6 +136,15 @@ namespace RadLibrary.Configuration
         public void EnsureScheme(ConfigurationScheme scheme, bool safe = true)
         {
             scheme.Ensure(this);
+        }
+        
+        /// <summary>
+        ///     Ensures configuration
+        /// </summary>
+        /// <exception cref="ArgumentException">Occurs when parameter not found -or- when parameter has invalid type</exception>
+        public void EnsureScheme(Type scheme, bool safe = true)
+        {
+            ConfigurationScheme.Ensure(this, scheme, safe);
         }
 
         /// <summary>

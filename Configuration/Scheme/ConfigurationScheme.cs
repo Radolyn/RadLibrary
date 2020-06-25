@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 #endregion
 
@@ -13,6 +14,20 @@ namespace RadLibrary.Configuration.Scheme
     public class ConfigurationScheme
     {
         private readonly List<SchemeParameter> _scheme = new List<SchemeParameter>();
+        
+        /// <summary>
+        /// Initializes configuration scheme
+        /// </summary>
+        public ConfigurationScheme(){}
+
+        /// <summary>
+        /// Initializes configuration scheme with specified parameters
+        /// </summary>
+        /// <param name="parameters">The parameters</param>
+        public ConfigurationScheme(IEnumerable<SchemeParameter> parameters)
+        {
+            _scheme = new List<SchemeParameter>(parameters);
+        }
 
         /// <summary>
         ///     Sets comment
@@ -75,6 +90,19 @@ namespace RadLibrary.Configuration.Scheme
 
             return this;
         }
+        
+        /// <summary>
+        ///     Adds parameter
+        /// </summary>
+        /// <param name="key">The key</param>
+        /// <param name="value">The default value</param>
+        /// <param name="comment">The comment</param>
+        /// <param name="type">The type</param>
+        /// <returns>This configuration scheme</returns>
+        public ConfigurationScheme AddParameter(string key, object value, string comment, Type type)
+        {
+            return AddParameter(new SchemeParameter(key, value, comment, type));
+        }
 
         /// <summary>
         ///     Ensures configuration
@@ -118,6 +146,35 @@ namespace RadLibrary.Configuration.Scheme
             }
 
             config.Save();
+        }
+
+        /// <summary>
+        ///     Ensures configuration
+        /// </summary>
+        /// <param name="config">The config</param>
+        /// <param name="scheme">The scheme class</param>
+        /// <param name="safe">Throw exception on bad parameter</param>
+        /// <exception cref="ArgumentException">Occurs when parameter not found -or- when parameter has invalid type</exception>
+        public static void Ensure(AppConfiguration config, Type scheme, bool safe = true)
+        {
+            var fields = scheme.GetFields();
+
+            var parameters = new List<SchemeParameter>();
+
+            foreach (var info in fields)
+            {
+                var attribute = Attribute.GetCustomAttribute(info, typeof(SchemeParameterAttribute)) as SchemeParameterAttribute;
+
+                parameters.Add(new SchemeParameter
+                {
+                    Key = attribute?.Key ?? Utilities.FirstCharacterToLower(info.Name),
+                    Value = attribute?.Value?.ToString() ?? info.GetValue(Activator.CreateInstance(scheme))?.ToString(),
+                    Comment = attribute?.Comment,
+                    Type = info.FieldType
+                });
+            }
+            
+            new ConfigurationScheme(parameters).Ensure(config, safe);
         }
     }
 }

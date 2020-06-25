@@ -77,5 +77,18 @@ namespace RadLibrary
             message?.Invoke();
             Environment.Exit(1);
         }
+        
+        /// <summary>
+        /// Returns string with lowered first letter
+        /// </summary>
+        /// <param name="str">The string</param>
+        /// <returns>String with lowered first letter</returns>
+        public static string FirstCharacterToLower(string str)
+        {
+            if (string.IsNullOrEmpty(str) || char.IsLower(str, 0))
+                return str;
+
+            return char.ToLowerInvariant(str[0]) + str.Substring(1);
+        }
     }
 }

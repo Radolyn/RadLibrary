@@ -52,6 +52,7 @@ namespace RadLibrary.Configuration.Managers
                     ReloadConfiguration();
                     ConfigurationUpdated?.Invoke(this);
                 };
+                
                 _watcher.Error += (sender, args) => HotReload = false;
 
                 _watcher.EnableRaisingEvents = true;
@@ -70,7 +71,6 @@ namespace RadLibrary.Configuration.Managers
         /// <inheritdoc />
         public IReadOnlyList<Parameter> GetParameters()
         {
-            // clone
             return _config;
         }
 
@@ -134,7 +134,7 @@ namespace RadLibrary.Configuration.Managers
         /// <inheritdoc />
         public bool GetBool(string key)
         {
-            return bool.Parse(GetString(key) ?? "0");
+            return bool.Parse(GetString(key) ?? "false");
         }
 
         /// <inheritdoc />
@@ -163,7 +163,7 @@ namespace RadLibrary.Configuration.Managers
         /// <inheritdoc />
         public void SetComment(string key, string comment)
         {
-            comment = "# " + comment.Replace("\r\n", "# ").Replace("\n", "# ");
+            comment = "# " + comment.Replace("\r\n", "\n# ").Replace("\n", "\n# ");
             var pred = _config.Find(p => p.Key == key);
 
             if (pred != null)
@@ -187,12 +187,12 @@ namespace RadLibrary.Configuration.Managers
             foreach (var param in _config)
                 if (param.Comment == "")
                 {
-                    s.Append(param.Key + "=" + param.Value);
+                    s.Append(param.Key + "=" + param.Value + Environment.NewLine + Environment.NewLine);
                 }
                 else
                 {
                     s.AppendLine(param.Comment);
-                    s.AppendLine(param.Key + "=" + param.Value + "\n");
+                    s.AppendLine(param.Key + "=" + param.Value + Environment.NewLine);
                 }
 
             File.WriteAllText(_filename, s.ToString());
