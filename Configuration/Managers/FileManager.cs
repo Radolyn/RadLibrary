@@ -52,7 +52,7 @@ namespace RadLibrary.Configuration.Managers
                     ReloadConfiguration();
                     ConfigurationUpdated?.Invoke(this);
                 };
-                
+
                 _watcher.Error += (sender, args) => HotReload = false;
 
                 _watcher.EnableRaisingEvents = true;

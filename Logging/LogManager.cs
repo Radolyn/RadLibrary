@@ -38,7 +38,7 @@ namespace RadLibrary.Logging
         /// <summary>
         ///     Adds exceptions handler
         /// </summary>
-        /// <param name="logger"></param>
+        /// <param name="logger">The custom logger</param>
         public static void AddExceptionsHandler(Logger logger = null)
         {
             if (logger != null)
@@ -46,8 +46,10 @@ namespace RadLibrary.Logging
             else
                 AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
                 {
-                    GetLogger<MultiLogger>("ExceptionHandler", GetLogger<ConsoleLogger>("ExceptionHandler"),
-                            GetLogger<FileLogger>("ExceptionHandler", "crash.txt", FileMode.OpenOrCreate))
+                    GetLogger<MultiLogger>("ExceptionHandler", new MultiLoggerSettings(
+                            GetLogger<ConsoleLogger>("ExceptionHandler"),
+                            GetLogger<FileLogger>("ExceptionHandler",
+                                new FileLoggerSettings("crash.txt", FileMode.OpenOrCreate))))
                         .Fatal(args.ExceptionObject);
                     Environment.Exit(1);
                 };
@@ -67,17 +69,18 @@ namespace RadLibrary.Logging
         /// <summary>
         ///     Creates logger with specified type, name and arguments
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="name">The logger name</param>
+        /// <param name="args">The logger settings</param>
         /// <typeparam name="TLogger"></typeparam>
         /// <returns></returns>
-        public static Logger GetLogger<TLogger>(string name, params object[] args) where TLogger : Logger
+        public static Logger GetLogger<TLogger>(string name, LoggerSettings args) where TLogger : Logger
         {
-            return CreateLogger(new LoggerSettings
-            {
-                Name = name,
-                Logger = typeof(TLogger),
-                InitializationArguments = args
-            });
+            args ??= new LoggerSettings();
+
+            args.Name = name;
+            args.Logger = typeof(TLogger);
+
+            return CreateLogger(args);
         }
 
         /// <summary>
@@ -94,7 +97,7 @@ namespace RadLibrary.Logging
         /// </summary>
         /// <param name="args">Logger's arguments</param>
         /// <returns>Logger</returns>
-        public static Logger GetClassLogger(params object[] args)
+        public static Logger GetClassLogger(LoggerSettings args)
         {
             return GetClassLogger<ConsoleLogger>(args);
         }
@@ -105,19 +108,19 @@ namespace RadLibrary.Logging
         /// <param name="args">Logger's arguments</param>
         /// <typeparam name="TLogger">Logger type</typeparam>
         /// <returns>Logger</returns>
-        public static Logger GetClassLogger<TLogger>(params object[] args) where TLogger : Logger
+        public static Logger GetClassLogger<TLogger>(LoggerSettings args = null) where TLogger : Logger
         {
+            args ??= new LoggerSettings();
+
             // get namespace
             var stack = new StackTrace();
             var current = Assembly.GetExecutingAssembly().ManifestModule;
             var method = stack.GetFrames()?.First(x => x.GetMethod().Module != current).GetMethod();
 
-            return CreateLogger(new LoggerSettings
-            {
-                Name = method?.DeclaringType?.FullName,
-                Logger = typeof(TLogger),
-                InitializationArguments = args
-            });
+            args.Name = method?.DeclaringType?.FullName;
+            args.Logger = typeof(TLogger);
+
+            return CreateLogger(args);
         }
 
         /// <summary>
@@ -134,7 +137,7 @@ namespace RadLibrary.Logging
         /// </summary>
         /// <param name="args">Logger's arguments</param>
         /// <returns>Logger</returns>
-        public static Logger GetMethodLogger(params object[] args)
+        public static Logger GetMethodLogger(LoggerSettings args)
         {
             return GetMethodLogger<ConsoleLogger>(args);
         }
@@ -145,19 +148,19 @@ namespace RadLibrary.Logging
         /// <param name="args">Logger's arguments</param>
         /// <typeparam name="TLogger">Logger type</typeparam>
         /// <returns>Logger</returns>
-        public static Logger GetMethodLogger<TLogger>(params object[] args) where TLogger : Logger
+        public static Logger GetMethodLogger<TLogger>(LoggerSettings args = null) where TLogger : Logger
         {
+            args ??= new LoggerSettings();
+
             // get method name
             var stack = new StackTrace();
             var current = Assembly.GetExecutingAssembly().ManifestModule;
             var method = stack.GetFrames()?.First(x => x.GetMethod().Module != current).GetMethod();
 
-            return CreateLogger(new LoggerSettings
-            {
-                Name = method?.DeclaringType?.FullName + "." + method?.Name,
-                Logger = typeof(TLogger),
-                InitializationArguments = args
-            });
+            args.Name = method?.DeclaringType?.FullName + "." + method?.Name;
+            args.Logger = typeof(TLogger);
+
+            return CreateLogger(args);
         }
 
         /// <summary>
@@ -182,7 +185,7 @@ namespace RadLibrary.Logging
             var logger = (Logger) Activator.CreateInstance(settings.Logger);
             logger.Settings = settings;
 
-            logger.Initialize(settings.InitializationArguments);
+            logger.Initialize();
 
             _loggers.Add(logger);
 

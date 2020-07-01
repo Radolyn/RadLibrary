@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 #endregion
 
@@ -14,14 +13,16 @@ namespace RadLibrary.Configuration.Scheme
     public class ConfigurationScheme
     {
         private readonly List<SchemeParameter> _scheme = new List<SchemeParameter>();
-        
-        /// <summary>
-        /// Initializes configuration scheme
-        /// </summary>
-        public ConfigurationScheme(){}
 
         /// <summary>
-        /// Initializes configuration scheme with specified parameters
+        ///     Initializes configuration scheme
+        /// </summary>
+        public ConfigurationScheme()
+        {
+        }
+
+        /// <summary>
+        ///     Initializes configuration scheme with specified parameters
         /// </summary>
         /// <param name="parameters">The parameters</param>
         public ConfigurationScheme(IEnumerable<SchemeParameter> parameters)
@@ -90,7 +91,7 @@ namespace RadLibrary.Configuration.Scheme
 
             return this;
         }
-        
+
         /// <summary>
         ///     Adds parameter
         /// </summary>
@@ -163,7 +164,8 @@ namespace RadLibrary.Configuration.Scheme
 
             foreach (var info in fields)
             {
-                var attribute = Attribute.GetCustomAttribute(info, typeof(SchemeParameterAttribute)) as SchemeParameterAttribute;
+                var attribute =
+                    Attribute.GetCustomAttribute(info, typeof(SchemeParameterAttribute)) as SchemeParameterAttribute;
 
                 parameters.Add(new SchemeParameter
                 {
@@ -173,7 +175,7 @@ namespace RadLibrary.Configuration.Scheme
                     Type = info.FieldType
                 });
             }
-            
+
             new ConfigurationScheme(parameters).Ensure(config, safe);
         }
     }

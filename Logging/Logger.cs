@@ -25,10 +25,11 @@ namespace RadLibrary.Logging
         private readonly object _formatterLock = new object();
 
         /// <summary>
-        ///     Initializes logger
+        /// Initializes logger
         /// </summary>
-        /// <param name="args">Arguments</param>
-        public abstract void Initialize(params object[] args);
+        public virtual void Initialize()
+        {
+        }
 
         /// <summary>
         ///     The log action
@@ -168,7 +169,7 @@ namespace RadLibrary.Logging
 
                     if (str.Length > 2)
                         return str.Remove(str.Length - 2) + "]";
-                    
+
                     return "[]";
                 }
                 case DictionaryEntry pair:

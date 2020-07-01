@@ -16,22 +16,20 @@ namespace RadLibrary.Logging.Loggers
         private FileStream _fileStream;
 
         /// <inheritdoc />
-        public override void Initialize(params object[] args)
+        public override void Initialize()
         {
-            if (args == null || args.Length == 0)
-                _fileStream = new FileStream(DateTime.Now.ToString("HH_mm_") + Settings.Name + ".txt", FileMode.Append);
-            else if (args.Length == 1)
-                _fileStream =
-                    new FileStream(args[0]?.ToString() ?? DateTime.Now.ToString("HH_mm_") + Settings.Name + ".txt",
-                        FileMode.Append);
+            var settings = Settings as FileLoggerSettings;
+
+            var name = DateTime.Now.ToString("HH_mm_") + Settings.Name + ".txt";
+
+            if (settings == null)
+                _fileStream = new FileStream(name, FileMode.Append);
             else
-                _fileStream = args[1] is FileMode
-                    ? new FileStream(args[0]?.ToString() ?? DateTime.Now.ToString("HH_mm_") + Settings.Name + ".txt",
-                        (FileMode) args[1])
-                    : new FileStream(args[0]?.ToString() ?? DateTime.Now.ToString("HH_mm") + ".txt", FileMode.Append);
+                _fileStream = new FileStream(settings.FileName ?? name, settings.FileMode);
 
             var startLog =
                 Encoding.UTF8.GetBytes("\n\nLog started at: " + DateTime.Now.ToString(Settings.TimeFormat) + "\n\n\n");
+
             _fileStream.Write(startLog, 0, startLog.Length);
         }
 
@@ -42,5 +40,24 @@ namespace RadLibrary.Logging.Loggers
             _fileStream.Write(bytes, 0, bytes.Length);
             _fileStream.Flush();
         }
+    }
+
+    /// <summary>
+    /// The file logger settings
+    /// </summary>
+    internal class FileLoggerSettings : LoggerSettings
+    {
+        public FileLoggerSettings()
+        {
+        }
+
+        public FileLoggerSettings(string fileName, FileMode fileMode)
+        {
+            FileName = fileName;
+            FileMode = fileMode;
+        }
+
+        public string FileName;
+        public FileMode FileMode = FileMode.Append;
     }
 }

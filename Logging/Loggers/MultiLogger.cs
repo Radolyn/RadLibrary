@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 #endregion
@@ -14,31 +15,31 @@ namespace RadLibrary.Logging.Loggers
     /// </summary>
     public class MultiLogger : Logger
     {
-        private Logger[] _loggers;
+        private IEnumerable<Logger> _loggers;
 
         /// <inheritdoc />
-        public override LoggerSettings Settings
+        public sealed override LoggerSettings Settings
         {
             get => base.Settings;
             set
             {
-                if (_loggers == null)
-                {
-                    base.Settings = value;
-                    return;
-                }
+                base.Settings = value;
+
+                if (_loggers == null) return;
 
                 foreach (var logger in _loggers) logger.Settings = value;
             }
         }
 
         /// <inheritdoc />
-        public override void Initialize(params object[] args)
+        public override void Initialize()
         {
-            if (args == null)
-                throw new ArgumentNullException(nameof(args), "No loggers provided");
+            var settings = Settings as MultiLoggerSettings;
 
-            _loggers = args.Cast<Logger>().ToArray();
+            if (settings == null || settings.Loggers?.Any() == false)
+                throw new ArgumentException("No loggers provided");
+
+            _loggers = settings.Loggers;
         }
 
         /// <inheritdoc />
@@ -46,5 +47,22 @@ namespace RadLibrary.Logging.Loggers
         {
             foreach (var logger in _loggers) logger?.Log(type, message, formatted);
         }
+    }
+
+    /// <summary>
+    /// The multi logger settings
+    /// </summary>
+    public class MultiLoggerSettings : LoggerSettings
+    {
+        public MultiLoggerSettings()
+        {
+        }
+
+        public MultiLoggerSettings(params Logger[] loggers)
+        {
+            Loggers = loggers;
+        }
+
+        public IEnumerable<Logger> Loggers;
     }
 }

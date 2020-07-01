@@ -77,9 +77,9 @@ namespace RadLibrary
             message?.Invoke();
             Environment.Exit(1);
         }
-        
+
         /// <summary>
-        /// Returns string with lowered first letter
+        ///     Returns string with lowered first letter
         /// </summary>
         /// <param name="str">The string</param>
         /// <returns>String with lowered first letter</returns>

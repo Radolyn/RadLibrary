@@ -1,35 +1,41 @@
-﻿using System;
+﻿#region
+
+using System;
+
+#endregion
 
 namespace RadLibrary.Configuration.Scheme
 {
     /// <summary>
-    /// The scheme parameter attribute
+    ///     The scheme parameter attribute
     /// </summary>
     [AttributeUsage(AttributeTargets.Field)]
     public class SchemeParameterAttribute : Attribute
     {
         /// <summary>
-        /// The key
+        ///     The key
         /// </summary>
         public string Key { get; set; }
+
         /// <summary>
-        /// The value
+        ///     The value
         /// </summary>
         public object Value { get; set; }
+
         /// <summary>
-        /// The comment
+        ///     The comment
         /// </summary>
         public string Comment { get; set; }
 
         /// <summary>
-        /// Initializes attribute
+        ///     Initializes attribute
         /// </summary>
         public SchemeParameterAttribute()
         {
         }
-        
+
         /// <summary>
-        /// Initializes attribute with specified key
+        ///     Initializes attribute with specified key
         /// </summary>
         /// <param name="key">The key</param>
         public SchemeParameterAttribute(string key)

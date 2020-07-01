@@ -16,7 +16,7 @@ namespace RadLibrary.Logging.Loggers
         public static readonly object ConsoleLocker = new object();
 
         /// <inheritdoc />
-        public override void Initialize(params object[] args)
+        public override void Initialize()
         {
             Colorizer.Initialize();
             Console.OutputEncoding = Encoding.UTF8;

@@ -137,7 +137,7 @@ namespace RadLibrary.Configuration
         {
             scheme.Ensure(this);
         }
-        
+
         /// <summary>
         ///     Ensures configuration
         /// </summary>

@@ -14,11 +14,6 @@ namespace RadLibrary.Logging
         public Type Logger;
 
         /// <summary>
-        ///     The logger initialization arguments to pass in Logger.Initialize(object[] args)
-        /// </summary>
-        public object[] InitializationArguments;
-
-        /// <summary>
         ///     The logger name
         /// </summary>
         public string Name;
