@@ -178,5 +178,17 @@ namespace RadLibrary.Configuration.Scheme
 
             new ConfigurationScheme(parameters).Ensure(config, safe);
         }
+        
+        /// <summary>
+        ///     Ensures configuration
+        /// </summary> = " g = at
+        /// <param name="config">The config</param>
+        /// <param name="safe">Throw exception on bad parameter</param>
+        /// <typeparam name="TScheme">The scheme class</typeparam>
+        /// <exception cref="ArgumentException">Occurs when parameter not found -or- when parameter has invalid type</exception>
+        public static void Ensure<TScheme>(AppConfiguration config, bool safe = true)
+        {
+            Ensure(config, typeof(TScheme), safe);
+        }
     }
 }

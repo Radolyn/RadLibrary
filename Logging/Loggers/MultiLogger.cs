@@ -54,6 +54,8 @@ namespace RadLibrary.Logging.Loggers
     /// </summary>
     public class MultiLoggerSettings : LoggerSettings
     {
+        public IEnumerable<Logger> Loggers;
+        
         public MultiLoggerSettings()
         {
         }
@@ -62,7 +64,5 @@ namespace RadLibrary.Logging.Loggers
         {
             Loggers = loggers;
         }
-
-        public IEnumerable<Logger> Loggers;
     }
 }

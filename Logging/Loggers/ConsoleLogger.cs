@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 
@@ -28,7 +29,7 @@ namespace RadLibrary.Logging.Loggers
             lock (ConsoleLocker)
             {
                 Console.WriteLine(
-                    formatted.Colorize((Color) typeof(ColorsSettings).GetField(type.ToString()).GetValue(null)));
+                    formatted.Colorize(ColorSettings.Colors[type]));
             }
         }
     }
@@ -36,13 +37,16 @@ namespace RadLibrary.Logging.Loggers
     /// <summary>
     ///     The console colors. Use <see cref="Colorizer" />'s HexToColor function to parse web colors
     /// </summary>
-    public static class ColorsSettings
+    public static class ColorSettings
     {
-        public static Color Trace = Color.Gray;
-        public static Color Debug = Color.DarkGray;
-        public static Color Info = Color.DarkCyan;
-        public static Color Warn = Color.Gold;
-        public static Color Error = Color.Tomato;
-        public static Color Fatal = Color.Red;
+        public static readonly Dictionary<LogType, Color> Colors = new Dictionary<LogType, Color>
+        {
+            {LogType.Trace, Color.Gray},
+            {LogType.Debug, Color.DarkGray},
+            {LogType.Info, Color.DarkCyan},
+            {LogType.Warn, Color.Gold},
+            {LogType.Error, Color.Tomato},
+            {LogType.Fatal, Color.Red}
+        };
     }
 }

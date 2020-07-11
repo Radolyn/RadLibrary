@@ -155,6 +155,22 @@ namespace RadLibrary.Configuration
             _manager.Save();
         }
 
+        public T Cast<T>() where T : class, new()
+        {
+            var type = typeof(T);
+            var fields = type.GetFields();
+            
+            var instance = new T();
+
+            foreach (var field in fields)
+            {
+                var paramName = Attribute.GetCustomAttribute(field, typeof(SchemeParameterAttribute)) is SchemeParameterAttribute attribute ? attribute.Key ?? Utilities.FirstCharacterToLower(field.Name) : Utilities.FirstCharacterToLower(field.Name);
+                field.SetValue(instance, Convert.ChangeType(this[paramName], field.FieldType));
+            }
+
+            return instance;
+        }
+
         /// <summary>
         ///     Notices about configuration update
         /// </summary>

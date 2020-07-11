@@ -47,6 +47,9 @@ namespace RadLibrary.Logging.Loggers
     /// </summary>
     internal class FileLoggerSettings : LoggerSettings
     {
+        public string FileName;
+        public FileMode FileMode = FileMode.Append;
+        
         public FileLoggerSettings()
         {
         }
@@ -56,8 +59,5 @@ namespace RadLibrary.Logging.Loggers
             FileName = fileName;
             FileMode = fileMode;
         }
-
-        public string FileName;
-        public FileMode FileMode = FileMode.Append;
     }
 }

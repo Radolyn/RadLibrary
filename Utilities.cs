@@ -21,6 +21,8 @@ namespace RadLibrary
 
         private const int StdOutputHandle = -11;
 
+        private static Random _random;
+
         /// <summary>
         ///     Infinite loop
         /// </summary>
@@ -89,6 +91,13 @@ namespace RadLibrary
                 return str;
 
             return char.ToLowerInvariant(str[0]) + str.Substring(1);
+        }
+
+        public static int RandomInt(int start = int.MinValue, int end = int.MaxValue)
+        {
+            _random ??= new Random();
+
+            return _random.Next(start, end);
         }
     }
 }
