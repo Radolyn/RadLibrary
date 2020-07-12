@@ -11,7 +11,7 @@ namespace RadLibrary.ConsoleExperience
 {
     public static partial class ColorfulConsole
     {
-        private static readonly Regex _regex = new Regex(@"\[(#?[0-9A-Fa-f]{1,6})\](.*?)(?=\[#?[0-9A-Fa-f]{1,6}\]|$)",
+        private static readonly Regex Regex = new Regex(@"\[(#?[0-9A-Fa-f]{1,6})\](.*?)(?=\[#?[0-9A-Fa-f]{1,6}\]|$)",
             RegexOptions.Compiled);
 
         /// <summary>
@@ -20,14 +20,14 @@ namespace RadLibrary.ConsoleExperience
         /// <param name="message">The message</param>
         public static void WriteLine(string message)
         {
-            var messages = _regex.Matches(message);
+            var messages = Regex.Matches(message);
 
             var sb = new StringBuilder();
 
             foreach (Match msg in messages)
                 sb.Append(msg.Groups[2].Captures[0].Value.Colorize(msg.Groups[1].Captures[0].Value));
 
-            _lastMessageSize = CountSize(_regex.Replace(message, ""));
+            _lastMessageSize = CountSize(Regex.Replace(message, ""));
 
             if (!_inputInProgress)
             {

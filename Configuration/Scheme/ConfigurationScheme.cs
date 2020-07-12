@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 #endregion
 
@@ -160,21 +161,31 @@ namespace RadLibrary.Configuration.Scheme
         {
             var fields = scheme.GetFields();
 
-            var parameters = new List<SchemeParameter>();
+            // var parameters = new List<SchemeParameter>();
+            //
+            // foreach (var info in fields)
+            // {
+            //     var attribute =
+            //         Attribute.GetCustomAttribute(info, typeof(SchemeParameterAttribute)) as SchemeParameterAttribute;
+            //
+            //     parameters.Add(new SchemeParameter
+            //     {
+            //         Key = attribute?.Key ?? Utilities.FirstCharacterToLower(info.Name),
+            //         Value = attribute?.Value?.ToString() ?? info.GetValue(Activator.CreateInstance(scheme))?.ToString(),
+            //         Comment = attribute?.Comment,
+            //         Type = info.FieldType
+            //     });
+            // }
 
-            foreach (var info in fields)
-            {
-                var attribute =
-                    Attribute.GetCustomAttribute(info, typeof(SchemeParameterAttribute)) as SchemeParameterAttribute;
-
-                parameters.Add(new SchemeParameter
+            var parameters = (from info in fields
+                let attribute =
+                    Attribute.GetCustomAttribute(info, typeof(SchemeParameterAttribute)) as SchemeParameterAttribute
+                select new SchemeParameter
                 {
                     Key = attribute?.Key ?? Utilities.FirstCharacterToLower(info.Name),
                     Value = attribute?.Value?.ToString() ?? info.GetValue(Activator.CreateInstance(scheme))?.ToString(),
-                    Comment = attribute?.Comment,
-                    Type = info.FieldType
-                });
-            }
+                    Comment = attribute?.Comment, Type = info.FieldType
+                }).ToList();
 
             new ConfigurationScheme(parameters).Ensure(config, safe);
         }

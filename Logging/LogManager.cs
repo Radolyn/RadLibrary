@@ -17,7 +17,7 @@ namespace RadLibrary.Logging
     /// </summary>
     public static class LogManager
     {
-        private static readonly List<Logger> _loggers = new List<Logger>();
+        private static readonly List<Logger> Loggers = new List<Logger>();
 
         /// <summary>
         ///     Gets or sets max name length
@@ -28,7 +28,7 @@ namespace RadLibrary.Logging
             get => LoggerSettings.NameMaxLength;
             set
             {
-                if (_loggers.Any())
+                if (Loggers.Any())
                     throw new Exception("Cannot change max length, because there's at least one logger initialized");
 
                 LoggerSettings.NameMaxLength = value;
@@ -175,7 +175,7 @@ namespace RadLibrary.Logging
 
         private static Logger CreateLogger(LoggerSettings settings)
         {
-            var predicate = _loggers.Find(x => x.Settings == settings);
+            var predicate = Loggers.Find(x => x.Settings == settings);
 
             if (predicate != null)
                 return predicate;
@@ -187,7 +187,7 @@ namespace RadLibrary.Logging
 
             logger.Initialize();
 
-            _loggers.Add(logger);
+            Loggers.Add(logger);
 
             return logger;
         }

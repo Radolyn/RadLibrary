@@ -9,6 +9,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using RadLibrary.ConsoleExperience.PredictionEngine;
 
+// ReSharper disable AccessToModifiedClosure
+
 #endregion
 
 namespace RadLibrary.ConsoleExperience
@@ -190,7 +192,7 @@ namespace RadLibrary.ConsoleExperience
             // re-render
             Task.Run(() =>
             {
-                while (true)
+                while (cancellationToken.IsCancellationRequested)
                 {
                     SpinWait.SpinUntil(() => _inputReRenderingNeeded);
 
