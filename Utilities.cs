@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -38,7 +39,7 @@ namespace RadLibrary
         /// <param name="clearConsole">If set to true, console will be cleared after allocation</param>
         public static void AllocateConsole(Encoding encoding = null, bool clearConsole = true)
         {
-            if (!IsWindows())
+            if (!IsWindows() || Debugger.IsAttached)
                 return;
 
             encoding ??= Encoding.UTF8;
@@ -93,6 +94,12 @@ namespace RadLibrary
             return char.ToLowerInvariant(str[0]) + str.Substring(1);
         }
 
+        /// <summary>
+        ///     Returns random integer
+        /// </summary>
+        /// <param name="start">The minimal value</param>
+        /// <param name="end">The maximal value</param>
+        /// <returns>Random integer</returns>
         public static int RandomInt(int start = int.MinValue, int end = int.MaxValue)
         {
             _random ??= new Random();

@@ -25,7 +25,7 @@ namespace RadLibrary.Logging
         private readonly object _formatterLock = new object();
 
         /// <summary>
-        /// Initializes logger
+        ///     Initializes logger
         /// </summary>
         public virtual void Initialize()
         {

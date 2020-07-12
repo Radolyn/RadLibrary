@@ -159,12 +159,16 @@ namespace RadLibrary.Configuration
         {
             var type = typeof(T);
             var fields = type.GetFields();
-            
+
             var instance = new T();
 
             foreach (var field in fields)
             {
-                var paramName = Attribute.GetCustomAttribute(field, typeof(SchemeParameterAttribute)) is SchemeParameterAttribute attribute ? attribute.Key ?? Utilities.FirstCharacterToLower(field.Name) : Utilities.FirstCharacterToLower(field.Name);
+                var paramName =
+                    Attribute.GetCustomAttribute(field, typeof(SchemeParameterAttribute)) is SchemeParameterAttribute
+                        attribute
+                        ? attribute.Key ?? Utilities.FirstCharacterToLower(field.Name)
+                        : Utilities.FirstCharacterToLower(field.Name);
                 field.SetValue(instance, Convert.ChangeType(this[paramName], field.FieldType));
             }
 

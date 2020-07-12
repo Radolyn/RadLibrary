@@ -178,10 +178,10 @@ namespace RadLibrary.Configuration.Scheme
 
             new ConfigurationScheme(parameters).Ensure(config, safe);
         }
-        
+
         /// <summary>
         ///     Ensures configuration
-        /// </summary> = " g = at
+        /// </summary>
         /// <param name="config">The config</param>
         /// <param name="safe">Throw exception on bad parameter</param>
         /// <typeparam name="TScheme">The scheme class</typeparam>

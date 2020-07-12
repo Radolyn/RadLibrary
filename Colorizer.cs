@@ -28,12 +28,17 @@ namespace RadLibrary
         private static extern IntPtr GetStdHandle(int nStdHandle);
 
         /// <summary>
+        ///     The reset color string (place after string)
+        /// </summary>
+        public const string ResetColor = "\x1b[0m";
+
+        /// <summary>
         ///     Initializes colors system
         /// </summary>
         /// <exception cref="Win32Exception">If failed to set color mode</exception>
         public static void Initialize()
         {
-            if (!Utilities.IsWindows() || _isInitialized)
+            if (_isInitialized || !Utilities.IsWindows())
                 return;
 
             // todo: support for old terminals ($COLORTERM)
@@ -51,6 +56,50 @@ namespace RadLibrary
         }
 
         /// <summary>
+        ///     Gets colorization string
+        /// </summary>
+        /// <param name="r">The red color value</param>
+        /// <param name="g">The green color value</param>
+        /// <param name="b">The blue color value</param>
+        /// <returns>Prefix for string colorization</returns>
+        public static string GetColorizationString(uint r, uint g, uint b)
+        {
+            return _isInitialized ? $"\x1b[38;2;{r};{g};{b}m" : "";
+        }
+
+        /// <summary>
+        ///     Gets colorization string
+        /// </summary>
+        /// <param name="color">The color</param>
+        /// <returns>Prefix for string colorization</returns>
+        public static string GetColorizationString(Color color)
+        {
+            return GetColorizationString(color.R, color.G, color.B);
+        }
+
+        /// <summary>
+        ///     Gets background colorization string
+        /// </summary>
+        /// <param name="r">The red color value</param>
+        /// <param name="g">The green color value</param>
+        /// <param name="b">The blue color value</param>
+        /// <returns>Prefix for string background colorization</returns>
+        public static string GetBackgroundColorizationString(uint r, uint g, uint b)
+        {
+            return _isInitialized ? $"\x1b[48;2;{r};{g};{b}m" : "";
+        }
+
+        /// <summary>
+        ///     Gets background colorization string
+        /// </summary>
+        /// <param name="color">The color</param>
+        /// <returns>Prefix for string background colorization</returns>
+        public static string GetBackgroundColorizationString(Color color)
+        {
+            return GetBackgroundColorizationString(color.R, color.G, color.B);
+        }
+
+        /// <summary>
         ///     Colorizes string
         /// </summary>
         /// <param name="str">The string</param>
@@ -60,7 +109,8 @@ namespace RadLibrary
         /// <returns>Colorized string</returns>
         public static string Colorize(this string str, uint r, uint g, uint b)
         {
-            return $"\x1b[38;2;{r};{g};{b}m" + str + "\x1b[0m";
+            var colorized = GetColorizationString(r, g, b) + str;
+            return !str.EndsWith(ResetColor) ? colorized + ResetColor : colorized;
         }
 
         /// <summary>
@@ -95,7 +145,8 @@ namespace RadLibrary
         /// <returns>Colorized string</returns>
         public static string ColorizeBackground(this string str, uint r, uint g, uint b)
         {
-            return $"\x1b[48;2;{r};{g};{b}m" + str + "\x1b[0m";
+            var colorized = GetBackgroundColorizationString(r, g, b) + str;
+            return !str.EndsWith(ResetColor) ? colorized + ResetColor : colorized;
         }
 
         /// <summary>
@@ -131,11 +182,7 @@ namespace RadLibrary
         {
             hex = hex.Replace("#", "");
 
-            var r = int.Parse(hex.Substring(0, 2), NumberStyles.AllowHexSpecifier);
-            var g = int.Parse(hex.Substring(2, 2), NumberStyles.AllowHexSpecifier);
-            var b = int.Parse(hex.Substring(4, 2), NumberStyles.AllowHexSpecifier);
-
-            return Color.FromArgb(r, g, b);
+            return Color.FromArgb(int.Parse(hex, NumberStyles.AllowHexSpecifier));
         }
     }
 }

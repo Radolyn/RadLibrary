@@ -43,13 +43,13 @@ namespace RadLibrary.Logging.Loggers
     }
 
     /// <summary>
-    /// The file logger settings
+    ///     The file logger settings
     /// </summary>
     internal class FileLoggerSettings : LoggerSettings
     {
         public string FileName;
         public FileMode FileMode = FileMode.Append;
-        
+
         public FileLoggerSettings()
         {
         }

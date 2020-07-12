@@ -50,12 +50,12 @@ namespace RadLibrary.Logging.Loggers
     }
 
     /// <summary>
-    /// The multi logger settings
+    ///     The multi logger settings
     /// </summary>
     public class MultiLoggerSettings : LoggerSettings
     {
         public IEnumerable<Logger> Loggers;
-        
+
         public MultiLoggerSettings()
         {
         }
