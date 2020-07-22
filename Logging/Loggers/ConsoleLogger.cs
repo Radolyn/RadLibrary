@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using RadLibrary.Colorizer;
 
 #endregion
 
@@ -19,7 +20,7 @@ namespace RadLibrary.Logging.Loggers
         /// <inheritdoc />
         public override void Initialize()
         {
-            Colorizer.Initialize();
+            Colorizer.Colorizer.Initialize();
             Console.OutputEncoding = Encoding.UTF8;
         }
 

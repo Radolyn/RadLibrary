@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 #endregion
 
-namespace RadLibrary
+namespace RadLibrary.Colorizer
 {
     public static class Colorizer
     {
@@ -26,11 +26,6 @@ namespace RadLibrary
 
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern IntPtr GetStdHandle(int nStdHandle);
-
-        /// <summary>
-        ///     The reset color string (place after string)
-        /// </summary>
-        public const string ResetColor = "\x1b[0m";
 
         /// <summary>
         ///     Initializes colors system
@@ -52,6 +47,8 @@ namespace RadLibrary
                 throw new Win32Exception(
                     $"Failed to set output console mode, error code: {Marshal.GetLastWin32Error()}");
 
+            AppDomain.CurrentDomain.ProcessExit += (sender, args) => Console.Write(Font.Reset);
+            
             _isInitialized = true;
         }
 
@@ -110,7 +107,7 @@ namespace RadLibrary
         public static string Colorize(this string str, uint r, uint g, uint b)
         {
             var colorized = GetColorizationString(r, g, b) + str;
-            return !str.EndsWith(ResetColor) ? colorized + ResetColor : colorized;
+            return !str.EndsWith(Font.Reset) ? colorized + Font.Reset : colorized;
         }
 
         /// <summary>
@@ -146,7 +143,7 @@ namespace RadLibrary
         public static string ColorizeBackground(this string str, uint r, uint g, uint b)
         {
             var colorized = GetBackgroundColorizationString(r, g, b) + str;
-            return !str.EndsWith(ResetColor) ? colorized + ResetColor : colorized;
+            return !str.EndsWith(Font.Reset) ? colorized + Font.Reset : colorized;
         }
 
         /// <summary>

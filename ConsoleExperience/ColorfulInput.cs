@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using RadLibrary.Colorizer;
 using RadLibrary.ConsoleExperience.PredictionEngine;
 
 // ReSharper disable AccessToModifiedClosure
@@ -44,8 +45,8 @@ namespace RadLibrary.ConsoleExperience
                 .ColorizeBackground(settings.ArrowsBackgroundColor);
 
             var prefix = settings.Prefix == null ? arrowsColorized : settings.Prefix + " " + arrowsColorized;
-            prefix += Colorizer.GetColorizationString(settings.InputForegroundColor);
-            prefix += Colorizer.GetBackgroundColorizationString(settings.InputBackgroundColor);
+            prefix += Colorizer.Colorizer.GetColorizationString(settings.InputForegroundColor);
+            prefix += Colorizer.Colorizer.GetBackgroundColorizationString(settings.InputBackgroundColor);
 
             ++Console.BufferHeight;
 

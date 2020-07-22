@@ -155,6 +155,11 @@ namespace RadLibrary.Configuration
             _manager.Save();
         }
 
+        /// <summary>
+        /// Convert app configuration to specified class
+        /// </summary>
+        /// <typeparam name="T">The class</typeparam>
+        /// <returns>Filled instance</returns>
         public T Cast<T>() where T : class, new()
         {
             var type = typeof(T);

@@ -60,7 +60,7 @@ namespace RadLibrary
         /// <summary>
         ///     Checks whether the current system is Windows or not
         /// </summary>
-        /// <returns>Windows or not</returns>
+        /// <returns>true if Windows, otherwise false</returns>
         public static bool IsWindows()
         {
             return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
