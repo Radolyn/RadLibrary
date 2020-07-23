@@ -5,10 +5,11 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 #endregion
 
-namespace RadLibrary.Colorizer
+namespace RadLibrary.Colors
 {
     public static class Colorizer
     {
@@ -24,8 +25,8 @@ namespace RadLibrary.Colorizer
         [DllImport("kernel32.dll")]
         private static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
 
-        [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern IntPtr GetStdHandle(int nStdHandle);
+        private static readonly Regex _colorsRegex =
+            new Regex("\x1b\\[\\d{2};2;\\d{1,3};\\d{1,3};\\d{1,3}m", RegexOptions.Compiled);
 
         /// <summary>
         ///     Initializes colors system
@@ -38,7 +39,7 @@ namespace RadLibrary.Colorizer
 
             // todo: support for old terminals ($COLORTERM)
 
-            var iStdOut = GetStdHandle(StdOutputHandle);
+            var iStdOut = Utilities.GetStdHandle(StdOutputHandle);
             if (!GetConsoleMode(iStdOut, out var outConsoleMode))
                 throw new Win32Exception("Failed to get output console mode");
 
@@ -48,7 +49,7 @@ namespace RadLibrary.Colorizer
                     $"Failed to set output console mode, error code: {Marshal.GetLastWin32Error()}");
 
             AppDomain.CurrentDomain.ProcessExit += (sender, args) => Console.Write(Font.Reset);
-            
+
             _isInitialized = true;
         }
 
@@ -166,6 +167,16 @@ namespace RadLibrary.Colorizer
         public static string ColorizeBackground(this string str, string hex)
         {
             return ColorizeBackground(str, HexToColor(hex));
+        }
+
+        /// <summary>
+        ///     Removes all colorization marks from string
+        /// </summary>
+        /// <param name="s">The string</param>
+        /// <returns>De colorized string</returns>
+        public static string DeColorize(this string s)
+        {
+            return _colorsRegex.Replace(s, "");
         }
 
         /// <summary>

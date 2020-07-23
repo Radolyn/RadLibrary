@@ -1,4 +1,4 @@
-﻿namespace RadLibrary.Colorizer
+﻿namespace RadLibrary.Colors
 {
     public static class Font
     {

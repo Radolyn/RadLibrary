@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
-using RadLibrary.Colorizer;
+using RadLibrary.Colors;
 
 #endregion
 
@@ -15,19 +15,17 @@ namespace RadLibrary.Logging.Loggers
     /// </summary>
     public class ConsoleLogger : Logger
     {
-        public static readonly object ConsoleLocker = new object();
-
         /// <inheritdoc />
         public override void Initialize()
         {
-            Colorizer.Colorizer.Initialize();
+            Colorizer.Initialize();
             Console.OutputEncoding = Encoding.UTF8;
         }
 
         /// <inheritdoc />
         public override void Log(LogType type, string message, string formatted)
         {
-            lock (ConsoleLocker)
+            lock (Console.Out)
             {
                 Console.WriteLine(
                     formatted.Colorize(ColorSettings.Colors[type]));

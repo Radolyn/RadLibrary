@@ -14,8 +14,10 @@ namespace RadLibrary
 {
     public static class Utilities
     {
+        // Windows console coloring support
+
         [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern IntPtr GetStdHandle(int nStdHandle);
+        internal static extern IntPtr GetStdHandle(int nStdHandle);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern int AllocConsole();

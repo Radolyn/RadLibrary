@@ -156,7 +156,7 @@ namespace RadLibrary.Configuration
         }
 
         /// <summary>
-        /// Convert app configuration to specified class
+        ///     Convert app configuration to specified class
         /// </summary>
         /// <typeparam name="T">The class</typeparam>
         /// <returns>Filled instance</returns>

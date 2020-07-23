@@ -73,7 +73,7 @@ namespace RadLibrary.Logging
             if (!s.Contains('\n'))
                 return s;
 
-            var padding = string.Concat(Enumerable.Repeat(" ", s.IndexOf(message, StringComparison.Ordinal)));
+            var padding = " ".Repeat(s.IndexOf(message, StringComparison.Ordinal));
 
             var messages = s.Split('\n').Aggregate((current, item) =>
                 current + Environment.NewLine + padding + item);
@@ -97,13 +97,13 @@ namespace RadLibrary.Logging
                 let colon = ch == ':' && unquoted ? ": " : null
                 let noSpace = char.IsWhiteSpace(ch) && unquoted ? string.Empty : null
                 let lineBreak = ch == ',' && unquoted
-                    ? ch + Environment.NewLine + string.Concat(Enumerable.Repeat(indent, indentation))
+                    ? ch + Environment.NewLine + indent.Repeat(indentation)
                     : null
                 let openChar = (ch == '{' || ch == '[') && unquoted
-                    ? ch + Environment.NewLine + string.Concat(Enumerable.Repeat(indent, ++indentation))
+                    ? ch + Environment.NewLine + indent.Repeat(++indentation)
                     : ch.ToString()
                 let closeChar = (ch == '}' || ch == ']') && unquoted
-                    ? Environment.NewLine + string.Concat(Enumerable.Repeat(indent, --indentation)) + ch
+                    ? Environment.NewLine + indent.Repeat(--indentation) + ch
                     : ch.ToString()
                 select colon ?? noSpace ?? lineBreak ?? (
                     openChar.Length > 1 ? openChar : closeChar
