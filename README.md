@@ -1,5 +1,6 @@
 # RadLibrary
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8a8fb2ca7f4148e2a484b79725f2de27)](https://app.codacy.com/gh/Radolyn/RadLibrary?utm_source=github.com&utm_medium=referral&utm_content=Radolyn/RadLibrary&utm_campaign=Badge_Grade_Dashboard)
 [![NuGet](https://img.shields.io/nuget/v/RadLibrary.svg)](https://www.nuget.org/packages/RadLibrary/)
 
 All-In-One library
