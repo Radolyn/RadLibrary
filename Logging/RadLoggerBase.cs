@@ -1,45 +1,35 @@
 ﻿#region
 
 using System;
-using System.Collections;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using RadLibrary.Configuration;
 using RadLibrary.Logging.Helpers;
 
 #endregion
 
 namespace RadLibrary.Logging
 {
-    public abstract partial class Logger
+    public abstract class RadLoggerBase : LoggerBase
     {
-        /// <summary>
-        ///     Gets or sets settings
-        /// </summary>
-        public virtual LoggerSettings Settings { get; set; }
-
         private readonly Regex _jsonRegex = new Regex(@"(({)|(\[)).*\s*:\s*.*((})|(\]))", RegexOptions.Compiled);
 
         private StringFormatter _formatter;
         private readonly object _formatterLock = new object();
 
         /// <summary>
-        ///     Initializes logger
+        ///     The log action
         /// </summary>
-        public virtual void Initialize()
-        {
-        }
+        /// <param name="type">Log type</param>
+        /// <param name="message">The original message</param>
+        /// <param name="formatted">The formatted message (see <see cref="LoggerBase.Settings" />)</param>
+        internal abstract void Log(LogType type, string message, string formatted);
 
         /// <summary>
         ///     The log action
         /// </summary>
         /// <param name="type">Log type</param>
-        /// <param name="message">The original message</param>
-        /// <param name="formatted">The formatted message (see <see cref="Settings" />)</param>
-        public abstract void Log(LogType type, string message, string formatted);
-
-        private void PrivateLog(LogType type, string message)
+        /// <param name="message">The message</param>
+        public override void DirectLog(LogType type, string message)
         {
             if (LoggerSettings.EnvironmentLoggingLevel <= type || Settings.LoggingLevel <= type)
                 Log(type, message, Format(type, message));
@@ -116,75 +106,6 @@ namespace RadLibrary.Logging
         {
             var s = string.Format("{0, " + length + "}", name);
             return s.Length <= length ? s : ".." + s.Substring(s.Length - length + 2);
-        }
-
-        private string ParseArguments(params object[] args)
-        {
-            if (args == null)
-                return "null";
-
-            var sb = new StringBuilder();
-
-            foreach (var arg in args) sb.Append(ArgumentToString(arg) + " ");
-
-            return sb.ToString();
-        }
-
-        private string ArgumentToString(object arg, int iteration = 0)
-        {
-            ++iteration;
-
-            if (arg == null)
-                return "null";
-
-            if (iteration >= Settings.MaxRecursion)
-                return "...";
-
-            switch (arg)
-            {
-                case string s when iteration > 1:
-                    return $"\"{s}\"";
-                case DateTime date:
-                    return date.ToString(Settings.TimeFormat);
-                // Python styled dictionary output
-                case IDictionary dictionary:
-                {
-                    var sb = new StringBuilder();
-
-                    sb.Append("{");
-
-                    foreach (DictionaryEntry entry in dictionary) sb.Append(ArgumentToString(entry, iteration) + ", ");
-
-                    var str = sb.ToString();
-
-                    str = str.Remove(str.Length - 2);
-
-                    return str + "}";
-                }
-                // Python styled list output
-                case IEnumerable list:
-                {
-                    var str = list.Cast<object>().Aggregate("[",
-                        (current, item) => current + ArgumentToString(item, iteration) + ", ");
-
-                    if (str.Length > 2)
-                        return str.Remove(str.Length - 2) + "]";
-
-                    return "[]";
-                }
-                case DictionaryEntry pair:
-                    return ArgumentToString(pair.Key, iteration) + ": " + ArgumentToString(pair.Value, iteration);
-                case Exception exception:
-                    return
-                        $"{exception.Source}: {exception.GetType()}.\nMessage: {exception.Message}\nStack trace:\n{exception.StackTrace}";
-                case AppConfiguration configuration:
-                    return ArgumentToString(configuration.Parameters, iteration);
-                case Parameter parameter:
-                    return
-                        $"[\"value\": \"{parameter.Value}\", \"comment\": \"{parameter.Comment?.Replace("# ", "")}\"]";
-                default:
-                    return arg.ToString();
-            }
         }
     }
 }

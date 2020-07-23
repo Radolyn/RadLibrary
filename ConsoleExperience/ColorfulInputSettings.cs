@@ -12,12 +12,12 @@ namespace RadLibrary.ConsoleExperience
         /// <summary>
         ///     The prefix
         /// </summary>
-        public string Prefix = null;
+        public string Prefix;
 
         /// <summary>
         ///     The prediction engine
         /// </summary>
-        public IPredictionEngine Engine = null;
+        public IPredictionEngine Engine;
 
         /// <summary>
         ///     The arrows foreground color

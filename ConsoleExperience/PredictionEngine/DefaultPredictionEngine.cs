@@ -30,13 +30,13 @@ namespace RadLibrary.ConsoleExperience.PredictionEngine
             }
         }
 
-        protected string PredictHistory(string input)
+        protected static string PredictHistory(string input)
         {
             var history = ColorfulConsole.InputHistory.Where(s => s.StartsWith(input));
             return history.FirstOrDefault();
         }
 
-        protected string PredictPath(string input)
+        protected static string PredictPath(string input)
         {
             try
             {

@@ -9,9 +9,9 @@ using System.Text;
 namespace RadLibrary.Logging.Loggers
 {
     /// <summary>
-    ///     Logger that prints logs in file. Arguments: filename (opt.), FileMode (opt.)
+    ///     RadLoggerBase that prints logs in file. Arguments: filename (opt.), FileMode (opt.)
     /// </summary>
-    public class FileLogger : Logger
+    public class FileLogger : RadLoggerBase, IDisposable
     {
         private FileStream _fileStream;
 
@@ -34,11 +34,19 @@ namespace RadLibrary.Logging.Loggers
         }
 
         /// <inheritdoc />
-        public override void Log(LogType type, string message, string formatted)
+        internal override void Log(LogType type, string message, string formatted)
         {
             var bytes = Encoding.UTF8.GetBytes(formatted + Environment.NewLine);
             _fileStream.Write(bytes, 0, bytes.Length);
             _fileStream.Flush();
+        }
+
+        /// <summary>
+        ///     Disposes logger
+        /// </summary>
+        public void Dispose()
+        {
+            _fileStream?.Dispose();
         }
     }
 

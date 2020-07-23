@@ -11,9 +11,9 @@ using RadLibrary.Colors;
 namespace RadLibrary.Logging.Loggers
 {
     /// <summary>
-    ///     Logger that prints logs in console. Arguments: no
+    ///     RadLoggerBase that prints logs in console. Arguments: no
     /// </summary>
-    public class ConsoleLogger : Logger
+    public class ConsoleLogger : RadLoggerBase
     {
         /// <inheritdoc />
         public override void Initialize()
@@ -23,7 +23,7 @@ namespace RadLibrary.Logging.Loggers
         }
 
         /// <inheritdoc />
-        public override void Log(LogType type, string message, string formatted)
+        internal override void Log(LogType type, string message, string formatted)
         {
             lock (Console.Out)
             {

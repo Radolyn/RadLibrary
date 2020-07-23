@@ -9,13 +9,13 @@ using System.Linq;
 namespace RadLibrary.Logging.Loggers
 {
     /// <summary>
-    ///     Logger that does nothing by itself, but if you pass some loggers in arguments, it'll log in them. Arguments: pass
-    ///     all loggers that you want to log in.
+    ///     RadLoggerBase that does nothing by itself, but if you pass some loggers in arguments, it'll log in them. Arguments:
+    ///     pass all loggers that you want to log in.
     ///     If you want to change settings, it'll change settings of all loggers that you passed in.
     /// </summary>
-    public class MultiLogger : Logger
+    public class MultiLogger : RadLoggerBase
     {
-        private IEnumerable<Logger> _loggers;
+        private IEnumerable<LoggerBase> _loggers;
 
         /// <inheritdoc />
         public sealed override LoggerSettings Settings
@@ -43,9 +43,9 @@ namespace RadLibrary.Logging.Loggers
         }
 
         /// <inheritdoc />
-        public override void Log(LogType type, string message, string formatted)
+        internal override void Log(LogType type, string message, string formatted)
         {
-            foreach (var logger in _loggers) logger?.Log(type, message, formatted);
+            foreach (var logger in _loggers) logger?.DirectLog(type, formatted);
         }
     }
 
@@ -54,13 +54,13 @@ namespace RadLibrary.Logging.Loggers
     /// </summary>
     public class MultiLoggerSettings : LoggerSettings
     {
-        public IEnumerable<Logger> Loggers;
+        public IEnumerable<LoggerBase> Loggers;
 
         public MultiLoggerSettings()
         {
         }
 
-        public MultiLoggerSettings(params Logger[] loggers)
+        public MultiLoggerSettings(params LoggerBase[] loggers)
         {
             Loggers = loggers;
         }

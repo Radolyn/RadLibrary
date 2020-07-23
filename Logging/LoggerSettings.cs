@@ -9,7 +9,7 @@ namespace RadLibrary.Logging
     public class LoggerSettings
     {
         /// <summary>
-        ///     The logger type (use typeof(Logger))
+        ///     The logger type (use typeof(RadLoggerBase))
         /// </summary>
         public Type Logger;
 

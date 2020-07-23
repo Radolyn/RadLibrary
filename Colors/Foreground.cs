@@ -5,86 +5,86 @@
         /// <summary>
         ///     The black color
         /// </summary>
-        public const string Black = "\x1b[30m";
+        public static readonly string Black = "\x1b[30m";
 
         /// <summary>
         ///     The red color
         /// </summary>
-        public const string Red = "\x1b[31m";
+        public static readonly string Red = "\x1b[31m";
 
         /// <summary>
         ///     The green color
         /// </summary>
-        public const string Green = "\x1b[32m";
+        public static readonly string Green = "\x1b[32m";
 
         /// <summary>
         ///     The yellow color
         /// </summary>
-        public const string Yellow = "\x1b[33m";
+        public static readonly string Yellow = "\x1b[33m";
 
         /// <summary>
         ///     The blue color
         /// </summary>
-        public const string Blue = "\x1b[34m";
+        public static readonly string Blue = "\x1b[34m";
 
         /// <summary>
         ///     The purple color
         /// </summary>
-        public const string Purple = "\x1b[35m";
+        public static readonly string Purple = "\x1b[35m";
 
         /// <summary>
         ///     The light blue color
         /// </summary>
-        public const string LightBlue = "\x1b[36m";
+        public static readonly string LightBlue = "\x1b[36m";
 
         /// <summary>
         ///     The white color
         /// </summary>
-        public const string White = "\x1b[37m";
+        public static readonly string White = "\x1b[37m";
 
         /// <summary>
         ///     The bright black color
         /// </summary>
-        public const string BrightBlack = "\x1b[90m";
+        public static readonly string BrightBlack = "\x1b[90m";
 
         /// <summary>
         ///     The bright red color
         /// </summary>
-        public const string BrightRed = "\x1b[91m";
+        public static readonly string BrightRed = "\x1b[91m";
 
         /// <summary>
         ///     The bright green color
         /// </summary>
-        public const string BrightGreen = "\x1b[92m";
+        public static readonly string BrightGreen = "\x1b[92m";
 
         /// <summary>
         ///     The bright yellow color
         /// </summary>
-        public const string BrightYellow = "\x1b[93m";
+        public static readonly string BrightYellow = "\x1b[93m";
 
         /// <summary>
         ///     The bright blue color
         /// </summary>
-        public const string BrightBlue = "\x1b[94m";
+        public static readonly string BrightBlue = "\x1b[94m";
 
         /// <summary>
         ///     The bright purple color
         /// </summary>
-        public const string BrightPurple = "\x1b[95m";
+        public static readonly string BrightPurple = "\x1b[95m";
 
         /// <summary>
         ///     The bright light blue color
         /// </summary>
-        public const string BrightLightBlue = "\x1b[96m";
+        public static readonly string BrightLightBlue = "\x1b[96m";
 
         /// <summary>
         ///     The bright white color
         /// </summary>
-        public const string BrightWhite = "\x1b[97m";
+        public static readonly string BrightWhite = "\x1b[97m";
 
         /// <summary>
         ///     The reset foreground color string
         /// </summary>
-        public const string Reset = "\x1b[39m";
+        public static readonly string Reset = "\x1b[39m";
     }
 }

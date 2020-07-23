@@ -27,7 +27,7 @@ namespace RadLibrary
         private static Random _random;
 
         /// <summary>
-        ///     Infinite loop
+        ///     Infinite loop (use with caution!)
         /// </summary>
         public static void InfiniteWait()
         {
@@ -69,17 +69,17 @@ namespace RadLibrary
         }
 
         /// <summary>
-        ///     Call in the start of program to prevent from running more than 1 instance
+        ///     Prevents user from running more than 1 instance of program
         /// </summary>
         /// <param name="name">The name</param>
-        /// <param name="message">Action that will be invoked if there's already one instance running</param>
-        public static void OnlyOneInstance(string name, Action message = null)
+        /// <param name="action">Action that will be invoked if there's already one instance running</param>
+        public static void OnlyOneInstance(string name, Action action = null)
         {
             var mutex = new Mutex(true, name);
 
             if (mutex.WaitOne(TimeSpan.Zero, true)) return;
 
-            message?.Invoke();
+            action?.Invoke();
             Environment.Exit(1);
         }
 
