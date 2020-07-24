@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using RadLibrary.Logging.Loggers;
 
 #endregion
@@ -22,14 +21,15 @@ namespace RadLibrary.Logging
         /// <summary>
         ///     Gets or sets max name length
         /// </summary>
-        /// <exception cref="Exception">Occurs when trying to set max length after loggers initialization</exception>
+        /// <exception cref="NotSupportedException">Occurs when trying to set max length after loggers initialization</exception>
         public static int MaxNameLength
         {
             get => LoggerSettings.NameMaxLength;
             set
             {
                 if (Loggers.Any())
-                    throw new Exception("Cannot change max length, because there's at least one logger initialized");
+                    throw new NotSupportedException(
+                        "Cannot change max length, because there's at least one logger initialized");
 
                 LoggerSettings.NameMaxLength = value;
             }
@@ -210,7 +210,7 @@ namespace RadLibrary.Logging
         private static StackFrame GetPreviousFrame()
         {
             var stack = new StackTrace();
-            var current = Assembly.GetExecutingAssembly().ManifestModule;
+            var current = typeof(LogType).Module;
             var frame = stack.GetFrames()?.First(x => x.GetMethod().Module != current);
 
             return frame;

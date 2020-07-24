@@ -201,7 +201,7 @@ namespace RadLibrary.Configuration.Managers
         private bool NeedToReload()
         {
             // prevent from double notify (VS Code, etc.)
-            return !((DateTime.Now - _lastUpdate).TotalSeconds < 0.8);
+            return (DateTime.Now - _lastUpdate).TotalSeconds >= 0.8;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace RadLibrary.Colors
 {
-    public class Background
+    public static class Background
     {
         /// <summary>
         ///     The black color
