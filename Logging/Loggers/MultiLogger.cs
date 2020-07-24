@@ -13,7 +13,7 @@ namespace RadLibrary.Logging.Loggers
     ///     pass all loggers that you want to log in.
     ///     If you want to change settings, it'll change settings of all loggers that you passed in.
     /// </summary>
-    public class MultiLogger : RadLoggerBase
+    public class MultiLogger : LoggerBase
     {
         private IEnumerable<LoggerBase> _loggers;
 
@@ -32,6 +32,12 @@ namespace RadLibrary.Logging.Loggers
         }
 
         /// <inheritdoc />
+        public override void DirectLog(LogType type, string message)
+        {
+            foreach (var logger in _loggers) logger?.DirectLog(type, message);
+        }
+
+        /// <inheritdoc />
         public override void Initialize()
         {
             var settings = Settings as MultiLoggerSettings;
@@ -40,12 +46,6 @@ namespace RadLibrary.Logging.Loggers
                 throw new ArgumentException("No loggers provided");
 
             _loggers = settings.Loggers;
-        }
-
-        /// <inheritdoc />
-        internal override void Log(LogType type, string message, string formatted)
-        {
-            foreach (var logger in _loggers) logger?.DirectLog(type, formatted);
         }
     }
 
