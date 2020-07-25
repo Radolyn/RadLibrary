@@ -47,5 +47,16 @@ namespace RadLibrary
 
             return sb.ToString();
         }
+
+        /// <summary>
+        /// Removes specified substring from string
+        /// </summary>
+        /// <param name="s">The string</param>
+        /// <param name="value">The substring</param>
+        /// <returns>The string</returns>
+        public static string Remove(this string s, string value)
+        {
+            return s.Replace(value, "");
+        }
     }
 }

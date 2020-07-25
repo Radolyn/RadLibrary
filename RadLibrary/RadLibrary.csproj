@@ -14,27 +14,11 @@
     <Description>Colorized logging &amp; configuration manager
 </Description>
     <Copyright>© 2020 Radolyn</Copyright>
-    <PackageProjectUrl></PackageProjectUrl>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <!-- <PackageLicenseFile>$(SolutionDir)LICENSE</PackageLicenseFile> -->
     <RepositoryUrl>https://github.com/Radolyn/RadLibrary</RepositoryUrl>
-    <PackageVersion>1.3.0</PackageVersion>
+    <PackageVersion>1.3.1</PackageVersion>
     <LangVersion>8</LangVersion>
+    <PackageLicenseUrl>https://github.com/Radolyn/RadLibrary/blob/master/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="LICENSE">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-    <None Remove="old\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="old\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Remove="old\**" />
-  </ItemGroup>
 
 </Project>

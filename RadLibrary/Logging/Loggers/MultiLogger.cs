@@ -64,5 +64,10 @@ namespace RadLibrary.Logging.Loggers
         {
             Loggers = loggers;
         }
+
+        public MultiLoggerSettings(IEnumerable<LoggerBase> loggers)
+        {
+            Loggers = loggers;
+        }
     }
 }

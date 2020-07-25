@@ -19,10 +19,10 @@ namespace RadLibrary.Colors
         private const uint EnableVirtualTerminalProcessing = 0x0004;
         private const uint DisableNewlineAutoReturn = 0x0008;
 
-        [DllImport("kernel32.dll")]
+        [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
 
-        [DllImport("kernel32.dll")]
+        [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
 
         private static readonly Regex _colorsRegex =
@@ -34,14 +34,17 @@ namespace RadLibrary.Colors
         /// <exception cref="Win32Exception">If failed to set color mode</exception>
         public static void Initialize()
         {
-            if (_isInitialized || !Utilities.IsWindows())
+            if (_isInitialized || !Utilities.IsWindows() || Console.IsOutputRedirected)
+            {
+                _isInitialized = true;
                 return;
+            }
 
             // todo: support for old terminals ($COLORTERM)
 
             var iStdOut = Utilities.GetStdHandle(StdOutputHandle);
             if (!GetConsoleMode(iStdOut, out var outConsoleMode))
-                throw new Win32Exception("Failed to get output console mode");
+                throw new Win32Exception($"Failed to get output console mode, error code: {Marshal.GetLastWin32Error()}");
 
             outConsoleMode |= EnableVirtualTerminalProcessing | DisableNewlineAutoReturn;
             if (!SetConsoleMode(iStdOut, outConsoleMode))
@@ -176,7 +179,7 @@ namespace RadLibrary.Colors
         /// <returns>De colorized string</returns>
         public static string DeColorize(this string s)
         {
-            return _colorsRegex.Replace(s, "");
+            return _colorsRegex.Replace(s, "").Remove(Font.Reset);
         }
 
         /// <summary>

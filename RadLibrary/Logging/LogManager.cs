@@ -56,7 +56,7 @@ namespace RadLibrary.Logging
         }
 
         /// <summary>
-        ///     Creates console logger with specified type and name
+        ///     Creates console logger with specified name
         /// </summary>
         /// <param name="name">The logger name</param>
         /// <returns>The console logger</returns>
@@ -203,7 +203,7 @@ namespace RadLibrary.Logging
             if (settings == null)
                 throw new ArgumentNullException(nameof(settings), "Settings cannot be null");
 
-            if (!typeof(RadLoggerBase).IsAssignableFrom(settings.Logger))
+            if (!typeof(LoggerBase).IsAssignableFrom(settings.Logger))
                 throw new ArgumentException($"{settings.Logger?.FullName} is not assignable to RadLoggerBase");
         }
 
