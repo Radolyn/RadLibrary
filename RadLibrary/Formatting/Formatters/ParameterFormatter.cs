@@ -13,7 +13,7 @@ namespace RadLibrary.Formatting.Formatters
         /// <inheritdoc />
         public override string FormatObject(Parameter obj)
         {
-            return $"\"{obj.Key}\": {obj.Value}" + (string.IsNullOrEmpty(obj.Comment) ? "" : $" ({obj.Comment})");
+            return $"\"{obj.Key}\": \"{obj.Value}\"" + (string.IsNullOrEmpty(obj.Comment) ? "" : $" ({obj.Comment})");
         }
     }
 }

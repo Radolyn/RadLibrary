@@ -84,7 +84,17 @@ namespace RadLibrary.Configuration.Managers
 
             _config = new List<Parameter>();
 
-            var text = File.ReadAllLines(_filename);
+            string[] text;
+
+            try
+            {
+                text = File.ReadAllLines(_filename);
+            }
+            catch
+            {
+                Thread.Sleep(150);
+                text = File.ReadAllLines(_filename);
+            }
 
             // comment builder
             var sb = new StringBuilder();

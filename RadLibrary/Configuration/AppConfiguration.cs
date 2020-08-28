@@ -20,6 +20,8 @@ namespace RadLibrary.Configuration
         /// </summary>
         private readonly IConfigurationManager _manager;
 
+        private object _configInstance;
+
         /// <summary>
         ///     Enables or disables hot reload
         /// </summary>
@@ -43,7 +45,11 @@ namespace RadLibrary.Configuration
         {
             _manager = manager;
             _manager.Setup(name);
-            _manager.ConfigurationUpdated += configurationManager => ConfigurationUpdated?.Invoke(configurationManager);
+            _manager.ConfigurationUpdated += configurationManager =>
+            {
+                Cast();
+                ConfigurationUpdated?.Invoke(configurationManager);
+            };
         }
 
         /// <summary>
@@ -160,13 +166,23 @@ namespace RadLibrary.Configuration
         /// </summary>
         /// <typeparam name="T">The class</typeparam>
         /// <returns>Filled instance</returns>
-        public T Cast<T>() where T : class, new()
+        public T Cast<T>() where T : new()
         {
-            var type = typeof(T);
+            _configInstance ??= new T();
+
+            Cast();
+
+            return (T) _configInstance;
+        }
+
+        private void Cast()
+        {
+            if (_configInstance == null)
+                return;
+
+            var type = _configInstance.GetType();
+
             var fields = type.GetFields();
-
-            var instance = new T();
-
             foreach (var field in fields)
             {
                 var paramName =
@@ -174,10 +190,8 @@ namespace RadLibrary.Configuration
                         attribute
                         ? attribute.Key ?? Utilities.FirstCharacterToLower(field.Name)
                         : Utilities.FirstCharacterToLower(field.Name);
-                field.SetValue(instance, Convert.ChangeType(this[paramName], field.FieldType));
+                field.SetValue(_configInstance, Convert.ChangeType(this[paramName], field.FieldType));
             }
-
-            return instance;
         }
 
         /// <summary>

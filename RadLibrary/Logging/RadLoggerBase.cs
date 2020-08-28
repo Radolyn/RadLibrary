@@ -37,6 +37,9 @@ namespace RadLibrary.Logging
 
         private string Format(LogType type, string message)
         {
+            if (message == null)
+                message = "null";
+
             if (_formatter == null)
                 lock (_formatterLock)
                 {
