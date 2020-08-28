@@ -40,9 +40,7 @@ namespace RadLibrary.Logging.Loggers
         /// <inheritdoc />
         public override void Initialize()
         {
-            var settings = Settings as MultiLoggerSettings;
-
-            if (settings == null || settings.Loggers?.Any() == false)
+            if (!(Settings is MultiLoggerSettings settings) || settings.Loggers?.Any() == false)
                 throw new ArgumentException("No loggers provided");
 
             _loggers = settings.Loggers;

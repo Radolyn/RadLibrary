@@ -44,7 +44,8 @@ namespace RadLibrary.Colors
 
             var iStdOut = Utilities.GetStdHandle(StdOutputHandle);
             if (!GetConsoleMode(iStdOut, out var outConsoleMode))
-                throw new Win32Exception($"Failed to get output console mode, error code: {Marshal.GetLastWin32Error()}");
+                throw new Win32Exception(
+                    $"Failed to get output console mode, error code: {Marshal.GetLastWin32Error()}");
 
             outConsoleMode |= EnableVirtualTerminalProcessing | DisableNewlineAutoReturn;
             if (!SetConsoleMode(iStdOut, outConsoleMode))

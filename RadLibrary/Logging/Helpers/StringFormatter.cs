@@ -10,7 +10,7 @@ namespace RadLibrary.Logging.Helpers
     // https://stackoverflow.com/a/36778184
     internal sealed class StringFormatter
     {
-        public string Format { get; set; }
+        private string Format { get; }
 
         private Dictionary<string, string> Parameters { get; }
 

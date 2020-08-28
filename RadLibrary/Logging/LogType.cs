@@ -5,8 +5,8 @@
     /// </summary>
     public enum LogType
     {
-        Trace,
         Debug,
+        Trace,
         Info,
         Warn,
         Error,

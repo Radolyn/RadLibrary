@@ -22,7 +22,7 @@ namespace RadLibrary.Logging
         /// <param name="type">Log type</param>
         /// <param name="message">The original message</param>
         /// <param name="formatted">The formatted message (see <see cref="LoggerBase.Settings" />)</param>
-        internal abstract void Log(LogType type, string message, string formatted);
+        protected abstract void Log(LogType type, string message, string formatted);
 
         /// <summary>
         ///     The log action

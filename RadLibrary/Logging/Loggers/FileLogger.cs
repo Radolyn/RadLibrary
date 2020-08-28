@@ -34,7 +34,7 @@ namespace RadLibrary.Logging.Loggers
         }
 
         /// <inheritdoc />
-        internal override void Log(LogType type, string message, string formatted)
+        protected override void Log(LogType type, string message, string formatted)
         {
             var bytes = Encoding.UTF8.GetBytes(formatted + Environment.NewLine);
             _fileStream.Write(bytes, 0, bytes.Length);
@@ -55,13 +55,13 @@ namespace RadLibrary.Logging.Loggers
     /// </summary>
     public class FileLoggerSettings : LoggerSettings
     {
-        public string FileName;
-        public FileMode FileMode = FileMode.Append;
+        public readonly string FileName;
+        public readonly FileMode FileMode = FileMode.Append;
 
         public FileLoggerSettings()
         {
         }
-        
+
         public FileLoggerSettings(string fileName)
         {
             FileName = fileName;

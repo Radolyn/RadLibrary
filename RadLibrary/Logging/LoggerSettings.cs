@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using RadLibrary.Formatting;
 
 #endregion
 
@@ -26,7 +27,11 @@ namespace RadLibrary.Logging
         /// <summary>
         ///     The maximum recursion level. Will return "..." on reaching this value
         /// </summary>
-        public int MaxRecursion = 10;
+        public static int MaxRecursion
+        {
+            get => FormattersStorage.MaxRecursion;
+            set => FormattersStorage.MaxRecursion = value;
+        }
 
         /// <summary>
         ///     The name max length. Can be set with <see cref="LogManager" /> before creating any loggers

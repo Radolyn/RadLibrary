@@ -49,7 +49,7 @@ namespace RadLibrary
         }
 
         /// <summary>
-        /// Removes specified substring from string
+        ///     Removes specified substring from string
         /// </summary>
         /// <param name="s">The string</param>
         /// <param name="value">The substring</param>

@@ -23,13 +23,10 @@ namespace RadLibrary.Logging.Loggers
         }
 
         /// <inheritdoc />
-        internal override void Log(LogType type, string message, string formatted)
+        protected override void Log(LogType type, string message, string formatted)
         {
-            lock (Console.Out)
-            {
-                Console.WriteLine(
-                    formatted.Colorize(ColorSettings.Colors[type]));
-            }
+            Console.WriteLine(
+                formatted.Colorize(ColorSettings.Colors[type]));
         }
     }
 

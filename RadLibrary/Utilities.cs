@@ -7,6 +7,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using Microsoft.Win32.SafeHandles;
+using RadLibrary.Colors;
+using RadLibrary.Formatting;
 
 #endregion
 
@@ -25,6 +27,15 @@ namespace RadLibrary
         private const int StdOutputHandle = -11;
 
         private static Random _random;
+
+        /// <summary>
+        ///     Initializes Colorizer and FormattersStorage
+        /// </summary>
+        public static void Initialize()
+        {
+            Colorizer.Initialize();
+            FormattersStorage.AddDefault();
+        }
 
         /// <summary>
         ///     Infinite loop (use with caution!)
