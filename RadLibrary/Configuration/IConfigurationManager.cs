@@ -9,14 +9,14 @@ namespace RadLibrary.Configuration
     public interface IConfigurationManager
     {
         /// <summary>
-        ///     Event that invokes on configuration update
-        /// </summary>
-        event ConfigurationUpdated ConfigurationUpdated;
-
-        /// <summary>
         ///     Gets or sets necessity in hot reload
         /// </summary>
         bool HotReload { get; set; }
+
+        /// <summary>
+        ///     Event that invokes on configuration update
+        /// </summary>
+        event ConfigurationUpdated ConfigurationUpdated;
 
         /// <summary>
         ///     Setups manager

@@ -12,11 +12,6 @@ namespace RadLibrary.Configuration.Scheme
     public class SchemeParameter : Parameter
     {
         /// <summary>
-        ///     The type
-        /// </summary>
-        public Type Type { get; internal set; }
-
-        /// <summary>
         ///     Initializes class
         /// </summary>
         public SchemeParameter()
@@ -37,5 +32,10 @@ namespace RadLibrary.Configuration.Scheme
             Comment = comment;
             Type = type;
         }
+
+        /// <summary>
+        ///     The type
+        /// </summary>
+        public Type Type { get; internal set; }
     }
 }

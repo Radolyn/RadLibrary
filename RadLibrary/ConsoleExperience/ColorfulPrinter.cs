@@ -5,6 +5,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using RadLibrary.Colors;
+using RadLibrary.Formatting;
+using RadLibrary.Logging;
 
 #endregion
 
@@ -51,10 +53,20 @@ namespace RadLibrary.ConsoleExperience
         ///     Writes message with new line to console
         /// </summary>
         /// <param name="message">The message</param>
-        public static void WriteLine(string message)
+        public static void WriteLine(params object[] args)
         {
             // todo: fix x2 new line
-            Write(message + Environment.NewLine + Environment.NewLine);
+            Write(LoggerBase.ParseArguments(args) + Environment.NewLine);
+        }
+
+        /// <summary>
+        ///     Writes message with new line to console
+        /// </summary>
+        /// <param name="format">The message</param>
+        /// <param name="args">The arguments</param>
+        public static void WriteLine(string format, params object[] args)
+        {
+            Write(string.Format(FormattersStorage.FormatProvider, format, args) + Environment.NewLine);
         }
 
         /// <summary>

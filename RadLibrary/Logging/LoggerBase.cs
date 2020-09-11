@@ -141,7 +141,7 @@ namespace RadLibrary.Logging
                 args.Length == 0 ? message : string.Format(FormattersStorage.FormatProvider, message, args));
         }
 
-        private static string ParseArguments(params object[] args)
+        public static string ParseArguments(params object[] args)
         {
             return args == null ? "null" : string.Format(FormattersStorage.FormatProvider, "{0}", args.ToList());
         }

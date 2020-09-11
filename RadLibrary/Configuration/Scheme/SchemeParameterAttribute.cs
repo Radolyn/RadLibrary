@@ -13,21 +13,6 @@ namespace RadLibrary.Configuration.Scheme
     public class SchemeParameterAttribute : Attribute
     {
         /// <summary>
-        ///     The key
-        /// </summary>
-        public string Key { get; set; }
-
-        /// <summary>
-        ///     The value
-        /// </summary>
-        public object Value { get; set; }
-
-        /// <summary>
-        ///     The comment
-        /// </summary>
-        public string Comment { get; set; }
-
-        /// <summary>
         ///     Initializes attribute
         /// </summary>
         public SchemeParameterAttribute()
@@ -42,5 +27,20 @@ namespace RadLibrary.Configuration.Scheme
         {
             Key = key;
         }
+
+        /// <summary>
+        ///     The key
+        /// </summary>
+        public string Key { get; set; }
+
+        /// <summary>
+        ///     The value
+        /// </summary>
+        public object Value { get; set; }
+
+        /// <summary>
+        ///     The comment
+        /// </summary>
+        public string Comment { get; set; }
     }
 }

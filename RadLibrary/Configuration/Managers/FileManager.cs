@@ -15,13 +15,13 @@ namespace RadLibrary.Configuration.Managers
         private List<Parameter> _config;
         private string _filename;
 
+        private bool _hotReload;
+
         private DateTime _lastUpdate;
+        private FileSystemWatcher _watcher;
 
         /// <inheritdoc />
         public event ConfigurationUpdated ConfigurationUpdated;
-
-        private bool _hotReload;
-        private FileSystemWatcher _watcher;
 
         /// <inheritdoc />
         public bool HotReload
@@ -72,60 +72,6 @@ namespace RadLibrary.Configuration.Managers
         public IReadOnlyList<Parameter> GetParameters()
         {
             return _config;
-        }
-
-        private void ReloadConfiguration()
-        {
-            if (!NeedToReload())
-                return;
-
-            if (!File.Exists(_filename))
-                File.Create(_filename).Close();
-
-            _config = new List<Parameter>();
-
-            string[] text;
-
-            try
-            {
-                text = File.ReadAllLines(_filename);
-            }
-            catch
-            {
-                Thread.Sleep(150);
-                text = File.ReadAllLines(_filename);
-            }
-
-            // comment builder
-            var sb = new StringBuilder();
-
-            foreach (var s in text)
-            {
-                if (s.StartsWith("#"))
-                {
-                    sb.Append(s);
-                    continue;
-                }
-
-                var split = s.Split(new[] {'='}, 2);
-
-                if (split.Length == 0 || string.IsNullOrEmpty(split[0]))
-                    continue;
-
-                if (split.Length == 1)
-                    split = new[] {split[0], ""};
-
-                var pred = _config.Find(p => p.Key == split[0]);
-
-                if (pred == null)
-                    _config.Add(new Parameter(split[0], split[1], sb.ToString()));
-                else
-                    throw new ArgumentException("Duplicated parameter", split[0]);
-
-                sb.Clear();
-            }
-
-            _lastUpdate = DateTime.Now;
         }
 
         /// <inheritdoc />
@@ -206,6 +152,60 @@ namespace RadLibrary.Configuration.Managers
                 }
 
             File.WriteAllText(_filename, s.ToString());
+        }
+
+        private void ReloadConfiguration()
+        {
+            if (!NeedToReload())
+                return;
+
+            if (!File.Exists(_filename))
+                File.Create(_filename).Close();
+
+            _config = new List<Parameter>();
+
+            string[] text;
+
+            try
+            {
+                text = File.ReadAllLines(_filename);
+            }
+            catch
+            {
+                Thread.Sleep(150);
+                text = File.ReadAllLines(_filename);
+            }
+
+            // comment builder
+            var sb = new StringBuilder();
+
+            foreach (var s in text)
+            {
+                if (s.StartsWith("#"))
+                {
+                    sb.Append(s);
+                    continue;
+                }
+
+                var split = s.Split(new[] {'='}, 2);
+
+                if (split.Length == 0 || string.IsNullOrEmpty(split[0]))
+                    continue;
+
+                if (split.Length == 1)
+                    split = new[] {split[0], ""};
+
+                var pred = _config.Find(p => p.Key == split[0]);
+
+                if (pred == null)
+                    _config.Add(new Parameter(split[0], split[1], sb.ToString()));
+                else
+                    throw new ArgumentException("Duplicated parameter", split[0]);
+
+                sb.Clear();
+            }
+
+            _lastUpdate = DateTime.Now;
         }
 
         private bool NeedToReload()

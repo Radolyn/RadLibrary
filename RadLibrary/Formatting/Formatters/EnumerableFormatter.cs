@@ -9,7 +9,7 @@ using RadLibrary.Formatting.Abstractions;
 namespace RadLibrary.Formatting.Formatters
 {
     /// <inheritdoc />
-    internal class EnumerableFormatter : ObjectFormatter<IEnumerable>
+    public class EnumerableFormatter : ObjectFormatter<IEnumerable>
     {
         public override int Priority { get; } = 0;
 

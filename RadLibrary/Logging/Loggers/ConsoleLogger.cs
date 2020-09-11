@@ -11,7 +11,7 @@ using RadLibrary.Colors;
 namespace RadLibrary.Logging.Loggers
 {
     /// <summary>
-    ///     RadLoggerBase that prints logs in console. Arguments: no
+    ///     Logger that prints logs in console. Arguments: no
     /// </summary>
     public class ConsoleLogger : RadLoggerBase
     {

@@ -9,7 +9,7 @@ using System.Linq;
 namespace RadLibrary.Logging.Loggers
 {
     /// <summary>
-    ///     RadLoggerBase that does nothing by itself, but if you pass some loggers in arguments, it'll log in them. Arguments:
+    ///     Logger that does nothing by itself, but if you pass some loggers in arguments, it'll log in them. Arguments:
     ///     pass all loggers that you want to log in.
     ///     If you want to change settings, it'll change settings of all loggers that you passed in.
     /// </summary>

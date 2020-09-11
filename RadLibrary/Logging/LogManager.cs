@@ -179,9 +179,19 @@ namespace RadLibrary.Logging
             return CreateLogger(settings);
         }
 
+        /// <summary>
+        ///     Returns logger by name
+        /// </summary>
+        /// <param name="name">The name</param>
+        /// <returns>The logger</returns>
+        public static IEnumerable<LoggerBase> GetLoggerByName(string name)
+        {
+            return Loggers.FindAll(x => x.Settings.Name == name);
+        }
+
         private static LoggerBase CreateLogger(LoggerSettings settings)
         {
-            var predicate = Loggers.Find(x => x.Settings == settings);
+            var predicate = Loggers.Find(x => x.Settings.Equals(settings));
 
             if (predicate != null)
                 return predicate;

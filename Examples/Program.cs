@@ -1,10 +1,12 @@
 ﻿#region
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using RadLibrary;
 using RadLibrary.Configuration;
 using RadLibrary.Configuration.Managers;
+using RadLibrary.ConsoleExperience;
 using RadLibrary.Logging;
 
 #endregion
@@ -17,6 +19,13 @@ namespace Examples
         {
             Utilities.Initialize();
 
+            ColorfulConsoleTest();
+
+            //HotReloadTest();
+        }
+
+        private static void LoggerTest()
+        {
             var settings = new LoggerSettings
             {
                 FormatJson = false
@@ -48,15 +57,16 @@ namespace Examples
 
                 logger.Info(list, dict, set);
             }
+        }
 
+        private static void ConfigTest()
+        {
             var config = AppConfiguration.Initialize<FileManager>("example");
 
             config["exampleKey"] = "example";
             config.SetComment("exampleKey", "Defines example key.");
-
-            logger.Warn(config);
-
-            HotReloadTest();
+            
+            ColorfulConsole.WriteLine(config);
         }
 
         private static void HotReloadTest()
@@ -82,6 +92,27 @@ namespace Examples
                 logger.Info(config);
                 logger.Warn(instance.CoolParam);
             }
+        }
+
+        private static void ColorfulConsoleTest()
+        {
+            ColorfulConsole.WriteLine(new List<string>
+            {
+                "asdsads",
+                "asddad"
+            });
+            
+            ColorfulConsole.WriteLine(new HashSet<string>
+            {
+                "asdsads",
+                "asddad"
+            });
+            
+            ColorfulConsole.WriteLine("[fff123]{0}", new HashSet<string>
+            {
+                "asdsads",
+                "asddad"
+            }.Select(x => x));
         }
     }
 }

@@ -9,12 +9,6 @@ namespace RadLibrary.ConsoleExperience.ProgressBar
 {
     public class ColorfulProgressBar
     {
-        public int Left { get; }
-        public int Top { get; }
-        public long Total { get; set; }
-
-        public IStyle Style { get; set; } = new DefaultStyle(50);
-
         public ColorfulProgressBar(int total) : this(Console.CursorLeft, Console.CursorLeft, total)
         {
         }
@@ -25,6 +19,12 @@ namespace RadLibrary.ConsoleExperience.ProgressBar
             Top = top;
             Total = total;
         }
+
+        public int Left { get; }
+        public int Top { get; }
+        public long Total { get; set; }
+
+        public IStyle Style { get; set; } = new DefaultStyle(50);
 
         /// <summary>
         ///     Prints progress bar

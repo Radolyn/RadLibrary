@@ -23,6 +23,22 @@ namespace RadLibrary.Configuration
         private object _configInstance;
 
         /// <summary>
+        ///     Initializes configuration manager
+        /// </summary>
+        /// <param name="name">The name</param>
+        /// <param name="manager">The manager</param>
+        private AppConfiguration(string name, IConfigurationManager manager)
+        {
+            _manager = manager;
+            _manager.Setup(name);
+            _manager.ConfigurationUpdated += configurationManager =>
+            {
+                Cast();
+                ConfigurationUpdated?.Invoke(configurationManager);
+            };
+        }
+
+        /// <summary>
         ///     Enables or disables hot reload
         /// </summary>
         public bool HotReload
@@ -37,19 +53,14 @@ namespace RadLibrary.Configuration
         public IReadOnlyList<Parameter> Parameters => _manager.GetParameters();
 
         /// <summary>
-        ///     Initializes configuration manager
+        ///     Gets or sets string
         /// </summary>
-        /// <param name="name">The name</param>
-        /// <param name="manager">The manager</param>
-        private AppConfiguration(string name, IConfigurationManager manager)
+        /// <param name="key">The key</param>
+        public string this[string key]
         {
-            _manager = manager;
-            _manager.Setup(name);
-            _manager.ConfigurationUpdated += configurationManager =>
-            {
-                Cast();
-                ConfigurationUpdated?.Invoke(configurationManager);
-            };
+            get => _manager.GetString(key);
+
+            set => _manager.SetString(key, value);
         }
 
         /// <summary>
@@ -198,16 +209,5 @@ namespace RadLibrary.Configuration
         ///     Notices about configuration update
         /// </summary>
         public event ConfigurationUpdated ConfigurationUpdated;
-
-        /// <summary>
-        ///     Gets or sets string
-        /// </summary>
-        /// <param name="key">The key</param>
-        public string this[string key]
-        {
-            get => _manager.GetString(key);
-
-            set => _manager.SetString(key, value);
-        }
     }
 }

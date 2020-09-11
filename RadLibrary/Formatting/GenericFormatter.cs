@@ -10,15 +10,15 @@ namespace RadLibrary.Formatting
     public class GenericFormatter : IFormatProvider, ICustomFormatter
     {
         /// <inheritdoc />
-        public object GetFormat(Type formatType)
+        public virtual string Format(string format, object arg, IFormatProvider formatProvider)
         {
-            return formatType == typeof(ICustomFormatter) ? this : null;
+            return FormattersStorage.GetCustomFormatterResult(arg!);
         }
 
         /// <inheritdoc />
-        public string Format(string format, object arg, IFormatProvider formatProvider)
+        public virtual object GetFormat(Type formatType)
         {
-            return FormattersStorage.GetCustomFormatterResult(arg!);
+            return formatType == typeof(ICustomFormatter) ? this : null;
         }
     }
 }

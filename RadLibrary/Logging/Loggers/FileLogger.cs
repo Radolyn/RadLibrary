@@ -9,11 +9,19 @@ using System.Text;
 namespace RadLibrary.Logging.Loggers
 {
     /// <summary>
-    ///     RadLoggerBase that prints logs in file. Arguments: filename (opt.), FileMode (opt.)
+    ///     Logger that prints logs in file. Arguments: filename (opt.), FileMode (opt.)
     /// </summary>
     public class FileLogger : RadLoggerBase, IDisposable
     {
         private FileStream _fileStream;
+
+        /// <summary>
+        ///     Disposes logger
+        /// </summary>
+        public void Dispose()
+        {
+            _fileStream?.Dispose();
+        }
 
         /// <inheritdoc />
         public override void Initialize()
@@ -40,14 +48,6 @@ namespace RadLibrary.Logging.Loggers
             _fileStream.Write(bytes, 0, bytes.Length);
             _fileStream.Flush();
         }
-
-        /// <summary>
-        ///     Disposes logger
-        /// </summary>
-        public void Dispose()
-        {
-            _fileStream?.Dispose();
-        }
     }
 
     /// <summary>
@@ -55,8 +55,8 @@ namespace RadLibrary.Logging.Loggers
     /// </summary>
     public class FileLoggerSettings : LoggerSettings
     {
-        public readonly string FileName;
         public readonly FileMode FileMode = FileMode.Append;
+        public readonly string FileName;
 
         public FileLoggerSettings()
         {

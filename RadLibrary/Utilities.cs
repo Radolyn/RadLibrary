@@ -16,6 +16,9 @@ namespace RadLibrary
 {
     public static class Utilities
     {
+        private const int StdOutputHandle = -11;
+
+        private static Random _random;
         // Windows console coloring support
 
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -23,10 +26,6 @@ namespace RadLibrary
 
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern int AllocConsole();
-
-        private const int StdOutputHandle = -11;
-
-        private static Random _random;
 
         /// <summary>
         ///     Initializes Colorizer and FormattersStorage

@@ -3,21 +3,6 @@
     public class Parameter
     {
         /// <summary>
-        ///     The key
-        /// </summary>
-        public string Key { get; internal set; }
-
-        /// <summary>
-        ///     The value
-        /// </summary>
-        public string Value { get; internal set; }
-
-        /// <summary>
-        ///     The comment
-        /// </summary>
-        public string Comment { get; internal set; }
-
-        /// <summary>
         ///     Initializes class
         /// </summary>
         public Parameter()
@@ -36,5 +21,20 @@
             Value = value;
             Comment = comment;
         }
+
+        /// <summary>
+        ///     The key
+        /// </summary>
+        public string Key { get; internal set; }
+
+        /// <summary>
+        ///     The value
+        /// </summary>
+        public string Value { get; internal set; }
+
+        /// <summary>
+        ///     The comment
+        /// </summary>
+        public string Comment { get; internal set; }
     }
 }

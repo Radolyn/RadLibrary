@@ -10,6 +10,21 @@ namespace RadLibrary.ConsoleExperience.ProgressBar.Styles
 {
     public class DefaultStyle : IStyle
     {
+        protected readonly int _length;
+
+        protected string _prefix = "";
+
+        protected Color _prefixColor;
+        protected string _separator = "|";
+        protected Color _separatorColor;
+        protected string _suffix = "";
+        protected Color _suffixColor;
+
+        public DefaultStyle(int length)
+        {
+            _length = length;
+        }
+
         /// <summary>
         ///     The prefix
         /// </summary>
@@ -99,21 +114,6 @@ namespace RadLibrary.ConsoleExperience.ProgressBar.Styles
                 _separatorColor = value;
                 _separator = _separator.DeColorize().Colorize(_separatorColor);
             }
-        }
-
-        protected readonly int _length;
-
-        protected Color _prefixColor;
-        protected Color _suffixColor;
-        protected Color _separatorColor;
-
-        protected string _prefix = "";
-        protected string _suffix = "";
-        protected string _separator = "|";
-
-        public DefaultStyle(int length)
-        {
-            _length = length;
         }
 
         /// <inheritdoc />

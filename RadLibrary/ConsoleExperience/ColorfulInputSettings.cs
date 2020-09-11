@@ -10,14 +10,9 @@ namespace RadLibrary.ConsoleExperience
     public sealed class ColorfulInputSettings
     {
         /// <summary>
-        ///     The prefix
+        ///     The arrows background color
         /// </summary>
-        public string Prefix;
-
-        /// <summary>
-        ///     The prediction engine
-        /// </summary>
-        public IPredictionEngine Engine;
+        public Color ArrowsBackgroundColor = Color.Black;
 
         /// <summary>
         ///     The arrows foreground color
@@ -25,19 +20,9 @@ namespace RadLibrary.ConsoleExperience
         public Color ArrowsForegroundColor = Color.Aquamarine;
 
         /// <summary>
-        ///     The input text foreground color
+        ///     The prediction engine
         /// </summary>
-        public Color InputForegroundColor = Color.White;
-
-        /// <summary>
-        ///     The prediction text foreground color
-        /// </summary>
-        public Color PredictionForegroundColor = Color.Goldenrod;
-
-        /// <summary>
-        ///     The arrows background color
-        /// </summary>
-        public Color ArrowsBackgroundColor = Color.Black;
+        public IPredictionEngine Engine;
 
         /// <summary>
         ///     The input text background color
@@ -45,8 +30,23 @@ namespace RadLibrary.ConsoleExperience
         public Color InputBackgroundColor = Color.Black;
 
         /// <summary>
+        ///     The input text foreground color
+        /// </summary>
+        public Color InputForegroundColor = Color.White;
+
+        /// <summary>
         ///     The prediction text background color
         /// </summary>
         public Color PredictionBackgroundColor = Color.Black;
+
+        /// <summary>
+        ///     The prediction text foreground color
+        /// </summary>
+        public Color PredictionForegroundColor = Color.Goldenrod;
+
+        /// <summary>
+        ///     The prefix
+        /// </summary>
+        public string Prefix;
     }
 }

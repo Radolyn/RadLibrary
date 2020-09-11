@@ -11,10 +11,10 @@ namespace RadLibrary.Logging
 {
     public abstract class RadLoggerBase : LoggerBase
     {
+        private readonly object _formatterLock = new object();
         private readonly Regex _jsonRegex = new Regex(@"(({)|(\[)).*\s*:\s*.*((})|(\]))", RegexOptions.Compiled);
 
         private StringFormatter _formatter;
-        private readonly object _formatterLock = new object();
 
         /// <summary>
         ///     The log action

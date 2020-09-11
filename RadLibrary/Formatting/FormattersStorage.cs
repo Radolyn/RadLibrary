@@ -25,11 +25,6 @@ namespace RadLibrary.Formatting
         private static readonly IObjectFormatter NullFormatter = new NullFormatter();
 
         /// <summary>
-        ///     The all registered in the storage formatters
-        /// </summary>
-        public static IEnumerable<IObjectFormatter> RegisteredFormatters => Formatters.Skip(0);
-
-        /// <summary>
         ///     Pass this as first parameter in string.Format to apply formatting
         /// </summary>
         public static readonly IFormatProvider FormatProvider = new GenericFormatter();
@@ -38,6 +33,11 @@ namespace RadLibrary.Formatting
         ///     The maximum recursion level. Will return "..." on reaching this value
         /// </summary>
         public static int MaxRecursion = 10;
+
+        /// <summary>
+        ///     The all registered in the storage formatters
+        /// </summary>
+        public static IEnumerable<IObjectFormatter> RegisteredFormatters => Formatters.Skip(0);
 
         /// <summary>
         ///     Adds default formatters

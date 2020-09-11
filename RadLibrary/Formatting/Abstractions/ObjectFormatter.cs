@@ -14,17 +14,23 @@ namespace RadLibrary.Formatting.Abstractions
     /// <typeparam name="T">The type</typeparam>
     public abstract class ObjectFormatter<T> : IObjectFormatter where T : class
     {
+        public virtual int Priority { get; } = 1;
+
+        /// <inheritdoc />
+        public virtual Type Type { get; } = typeof(T);
+
+        /// <inheritdoc />
+        public virtual string Format(object obj)
+        {
+            return GetRecursionDeep() >= FormattersStorage.MaxRecursion ? "..." : FormatObject((obj as T)!);
+        }
+
         /// <summary>
         ///     Formats specified object
         /// </summary>
         /// <param name="obj">The object</param>
         /// <returns>The formatted string</returns>
         public abstract string FormatObject(T obj);
-
-        public virtual int Priority { get; } = 1;
-
-        /// <inheritdoc />
-        public virtual Type Type { get; } = typeof(T);
 
         /// <summary>
         ///     Returns the recursion deep
@@ -39,12 +45,6 @@ namespace RadLibrary.Formatting.Abstractions
             var count = frames!.Count(x => x?.GetMethod()?.Name == nameof(FormatObject));
 
             return count;
-        }
-
-        /// <inheritdoc />
-        public virtual string Format(object obj)
-        {
-            return GetRecursionDeep() >= FormattersStorage.MaxRecursion ? "..." : FormatObject((obj as T)!);
         }
     }
 }

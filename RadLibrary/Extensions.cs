@@ -8,7 +8,7 @@ using System.Text;
 
 namespace RadLibrary
 {
-    public static class Extensions
+    public static class RadExtensions
     {
         /// <summary>
         ///     Returns random item from enumerable
