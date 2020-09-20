@@ -7,16 +7,16 @@ using System;
 namespace RadLibrary.Formatting
 {
     /// <inheritdoc cref="ICustomFormatter" />
-    public class GenericFormatter : IFormatProvider, ICustomFormatter
+    public sealed class GenericFormatter : IFormatProvider, ICustomFormatter
     {
         /// <inheritdoc />
-        public virtual string Format(string format, object arg, IFormatProvider formatProvider)
+        public string Format(string format, object arg, IFormatProvider formatProvider)
         {
             return FormattersStorage.GetCustomFormatterResult(arg!);
         }
 
         /// <inheritdoc />
-        public virtual object GetFormat(Type formatType)
+        public object GetFormat(Type formatType)
         {
             return formatType == typeof(ICustomFormatter) ? this : null;
         }

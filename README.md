@@ -1,8 +1,8 @@
 # RadLibrary
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8a8fb2ca7f4148e2a484b79725f2de27)](https://app.codacy.com/gh/Radolyn/RadLibrary?utm_source=github.com&utm_medium=referral&utm_content=Radolyn/RadLibrary&utm_campaign=Badge_Grade_Dashboard)
-[![CodeFactor](https://www.codefactor.io/repository/github/radolyn/radlibrary/badge)](https://www.codefactor.io/repository/github/radolyn/radlibrary)
-[![NuGet](https://img.shields.io/nuget/v/RadLibrary.svg)](https://www.nuget.org/packages/RadLibrary/)
+[![Codacy Badge](https://img.shields.io/codacy/grade/dbd6443c52e6446086f30d4ea9a95223?style=flat-square)](https://app.codacy.com/gh/Radolyn/RadLibrary/dashboard)
+[![CodeFactor](https://img.shields.io/codefactor/grade/github/radolyn/radlibrary?style=flat-square)](https://www.codefactor.io/repository/github/radolyn/radlibrary)
+[![NuGet](https://img.shields.io/nuget/v/radlibrary?style=flat-square)](https://www.nuget.org/packages/RadLibrary/)
 
 All-In-One library
 
@@ -22,6 +22,12 @@ All-In-One library
   - Comments support
   - Casts support
   - Scheme support
+- Formatters
+  - AppConfiguration
+  - Any types of Enumerables
+  - Exception
+  - String
+  - __Custom__
 
 ## Getting started
 

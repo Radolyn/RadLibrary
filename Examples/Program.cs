@@ -65,7 +65,7 @@ namespace Examples
 
             config["exampleKey"] = "example";
             config.SetComment("exampleKey", "Defines example key.");
-            
+
             ColorfulConsole.WriteLine(config);
         }
 
@@ -101,13 +101,13 @@ namespace Examples
                 "asdsads",
                 "asddad"
             });
-            
+
             ColorfulConsole.WriteLine(new HashSet<string>
             {
                 "asdsads",
                 "asddad"
             });
-            
+
             ColorfulConsole.WriteLine("[fff123]{0}", new HashSet<string>
             {
                 "asdsads",

@@ -55,12 +55,12 @@ namespace RadLibrary.Tests
 
     public class Config
     {
-        [SchemeParameter(Comment = "Really cool string", Key = "someCoolKey")]
-        public string CoolString;
-
         [SchemeParameter]
         // ReSharper disable once InconsistentNaming
         public int coolInt;
+
+        [SchemeParameter(Comment = "Really cool string", Key = "someCoolKey")]
+        public string CoolString;
 
         [SchemeParameter(Comment = "sad string")]
         public string NotCoolString = "is that cool?";

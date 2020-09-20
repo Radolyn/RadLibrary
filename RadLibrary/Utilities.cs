@@ -19,7 +19,12 @@ namespace RadLibrary
         private const int StdOutputHandle = -11;
 
         private static Random _random;
-        // Windows console coloring support
+
+        /// <summary>
+        ///     Checks whether the current system is Windows or not
+        /// </summary>
+        /// <returns>true if Windows, otherwise false</returns>
+        public static bool IsWindows => RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         internal static extern IntPtr GetStdHandle(int nStdHandle);
@@ -37,21 +42,13 @@ namespace RadLibrary
         }
 
         /// <summary>
-        ///     Infinite loop (use with caution!)
-        /// </summary>
-        public static void InfiniteWait()
-        {
-            SpinWait.SpinUntil(() => false);
-        }
-
-        /// <summary>
         ///     Allocate console with specified encoding. Works on Windows only
         /// </summary>
         /// <param name="encoding">The encoding</param>
         /// <param name="clearConsole">If set to true, console will be cleared after allocation</param>
         public static void AllocateConsole(Encoding encoding = null, bool clearConsole = true)
         {
-            if (!IsWindows() || Debugger.IsAttached)
+            if (!IsWindows || Debugger.IsAttached)
                 return;
 
             encoding ??= Encoding.UTF8;
@@ -67,15 +64,6 @@ namespace RadLibrary
 
             if (clearConsole)
                 Console.Clear();
-        }
-
-        /// <summary>
-        ///     Checks whether the current system is Windows or not
-        /// </summary>
-        /// <returns>true if Windows, otherwise false</returns>
-        public static bool IsWindows()
-        {
-            return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
         }
 
         /// <summary>

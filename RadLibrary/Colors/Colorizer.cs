@@ -13,11 +13,13 @@ namespace RadLibrary.Colors
 {
     public static class Colorizer
     {
-        private static bool _isInitialized;
-
         private const int StdOutputHandle = -11;
         private const uint EnableVirtualTerminalProcessing = 0x0004;
         private const uint DisableNewlineAutoReturn = 0x0008;
+        private static bool _isInitialized;
+
+        private static readonly Regex _colorsRegex =
+            new Regex("\x1b\\[\\d{2};2;\\d{1,3};\\d{1,3};\\d{1,3}m", RegexOptions.Compiled);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
@@ -25,16 +27,13 @@ namespace RadLibrary.Colors
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
 
-        private static readonly Regex _colorsRegex =
-            new Regex("\x1b\\[\\d{2};2;\\d{1,3};\\d{1,3};\\d{1,3}m", RegexOptions.Compiled);
-
         /// <summary>
         ///     Initializes colors system
         /// </summary>
         /// <exception cref="Win32Exception">If failed to set color mode</exception>
         public static void Initialize()
         {
-            if (_isInitialized || !Utilities.IsWindows() || Console.IsOutputRedirected)
+            if (_isInitialized || !Utilities.IsWindows || Console.IsOutputRedirected)
             {
                 _isInitialized = true;
                 return;

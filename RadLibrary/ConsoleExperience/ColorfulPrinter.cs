@@ -52,10 +52,9 @@ namespace RadLibrary.ConsoleExperience
         /// <summary>
         ///     Writes message with new line to console
         /// </summary>
-        /// <param name="message">The message</param>
+        /// <param name="args">The objects</param>
         public static void WriteLine(params object[] args)
         {
-            // todo: fix x2 new line
             Write(LoggerBase.ParseArguments(args) + Environment.NewLine);
         }
 
@@ -72,9 +71,9 @@ namespace RadLibrary.ConsoleExperience
         /// <summary>
         ///     Writes message at specified place in console buffer, then returns cursor back
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="top"></param>
-        /// <param name="left"></param>
+        /// <param name="message">The message</param>
+        /// <param name="top">The top offset</param>
+        /// <param name="left">The left offset</param>
         public static void WriteAt(string message, int top, int left = 0)
         {
             var msg = InternalColorizer(message);

@@ -12,7 +12,7 @@ namespace RadLibrary.Formatting.Formatters
 {
     public class HashSetFormatter : ObjectFormatter<object>
     {
-        public override Type Type { get; } = typeof(HashSet<>);
+        public override Type Type { get; } = typeof(ISet<>);
 
         public override string FormatObject(object obj)
         {
