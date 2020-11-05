@@ -7,7 +7,7 @@ using RadLibrary.Formatting;
 
 namespace RadLibrary.Logging
 {
-    public class LoggerSettings
+    public class LoggerSettings : IEquatable<LoggerSettings>
     {
         /// <summary>
         ///     The name max length. Can be set with <see cref="LogManager" /> before creating any loggers
@@ -60,6 +60,54 @@ namespace RadLibrary.Logging
         {
             get => FormattersStorage.MaxRecursion;
             set => FormattersStorage.MaxRecursion = value;
+        }
+
+        /// <inheritdoc />
+        public bool Equals(LoggerSettings other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return FormatJson == other.FormatJson &&
+                   string.Equals(LogFormat, other.LogFormat, StringComparison.OrdinalIgnoreCase) &&
+                   Equals(Logger, other.Logger) && LoggingLevel == other.LoggingLevel &&
+                   string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase) && string.Equals(TimeFormat,
+                       other.TimeFormat, StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((LoggerSettings) obj);
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = FormatJson.GetHashCode();
+                hashCode = (hashCode * 397) ^
+                           (LogFormat != null ? StringComparer.OrdinalIgnoreCase.GetHashCode(LogFormat) : 0);
+                hashCode = (hashCode * 397) ^ (Logger != null ? Logger.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (int) LoggingLevel;
+                hashCode = (hashCode * 397) ^ (Name != null ? StringComparer.OrdinalIgnoreCase.GetHashCode(Name) : 0);
+                hashCode = (hashCode * 397) ^
+                           (TimeFormat != null ? StringComparer.OrdinalIgnoreCase.GetHashCode(TimeFormat) : 0);
+                return hashCode;
+            }
+        }
+
+        public static bool operator ==(LoggerSettings left, LoggerSettings right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(LoggerSettings left, LoggerSettings right)
+        {
+            return !Equals(left, right);
         }
     }
 }

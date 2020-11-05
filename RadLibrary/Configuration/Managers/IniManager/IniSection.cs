@@ -45,6 +45,12 @@ namespace RadLibrary.Configuration.Managers.IniManager
         }
 
         /// <inheritdoc />
+        public TU ValueAs<TU>() where TU : new()
+        {
+            return (TU) Convert.ChangeType(Value, typeof(TU));
+        }
+
+        /// <inheritdoc />
         public override string ToString()
         {
             return Value;

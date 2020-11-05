@@ -17,7 +17,8 @@ namespace RadLibrary.Logging.Loggers
         /// <inheritdoc />
         public void Dispose()
         {
-            _fileStream?.Dispose();
+            _fileStream.Dispose();
+            _fileStream.BaseStream.Dispose();
         }
 
         /// <inheritdoc />
@@ -29,12 +30,10 @@ namespace RadLibrary.Logging.Loggers
 
             if (settings == null)
                 _fileStream = new StreamWriter(new FileStream(name, FileMode.OpenOrCreate, FileAccess.Write,
-                    FileShare.ReadWrite));
+                    FileShare.Read));
             else
                 _fileStream = new StreamWriter(new FileStream(settings.FileName ?? name, settings.FileMode,
-                    FileAccess.Write, FileShare.ReadWrite));
-
-            _fileStream.AutoFlush = true;
+                    FileAccess.Write, FileShare.Read));
 
             _fileStream.WriteLine($"\nLog started at: {DateTime.Now.ToString(Settings.TimeFormat)}\n");
         }
@@ -43,6 +42,7 @@ namespace RadLibrary.Logging.Loggers
         protected override void Log(LogType type, string message, string formatted)
         {
             _fileStream.WriteLine(formatted);
+            _fileStream.Flush();
         }
     }
 

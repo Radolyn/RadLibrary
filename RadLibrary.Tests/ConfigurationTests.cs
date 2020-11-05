@@ -35,5 +35,22 @@ namespace RadLibrary.Tests
             Assert.True(File.ReadAllText(file).Length != 0);
             Assert.True(config.Sections.Count() == 3);
         }
+
+        [Fact]
+        public void TypeConversionsTest()
+        {
+            const string file = "test2.ini";
+
+            File.WriteAllText(file, "key1 = false\nkey2 = 1338\n");
+
+            var config = new IniManager(file);
+            config.Load();
+
+            var key1 = config["key1"].ValueAs<bool>();
+            var key2 = config["key2"].ValueAs<int>();
+
+            Assert.False(key1);
+            Assert.Equal(1338, key2);
+        }
     }
 }

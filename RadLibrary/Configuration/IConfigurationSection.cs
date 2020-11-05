@@ -32,5 +32,7 @@
         /// <param name="value">The value</param>
         /// <typeparam name="T">The type of value</typeparam>
         public void SetValue<T>(T value);
+
+        TU ValueAs<TU>() where TU : new();
     }
 }

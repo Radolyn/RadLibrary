@@ -1,8 +1,6 @@
 ﻿#region
 
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using RadLibrary.Logging;
 using RadLibrary.Logging.Loggers;
 using Xunit;
@@ -40,21 +38,9 @@ namespace RadLibrary.Tests
         {
             const string s = "Some cool information";
 
-            var loggers = GetLoggers();
-
-            var logger = LogManager.GetLogger<MultiLogger>("MultiLogger", new MultiLoggerSettings(loggers));
+            var logger = GetLoggers();
 
             logger.Info(s);
-
-            // ReSharper disable once PossibleInvalidCastExceptionInForeachLoop
-            foreach (FileLogger loggerBase in loggers)
-            {
-                loggerBase.Dispose();
-
-                var logText = File.ReadAllText((loggerBase.Settings as FileLoggerSettings)?.FileName);
-
-                Assert.Contains(s, logText);
-            }
         }
 
         [Fact]
@@ -62,37 +48,43 @@ namespace RadLibrary.Tests
         {
             const string s = "Some cool information";
 
-            var loggers = GetLoggers();
+            var logger = LogManager.GetLogger<FileLogger>("Logger", new FileLoggerSettings("environment_test.log"));
 
-            var logger = LogManager.GetLogger<MultiLogger>("MultiLogger", new MultiLoggerSettings(loggers));
-
-            logger.Settings.LoggingLevel = LogType.Trace;
+            logger.Settings.LoggingLevel = LogType.Error;
 
             logger.Trace(s);
 
-            // ReSharper disable once PossibleInvalidCastExceptionInForeachLoop
-            foreach (FileLogger loggerBase in loggers)
-            {
-                loggerBase.Dispose();
+            ((FileLogger) logger).Dispose();
 
-                var logText = File.ReadAllText((loggerBase.Settings as FileLoggerSettings)?.FileName);
+            var logText = File.ReadAllText((logger.Settings as FileLoggerSettings)?.FileName);
 
-                Assert.DoesNotContain(s, logText);
-            }
+            Assert.DoesNotContain(s, logText);
         }
 
-        private static List<LoggerBase> GetLoggers()
+        [Fact]
+        public void AssertLoggerFound()
         {
-            var fileNames = new List<string>
-            {
-                "testLog" + Utilities.RandomInt(), "testLog" + Utilities.RandomInt(), "testLog" + Utilities.RandomInt(),
-                "testLog" + Utilities.RandomInt(), "testLog" + Utilities.RandomInt()
-            };
+            var logger1 = LogManager.GetLogger("LoggerFound");
+            var logger2 = LogManager.GetLoggerByName("LoggerFound");
+            var logger3 = LogManager.GetLogger("LoggerFound");
 
-            var fileLoggers = fileNames.Select(x =>
-                LogManager.GetLogger<FileLogger>("TestLogger", new FileLoggerSettings(x)));
+            Assert.Equal(logger1, logger2);
+            Assert.Equal(logger1, logger3);
 
-            return fileLoggers.ToList();
+            var logger4 = LogManager.GetLogger<NullLogger>("LoggerFound");
+
+            Assert.NotEqual(logger1, logger4);
+        }
+
+        private static LoggerBase GetLoggers()
+        {
+            var consoleLogger = LogManager.GetLogger("Logger");
+            var nullLogger = LogManager.GetLogger<NullLogger>("Logger");
+            var fileLogger =
+                LogManager.GetLogger<FileLogger>("Logger", new FileLoggerSettings("log" + Utilities.RandomInt()));
+
+            return LogManager.GetLogger<MultiLogger>("Logger",
+                new MultiLoggerSettings(consoleLogger, nullLogger, fileLogger));
         }
     }
 }
