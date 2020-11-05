@@ -2,10 +2,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using RadLibrary;
-using RadLibrary.Configuration;
-using RadLibrary.Configuration.Managers;
 using RadLibrary.ConsoleExperience;
 using RadLibrary.Logging;
 
@@ -56,41 +53,6 @@ namespace Examples
                 };
 
                 logger.Info(list, dict, set);
-            }
-        }
-
-        private static void ConfigTest()
-        {
-            var config = AppConfiguration.Initialize<FileManager>("example");
-
-            config["exampleKey"] = "example";
-            config.SetComment("exampleKey", "Defines example key.");
-
-            ColorfulConsole.WriteLine(config);
-        }
-
-        private static void HotReloadTest()
-        {
-            var config = AppConfiguration.Initialize<FileManager>("example2");
-
-            config.HotReload = true;
-
-            var instance = config.Cast<Config>();
-
-            config.EnsureScheme(typeof(Config));
-
-            var settings = new LoggerSettings
-            {
-                FormatJson = false
-            };
-
-            var logger = LogManager.GetClassLogger(settings);
-
-            for (var i = 0; i < 100; i++)
-            {
-                Thread.Sleep(1000);
-                logger.Info(config);
-                logger.Warn(instance.CoolParam);
             }
         }
 

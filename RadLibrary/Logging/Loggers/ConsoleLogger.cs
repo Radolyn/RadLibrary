@@ -25,7 +25,7 @@ namespace RadLibrary.Logging.Loggers
         /// <inheritdoc />
         protected override void Log(LogType type, string message, string formatted)
         {
-            Console.WriteLine(
+            Console.Out.WriteLine(
                 formatted.Colorize(ColorSettings.Colors[type]));
         }
     }

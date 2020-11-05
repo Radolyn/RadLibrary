@@ -2,7 +2,6 @@
 
 using System;
 using System.IO;
-using System.Text;
 
 #endregion
 
@@ -13,11 +12,9 @@ namespace RadLibrary.Logging.Loggers
     /// </summary>
     public class FileLogger : RadLoggerBase, IDisposable
     {
-        private FileStream _fileStream;
+        private StreamWriter _fileStream;
 
-        /// <summary>
-        ///     Disposes logger
-        /// </summary>
+        /// <inheritdoc />
         public void Dispose()
         {
             _fileStream?.Dispose();
@@ -31,29 +28,28 @@ namespace RadLibrary.Logging.Loggers
             var name = DateTime.Now.ToString("HH_mm_") + Settings.Name + ".txt";
 
             if (settings == null)
-                _fileStream = new FileStream(name, FileMode.Append);
+                _fileStream = new StreamWriter(new FileStream(name, FileMode.OpenOrCreate, FileAccess.Write,
+                    FileShare.ReadWrite));
             else
-                _fileStream = new FileStream(settings.FileName ?? name, settings.FileMode);
+                _fileStream = new StreamWriter(new FileStream(settings.FileName ?? name, settings.FileMode,
+                    FileAccess.Write, FileShare.ReadWrite));
 
-            var startLog =
-                Encoding.UTF8.GetBytes("\n\nLog started at: " + DateTime.Now.ToString(Settings.TimeFormat) + "\n\n\n");
+            _fileStream.AutoFlush = true;
 
-            _fileStream.Write(startLog, 0, startLog.Length);
+            _fileStream.WriteLine($"\nLog started at: {DateTime.Now.ToString(Settings.TimeFormat)}\n");
         }
 
         /// <inheritdoc />
         protected override void Log(LogType type, string message, string formatted)
         {
-            var bytes = Encoding.UTF8.GetBytes(formatted + Environment.NewLine);
-            _fileStream.Write(bytes, 0, bytes.Length);
-            _fileStream.Flush();
+            _fileStream.WriteLine(formatted);
         }
     }
 
     /// <summary>
     ///     The file logger settings
     /// </summary>
-    public class FileLoggerSettings : LoggerSettings
+    public sealed class FileLoggerSettings : LoggerSettings
     {
         public readonly FileMode FileMode = FileMode.Append;
         public readonly string FileName;

@@ -1,10 +1,8 @@
 ﻿#region
 
-using System;
 using System.IO;
-using RadLibrary.Configuration;
-using RadLibrary.Configuration.Managers;
-using RadLibrary.Configuration.Scheme;
+using System.Linq;
+using RadLibrary.Configuration.Managers.IniManager;
 using Xunit;
 
 #endregion
@@ -13,67 +11,29 @@ namespace RadLibrary.Tests
 {
     public class ConfigurationTests
     {
-        public ConfigurationTests()
-        {
-            var dir = Path.Combine(Path.GetTempPath(), "configTest" + Utilities.RandomInt());
-
-            Directory.CreateDirectory(dir);
-
-            Environment.CurrentDirectory = dir;
-        }
-
         [Fact]
-        public void ConfigurationSchemeTest()
+        public void ConfigurationTest()
         {
-            var config = AppConfiguration.Initialize<FileManager>("basicTest" + Utilities.RandomInt());
+            const string file = "test1.ini";
 
-            config.EnsureScheme(typeof(Config));
+            File.WriteAllText(file, "\n\n\r\nsome_key =some value\r\n# some comment\n\nsome_second_key = \"some val\"");
 
-            config = AppConfiguration.Initialize<FileManager>("basicTest" + Utilities.RandomInt());
+            var config = new IniManager(file);
+            config.Load();
 
-            config.EnsureScheme(Config.GetScheme());
+            Assert.Equal("some value", config["some_key"].Value);
+            Assert.Equal("some val", config["some_second_key"].Value);
 
-            config = AppConfiguration.Initialize<FileManager>("basicTest" + Utilities.RandomInt());
+            config.Save();
 
-            ConfigurationScheme.Ensure<Config>(config);
+            config["another_key"] = "ok";
 
-            config.SetInteger("coolInt", 123);
+            config["another_key"] = new IniSection("another_key", "ok2", null, false);
 
-            var cfg = config.Cast<Config>();
+            config.Save();
 
-            Assert.Null(cfg.CoolString);
-        }
-
-        [Fact]
-        public void ConfigurationSchemeThrowsException()
-        {
-            var config = AppConfiguration.Initialize<FileManager>("basicTest" + Utilities.RandomInt());
-
-            Assert.Throws<ArgumentException>(() => config.EnsureScheme(typeof(Config), false));
-        }
-    }
-
-    public class Config
-    {
-        [SchemeParameter]
-        // ReSharper disable once InconsistentNaming
-        public int coolInt;
-
-        [SchemeParameter(Comment = "Really cool string", Key = "someCoolKey")]
-        public string CoolString;
-
-        [SchemeParameter(Comment = "sad string")]
-        public string NotCoolString = "is that cool?";
-
-        public static ConfigurationScheme GetScheme()
-        {
-            var scheme = new ConfigurationScheme();
-
-            scheme.AddParameter("someCoolKey", "", "Really cool string", typeof(string))
-                .AddParameter(new SchemeParameter("coolInt", 0, "", typeof(int)))
-                .AddParameter("notCoolString", "", "sad string", typeof(string));
-
-            return scheme;
+            Assert.True(File.ReadAllText(file).Length != 0);
+            Assert.True(config.Sections.Count() == 3);
         }
     }
 }

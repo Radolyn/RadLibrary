@@ -94,7 +94,7 @@ namespace RadLibrary.Formatting
             if (CachedFormatters.ContainsKey(type))
                 return CachedFormatters[type];
 
-            var pred = Formatters.Where(x =>
+            var predicate = Formatters.Where(x =>
             {
                 if (!x.Type.IsGenericType || !type.IsGenericType)
                     return x.Type.IsAssignableFrom(type);
@@ -106,31 +106,17 @@ namespace RadLibrary.Formatting
                        (generic2 as TypeInfo)!.ImplementedInterfaces.Any(y => y.GUID == generic1.GUID);
             }).ToList();
 
-            if (pred.Count == 1)
-                return pred[0];
+            if (predicate.Count == 1)
+                return predicate[0];
 
-            var theMostPriority = pred.Max(x => x.Priority);
+            var theMostPriority = predicate.Max(x => x.Priority);
 
-            var res = pred.First(x => x.Priority == theMostPriority);
+            var res = predicate.First(x => x.Priority == theMostPriority);
 
             CachedFormatters.TryAdd(type, res);
 
             return res;
         }
-
-        // /// <summary>
-        // ///     Returns formatter for specified type
-        // /// </summary>
-        // /// <typeparam name="T">The type</typeparam>
-        // /// <returns>The formatter</returns>
-        // public static IObjectFormatter GetCustomFormatter<T>() where T : class
-        // {
-        //     var type = typeof(T);
-        //
-        //     var pred = Formatters.FirstOrDefault(x => x.Type.IsAssignableFrom(type));
-        //
-        //     return pred ?? DefaultFormatter;
-        // }
 
         /// <summary>
         ///     Returns a result from formatter for specified object

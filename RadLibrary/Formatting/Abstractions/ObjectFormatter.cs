@@ -36,7 +36,7 @@ namespace RadLibrary.Formatting.Abstractions
         ///     Returns the recursion deep
         /// </summary>
         /// <returns>The recursion deep</returns>
-        public static int GetRecursionDeep()
+        protected static int GetRecursionDeep()
         {
             var stack = new StackTrace();
 

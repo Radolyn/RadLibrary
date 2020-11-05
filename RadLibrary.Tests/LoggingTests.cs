@@ -1,6 +1,5 @@
 ﻿#region
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,15 +13,6 @@ namespace RadLibrary.Tests
 {
     public sealed class LoggingTests
     {
-        public LoggingTests()
-        {
-            var dir = Path.Combine(Path.GetTempPath(), "loggingTest" + Utilities.RandomInt());
-
-            Directory.CreateDirectory(dir);
-
-            Environment.CurrentDirectory = dir;
-        }
-
         [Fact]
         public void AssertLoggerCreates()
         {

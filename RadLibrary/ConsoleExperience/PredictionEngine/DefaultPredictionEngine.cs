@@ -32,7 +32,7 @@ namespace RadLibrary.ConsoleExperience.PredictionEngine
 
         protected static string PredictHistory(string input)
         {
-            var history = ColorfulConsole.InputHistory.Where(s => s.StartsWith(input));
+            var history = ColorfulConsole.InputHistory.Where(s => s.StartsWith(input, StringComparison.Ordinal));
             return history.FirstOrDefault();
         }
 

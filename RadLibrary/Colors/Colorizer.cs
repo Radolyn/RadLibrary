@@ -111,7 +111,7 @@ namespace RadLibrary.Colors
         public static string Colorize(this string str, uint r, uint g, uint b)
         {
             var colorized = GetColorizationString(r, g, b) + str;
-            return !str.EndsWith(Font.Reset) ? colorized + Font.Reset : colorized;
+            return !str.EndsWith(Font.Reset, StringComparison.Ordinal) ? colorized + Font.Reset : colorized;
         }
 
         /// <summary>
@@ -147,7 +147,7 @@ namespace RadLibrary.Colors
         public static string ColorizeBackground(this string str, uint r, uint g, uint b)
         {
             var colorized = GetBackgroundColorizationString(r, g, b) + str;
-            return !str.EndsWith(Font.Reset) ? colorized + Font.Reset : colorized;
+            return !str.EndsWith(Font.Reset, StringComparison.Ordinal) ? colorized + Font.Reset : colorized;
         }
 
         /// <summary>
