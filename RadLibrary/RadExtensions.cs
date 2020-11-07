@@ -73,6 +73,11 @@ namespace RadLibrary
             return char.ToLowerInvariant(s[0]) + s.Substring(1);
         }
 
+        /// <summary>
+        ///     Returns default value for specified type
+        /// </summary>
+        /// <param name="type">The type</param>
+        /// <returns>The default value</returns>
         public static object GetDefault(this Type type)
         {
             return type.IsValueType ? Activator.CreateInstance(type) : null;
