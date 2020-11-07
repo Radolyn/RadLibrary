@@ -1,5 +1,6 @@
 ﻿#region
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -57,6 +58,24 @@ namespace RadLibrary
         public static string Remove(this string s, string value)
         {
             return s.Replace(value, "");
+        }
+
+        /// <summary>
+        ///     Returns string with lowered first letter
+        /// </summary>
+        /// <param name="s">The string</param>
+        /// <returns>String with lowered first letter</returns>
+        public static string FirstCharacterToLower(this string s)
+        {
+            if (string.IsNullOrEmpty(s) || char.IsLower(s, 0))
+                return s;
+
+            return char.ToLowerInvariant(s[0]) + s.Substring(1);
+        }
+
+        public static object GetDefault(this Type type)
+        {
+            return type.IsValueType ? Activator.CreateInstance(type) : null;
         }
     }
 }

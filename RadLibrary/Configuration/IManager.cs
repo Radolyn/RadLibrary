@@ -1,5 +1,6 @@
 ﻿#region
 
+using System;
 using System.Collections.Generic;
 
 #endregion
@@ -47,5 +48,11 @@ namespace RadLibrary.Configuration
         ///     Save configuration
         /// </summary>
         void Save();
+
+        /// <summary>
+        ///     Ensure config scheme
+        /// </summary>
+        /// <param name="type">The config scheme</param>
+        void EnsureScheme(Type type);
     }
 }

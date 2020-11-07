@@ -3,6 +3,7 @@
 using System.IO;
 using System.Linq;
 using RadLibrary.Configuration.Managers.IniManager;
+using RadLibrary.Configuration.Scheme;
 using Xunit;
 
 #endregion
@@ -12,7 +13,7 @@ namespace RadLibrary.Tests
     public class ConfigurationTests
     {
         [Fact]
-        public void ConfigurationTest()
+        public void IniTest()
         {
             const string file = "test1.ini";
 
@@ -51,6 +52,36 @@ namespace RadLibrary.Tests
 
             Assert.False(key1);
             Assert.Equal(1338, key2);
+        }
+
+        [Fact]
+        public void SchemeTest()
+        {
+            const string file = "test3.ini";
+
+            File.WriteAllText(file, "key1 = false\nkey2 = 1338\n");
+
+            var config = new IniManager(file);
+            config.Load();
+
+            config.EnsureScheme(typeof(Config));
+
+            Assert.Equal(ulong.MaxValue, config["count"].ValueAs<ulong>());
+            Assert.Equal(default, config["port"].ValueAs<int>());
+            Assert.Equal("127.0.0.1", config["ip"].Value);
+
+            ;
+        }
+
+        public class Config
+        {
+            [SchemeSection] public string Ip = "127.0.0.1";
+
+            [SchemeSection] public int Port { get; set; }
+
+            [SchemeSection] public bool Connect { get; set; }
+
+            [SchemeSection] public ulong Count { get; set; } = ulong.MaxValue;
         }
     }
 }

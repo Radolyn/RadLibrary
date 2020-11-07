@@ -82,19 +82,6 @@ namespace RadLibrary
         }
 
         /// <summary>
-        ///     Returns string with lowered first letter
-        /// </summary>
-        /// <param name="str">The string</param>
-        /// <returns>String with lowered first letter</returns>
-        public static string FirstCharacterToLower(string str)
-        {
-            if (string.IsNullOrEmpty(str) || char.IsLower(str, 0))
-                return str;
-
-            return char.ToLowerInvariant(str[0]) + str.Substring(1);
-        }
-
-        /// <summary>
         ///     Returns random integer
         /// </summary>
         /// <param name="start">The minimal value</param>

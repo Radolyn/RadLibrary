@@ -4,7 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using RadLibrary.Configuration.Scheme;
 
 #endregion
 
@@ -129,6 +131,71 @@ namespace RadLibrary.Configuration.Managers.IniManager
                 writer.Write($"{section.Key} = {value}");
 
                 writer.Write("\n\n");
+            }
+        }
+
+        /// <inheritdoc />
+        public void EnsureScheme(Type type)
+        {
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+
+            if (type.GetConstructors().All(x => x.GetParameters().Length != 0))
+                throw new ArgumentException("The scheme class doesn't have parameterless constructor", nameof(type));
+
+            var instance = Activator.CreateInstance(type);
+
+            foreach (var member in type.GetMembers())
+            {
+                var attr = member.GetCustomAttribute<SchemeSectionAttribute>();
+
+                if (attr == null)
+                    continue;
+
+                var section = _sections.FirstOrDefault(x => x.Key == attr.Key);
+
+                Type paramType;
+                object defaultValue;
+                switch (member.MemberType)
+                {
+                    case MemberTypes.Field:
+                        var field = (FieldInfo) member;
+                        paramType = field.FieldType;
+                        defaultValue = field.GetValue(instance);
+                        break;
+                    case MemberTypes.Property:
+                        var property = (PropertyInfo) member;
+                        paramType = property.PropertyType;
+                        defaultValue = property.GetValue(instance);
+                        break;
+                    default:
+                        paramType = null;
+                        defaultValue = null;
+                        break;
+                }
+
+                if (section != null)
+                {
+                    if (paramType == null)
+                        continue;
+
+                    try
+                    {
+                        _ = Convert.ChangeType(section.Value, paramType);
+                    }
+                    catch
+                    {
+                        section.SetValue(defaultValue ?? paramType.GetDefault());
+                    }
+                }
+                else
+                {
+                    var key = attr.Key ?? member.Name.FirstCharacterToLower();
+
+                    var val = (string) Convert.ChangeType(defaultValue ?? paramType.GetDefault(), TypeCode.String);
+
+                    _sections.Add(new IniSection(key, val, attr.Comment, false));
+                }
             }
         }
     }
