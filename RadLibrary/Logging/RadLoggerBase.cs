@@ -9,7 +9,8 @@ using System.Text.RegularExpressions;
 
 namespace RadLibrary.Logging
 {
-    public abstract class RadLoggerBase : LoggerBase
+    public abstract class RadLoggerBase<T> : LoggerBase<T>
+        where T : LoggerSettings
     {
         private readonly Regex _jsonRegex = new Regex(@"(({)|(\[)).*\s*:\s*.*((})|(\]))", RegexOptions.Compiled);
 

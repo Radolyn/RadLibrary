@@ -146,4 +146,10 @@ namespace RadLibrary.Logging
             return args == null ? "null" : string.Format(FormattersStorage.FormatProvider, "{0}", args.ToList());
         }
     }
+
+    public abstract class LoggerBase<T> : LoggerBase
+        where T : LoggerSettings
+    {
+        public new T Settings { get; set; }
+    }
 }

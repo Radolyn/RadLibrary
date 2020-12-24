@@ -13,7 +13,7 @@ namespace RadLibrary.Logging.Loggers
     /// <summary>
     ///     Logger that prints logs in console. Arguments: no
     /// </summary>
-    public class ConsoleLogger : RadLoggerBase
+    public class ConsoleLogger : RadLoggerBase<LoggerSettings>
     {
         /// <inheritdoc />
         public override void Initialize()

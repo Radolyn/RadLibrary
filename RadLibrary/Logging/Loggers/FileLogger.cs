@@ -10,7 +10,7 @@ namespace RadLibrary.Logging.Loggers
     /// <summary>
     ///     Logger that prints logs in file. Arguments: filename (opt.), FileMode (opt.)
     /// </summary>
-    public class FileLogger : RadLoggerBase, IDisposable
+    public class FileLogger : RadLoggerBase<FileLoggerSettings>, IDisposable
     {
         private StreamWriter _fileStream;
 
@@ -24,15 +24,13 @@ namespace RadLibrary.Logging.Loggers
         /// <inheritdoc />
         public override void Initialize()
         {
-            var settings = Settings as FileLoggerSettings;
-
             var name = DateTime.Now.ToString("HH_mm_") + Settings.Name + ".txt";
 
-            if (settings == null)
+            if (Settings == null)
                 _fileStream = new StreamWriter(new FileStream(name, FileMode.OpenOrCreate, FileAccess.Write,
                     FileShare.Read));
             else
-                _fileStream = new StreamWriter(new FileStream(settings.FileName ?? name, settings.FileMode,
+                _fileStream = new StreamWriter(new FileStream(Settings.FileName ?? name, Settings.FileMode,
                     FileAccess.Write, FileShare.Read));
 
             _fileStream.WriteLine($"\nLog started at: {DateTime.Now}\n");
