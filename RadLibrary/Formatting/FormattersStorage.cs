@@ -32,7 +32,7 @@ namespace RadLibrary.Formatting
         /// <summary>
         ///     The maximum recursion level. Will return "..." on reaching this value
         /// </summary>
-        public static int MaxRecursion = 10;
+        public static int MaxRecursion { get; set; } = 10;
 
         /// <summary>
         ///     The all registered in the storage formatters

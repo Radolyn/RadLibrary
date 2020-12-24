@@ -9,11 +9,6 @@ namespace RadLibrary.Logging
 {
     public class LoggerSettings : IEquatable<LoggerSettings>
     {
-        /// <summary>
-        ///     The name max length. Can be set with <see cref="LogManager" /> before creating any loggers
-        /// </summary>
-        internal static int NameMaxLength = 24;
-
         // todo: optimize
         /// <summary>
         ///     The environment-set logging level
@@ -52,6 +47,11 @@ namespace RadLibrary.Logging
         ///     The time format
         /// </summary>
         public string TimeFormat = "HH:mm:ss:fffff";
+
+        /// <summary>
+        ///     The name max length. Can be set with <see cref="LogManager" /> before creating any loggers
+        /// </summary>
+        internal static int NameMaxLength { get; set; } = 24;
 
         /// <summary>
         ///     The maximum recursion level. Will return "..." on reaching this value

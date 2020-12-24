@@ -35,7 +35,7 @@ namespace RadLibrary.Logging.Loggers
     /// </summary>
     public static class ColorSettings
     {
-        public static readonly Dictionary<LogType, Color> Colors = new Dictionary<LogType, Color>
+        public static readonly Dictionary<LogType, Color> Colors = new()
         {
             {LogType.Trace, Color.Gray},
             {LogType.Debug, Color.DarkGray},

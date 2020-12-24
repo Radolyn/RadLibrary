@@ -69,8 +69,6 @@ namespace RadLibrary.Tests
             Assert.Equal(ulong.MaxValue, config["count"].ValueAs<ulong>());
             Assert.Equal(default, config["port"].ValueAs<int>());
             Assert.Equal("127.0.0.1", config["ip"].Value);
-
-            ;
         }
 
         public class Config

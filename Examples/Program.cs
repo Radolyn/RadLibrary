@@ -10,15 +10,13 @@ using RadLibrary.Logging;
 
 namespace Examples
 {
-    internal class Program
+    internal static class Program
     {
         private static void Main(string[] args)
         {
             Utilities.Initialize();
 
             ColorfulConsoleTest();
-
-            //HotReloadTest();
         }
 
         private static void LoggerTest()

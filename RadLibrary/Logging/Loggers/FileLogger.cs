@@ -17,8 +17,8 @@ namespace RadLibrary.Logging.Loggers
         /// <inheritdoc />
         public void Dispose()
         {
-            _fileStream.Dispose();
-            _fileStream.BaseStream.Dispose();
+            _fileStream?.Dispose();
+            _fileStream?.BaseStream.Dispose();
         }
 
         /// <inheritdoc />

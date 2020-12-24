@@ -8,11 +8,13 @@
         /// <inheritdoc />
         public override void DirectLog(LogType type, string message)
         {
+            // nothing
         }
 
         /// <inheritdoc />
         public override void Initialize()
         {
+            // nothing
         }
     }
 }
