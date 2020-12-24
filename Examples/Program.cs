@@ -3,7 +3,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using RadLibrary;
-using RadLibrary.ConsoleExperience;
 using RadLibrary.Logging;
 
 #endregion
@@ -16,7 +15,7 @@ namespace Examples
         {
             Utilities.Initialize();
 
-            ColorfulConsoleTest();
+            LoggerTest();
         }
 
         private static void LoggerTest()
@@ -54,25 +53,25 @@ namespace Examples
             }
         }
 
-        private static void ColorfulConsoleTest()
-        {
-            ColorfulConsole.WriteLine(new List<string>
-            {
-                "asdsads",
-                "asddad"
-            });
-
-            ColorfulConsole.WriteLine(new HashSet<string>
-            {
-                "asdsads",
-                "asddad"
-            });
-
-            ColorfulConsole.WriteLine("[fff123]{0}", new HashSet<string>
-            {
-                "asdsads",
-                "asddad"
-            }.Select(x => x));
-        }
+        // private static void ColorfulConsoleTest()
+        // {
+        //     ColorfulConsole.WriteLine(new List<string>
+        //     {
+        //         "asdsads",
+        //         "asddad"
+        //     });
+        //
+        //     ColorfulConsole.WriteLine(new HashSet<string>
+        //     {
+        //         "asdsads",
+        //         "asddad"
+        //     });
+        //
+        //     ColorfulConsole.WriteLine("[fff123]{0}", new HashSet<string>
+        //     {
+        //         "asdsads",
+        //         "asddad"
+        //     }.Select(x => x));
+        // }
     }
 }

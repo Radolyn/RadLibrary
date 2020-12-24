@@ -21,4 +21,8 @@
     <PackageLicenseUrl>https://github.com/Radolyn/RadLibrary/blob/master/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="ConsoleExperience" />
+  </ItemGroup>
+
 </Project>

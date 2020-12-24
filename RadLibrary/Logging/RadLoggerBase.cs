@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using RadLibrary.Logging.Helpers;
@@ -11,10 +12,7 @@ namespace RadLibrary.Logging
 {
     public abstract class RadLoggerBase : LoggerBase
     {
-        private readonly object _formatterLock = new object();
         private readonly Regex _jsonRegex = new Regex(@"(({)|(\[)).*\s*:\s*.*((})|(\]))", RegexOptions.Compiled);
-
-        private StringFormatter _formatter;
 
         /// <summary>
         ///     The log action
@@ -37,38 +35,29 @@ namespace RadLibrary.Logging
 
         private string Format(LogType type, string message)
         {
-            if (message == null)
-                message = "null";
+            message ??= "null";
 
-            if (_formatter == null)
-                lock (_formatterLock)
-                {
-                    _formatter = new StringFormatter(Settings.LogFormat);
-                    _formatter.Set("{name}", Normalize(Settings.Name, LoggerSettings.NameMaxLength));
-                }
+            var dict = new Dictionary<string, object>()
+            {
+                {"Name", Settings.Name},
+                {"Level", type},
+                {"Time", DateTime.Now},
+                {"Message", message}
+            };
 
             message = message.Replace("\r\n", "\n");
 
             if (_jsonRegex.IsMatch(message) && Settings.FormatJson)
                 message = FormatJson(message);
 
-            string s;
+            var res = Settings.LogFormat.FormatWith(dict);
 
-            lock (_formatterLock)
-            {
-                _formatter.Set("{level}", Normalize(type.ToString(), 5));
-                _formatter.Set("{time}", DateTime.Now.ToString(Settings.TimeFormat));
-                _formatter.Set("{message}", message);
+            if (!res.Contains('\n'))
+                return res;
 
-                s = _formatter.ToString();
-            }
+            var padding = " ".Repeat(res.IndexOf(message, StringComparison.Ordinal));
 
-            if (!s.Contains('\n'))
-                return s;
-
-            var padding = " ".Repeat(s.IndexOf(message, StringComparison.Ordinal));
-
-            var messages = s.Split('\n').Aggregate((current, item) =>
+            var messages = res.Split('\n').Aggregate((current, item) =>
                 current + Environment.NewLine + padding + item);
 
             return messages;
@@ -103,12 +92,6 @@ namespace RadLibrary.Logging
                 );
 
             return string.Concat(result);
-        }
-
-        private static string Normalize(string name, int length)
-        {
-            var s = string.Format("{0, " + length + "}", name);
-            return s.Length <= length ? s : ".." + s.Substring(s.Length - length + 2);
         }
     }
 }

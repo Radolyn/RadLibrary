@@ -35,7 +35,7 @@ namespace RadLibrary.Logging.Loggers
                 _fileStream = new StreamWriter(new FileStream(settings.FileName ?? name, settings.FileMode,
                     FileAccess.Write, FileShare.Read));
 
-            _fileStream.WriteLine($"\nLog started at: {DateTime.Now.ToString(Settings.TimeFormat)}\n");
+            _fileStream.WriteLine($"\nLog started at: {DateTime.Now}\n");
         }
 
         /// <inheritdoc />

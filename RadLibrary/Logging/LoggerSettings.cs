@@ -24,9 +24,10 @@ namespace RadLibrary.Logging
         public bool FormatJson = true;
 
         /// <summary>
-        ///     The log format. Available variables: {time}, {name}, {level}, {message}
+        ///     The log format. Available variables: {Time}, {Name}, {Level}, {Message}.
+        ///     Supports all string.Format features (alignment, formatting)
         /// </summary>
-        public string LogFormat = "[{time} {name} {level}] {message}";
+        public string LogFormat = "[{Time:HH\\:mm\\:ss\\:fffff} {Name,20} {Level,5}] {Message}";
 
         /// <summary>
         ///     The logger type (use typeof(RadLoggerBase))
@@ -44,16 +45,6 @@ namespace RadLibrary.Logging
         public string Name;
 
         /// <summary>
-        ///     The time format
-        /// </summary>
-        public string TimeFormat = "HH:mm:ss:fffff";
-
-        /// <summary>
-        ///     The name max length. Can be set with <see cref="LogManager" /> before creating any loggers
-        /// </summary>
-        internal static int NameMaxLength { get; set; } = 24;
-
-        /// <summary>
         ///     The maximum recursion level. Will return "..." on reaching this value
         /// </summary>
         public static int MaxRecursion
@@ -63,41 +54,12 @@ namespace RadLibrary.Logging
         }
 
         /// <inheritdoc />
-        public bool Equals(LoggerSettings other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return FormatJson == other.FormatJson &&
-                   string.Equals(LogFormat, other.LogFormat, StringComparison.OrdinalIgnoreCase) &&
-                   Logger == other.Logger && LoggingLevel == other.LoggingLevel &&
-                   string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase) && string.Equals(TimeFormat,
-                       other.TimeFormat, StringComparison.OrdinalIgnoreCase);
-        }
-
-        /// <inheritdoc />
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
+            if (obj.GetType() != this.GetType()) return false;
             return Equals((LoggerSettings) obj);
-        }
-
-        /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                var hashCode = FormatJson.GetHashCode();
-                hashCode = (hashCode * 397) ^
-                           (LogFormat != null ? StringComparer.OrdinalIgnoreCase.GetHashCode(LogFormat) : 0);
-                hashCode = (hashCode * 397) ^ (Logger != null ? Logger.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (int) LoggingLevel;
-                hashCode = (hashCode * 397) ^ (Name != null ? StringComparer.OrdinalIgnoreCase.GetHashCode(Name) : 0);
-                hashCode = (hashCode * 397) ^
-                           (TimeFormat != null ? StringComparer.OrdinalIgnoreCase.GetHashCode(TimeFormat) : 0);
-                return hashCode;
-            }
         }
 
         public static bool operator ==(LoggerSettings left, LoggerSettings right)
@@ -108,6 +70,28 @@ namespace RadLibrary.Logging
         public static bool operator !=(LoggerSettings left, LoggerSettings right)
         {
             return !Equals(left, right);
+        }
+
+        /// <inheritdoc />
+        public bool Equals(LoggerSettings other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return FormatJson == other.FormatJson && LogFormat == other.LogFormat && Equals(Logger, other.Logger) && LoggingLevel == other.LoggingLevel && Name == other.Name;
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = FormatJson.GetHashCode();
+                hashCode = (hashCode * 397) ^ (LogFormat != null ? LogFormat.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (Logger != null ? Logger.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (int) LoggingLevel;
+                hashCode = (hashCode * 397) ^ (Name != null ? Name.GetHashCode() : 0);
+                return hashCode;
+            }
         }
     }
 }

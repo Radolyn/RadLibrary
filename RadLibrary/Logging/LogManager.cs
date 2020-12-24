@@ -19,23 +19,6 @@ namespace RadLibrary.Logging
         private static readonly List<LoggerBase> Loggers = new List<LoggerBase>();
 
         /// <summary>
-        ///     Gets or sets max name length
-        /// </summary>
-        /// <exception cref="NotSupportedException">Occurs when trying to set max length after loggers initialization</exception>
-        public static int MaxNameLength
-        {
-            get => LoggerSettings.NameMaxLength;
-            set
-            {
-                if (Loggers.Any())
-                    throw new NotSupportedException(
-                        "Cannot change max length, because there's at least one logger initialized");
-
-                LoggerSettings.NameMaxLength = value;
-            }
-        }
-
-        /// <summary>
         ///     Adds exceptions handler
         /// </summary>
         /// <param name="logger">The custom logger</param>

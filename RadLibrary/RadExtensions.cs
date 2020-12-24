@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using RadLibrary.Formatting;
 
 #endregion
 
@@ -81,6 +82,97 @@ namespace RadLibrary
         public static object GetDefault(this Type type)
         {
             return type.IsValueType ? Activator.CreateInstance(type) : null;
+        }
+        
+        /// <summary>
+        /// Formats string
+        /// </summary>
+        /// <param name="s">The string</param>
+        /// <param name="dictionary">The dictionary</param>
+        /// <returns>The formatted string</returns>
+        public static string FormatWith(this string s, IDictionary<string, object> dictionary)
+        {
+            // remainder: 'out ... {parameter[,alignment][:format]}'
+            var sbOut = new StringBuilder(s.Length);
+            var sbParameter = new StringBuilder(8);
+            var sbAlignment = new StringBuilder();
+            var sbFormat = new StringBuilder();
+
+            var formatPart = CurrentPart.Out;
+            var escapeSymbol = false;
+            
+            void Write(char ch)
+            {
+                switch (formatPart)
+                {
+                    case CurrentPart.Out:
+                        sbOut.Append(ch);
+                        break;
+                    case CurrentPart.Parameter:
+                        sbParameter.Append(ch);
+                        break;
+                    case CurrentPart.Alignment:
+                        sbAlignment.Append(ch);
+                        break;
+                    case CurrentPart.Format:
+                        sbFormat.Append(ch);
+                        break;
+                }
+            }
+
+            foreach (var ch in s)
+            {
+                if (!escapeSymbol && ch == '\\')
+                {
+                    escapeSymbol = true;
+                    continue;
+                }
+                
+                if (escapeSymbol)
+                {
+                    Write(ch);
+                    escapeSymbol = false;
+                    continue;
+                }
+
+                switch (ch)
+                {
+                    case '{':
+                        formatPart = CurrentPart.Parameter;
+                        continue;
+                    case '}':
+                        var param = dictionary[sbParameter.ToString()];
+                        var res = string.Format("{0" + (sbAlignment.Length == 0 ? "" : "," + sbAlignment) + (sbFormat.Length == 0 ? "" : ":" + sbFormat) + "}", param);
+                        
+                        sbOut.Append(res);
+
+                        sbParameter.Clear();
+                        sbAlignment.Clear();
+                        sbFormat.Clear();
+                        
+                        formatPart = CurrentPart.Out;
+                        continue;
+                    case ',' when formatPart is CurrentPart.Parameter:
+                        formatPart = CurrentPart.Alignment;
+                        continue;
+                    case ':' when formatPart is CurrentPart.Parameter || formatPart is CurrentPart.Alignment:
+                        formatPart = CurrentPart.Format;
+                        continue;
+                    default:
+                        Write(ch);
+                        continue;
+                }
+            }
+
+            return sbOut.ToString();
+        }
+        
+        enum CurrentPart : byte
+        {
+            Out,
+            Parameter,
+            Alignment,
+            Format
         }
     }
 }
