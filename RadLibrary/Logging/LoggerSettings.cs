@@ -69,7 +69,7 @@ namespace RadLibrary.Logging
             if (ReferenceEquals(this, other)) return true;
             return FormatJson == other.FormatJson &&
                    string.Equals(LogFormat, other.LogFormat, StringComparison.OrdinalIgnoreCase) &&
-                   Equals(Logger, other.Logger) && LoggingLevel == other.LoggingLevel &&
+                   Logger == other.Logger && LoggingLevel == other.LoggingLevel &&
                    string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase) && string.Equals(TimeFormat,
                        other.TimeFormat, StringComparison.OrdinalIgnoreCase);
         }

@@ -61,6 +61,11 @@ namespace RadLibrary.Configuration.Managers.IniManager
             return new IniSection("", val, null, false);
         }
 
+        public static implicit operator IniSection(int val)
+        {
+            return new IniSection("", val.ToString(), null, false);
+        }
+
         public static implicit operator IniSection(bool val)
         {
             return val.ToString();

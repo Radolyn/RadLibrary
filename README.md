@@ -140,11 +140,11 @@ logger.Info("{\"song\":\"Song name\",\"artist\":\"Radolyn\",\"start\":0,\"end\":
 
 ## Configuration Manager
 
-### Create configuration using FileManager
+### Create configuration using IniManager
 
 ```csharp
 var logger = LogManager.GetMethodLogger();
-var config = AppConfiguration.Initialize<FileManager>("tester");
+var config = new IniManager("test.conf");
 
 config["ip"] = "127.0.0.1";
 config.SetBool("autorun", true);

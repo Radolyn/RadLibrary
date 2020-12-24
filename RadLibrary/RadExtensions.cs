@@ -19,8 +19,8 @@ namespace RadLibrary
         /// <returns>Random item</returns>
         public static T RandomItem<T>(this IEnumerable<T> enumerable)
         {
-            var array = enumerable as T[] ?? enumerable.ToArray();
-            return array.Length == 0 ? default : array[Utilities.RandomInt(0, array.Length)];
+            var array = enumerable as List<T> ?? enumerable.ToList();
+            return array.Count == 0 ? default : array[Utilities.RandomInt(0, array.Count)];
         }
 
         /// <summary>

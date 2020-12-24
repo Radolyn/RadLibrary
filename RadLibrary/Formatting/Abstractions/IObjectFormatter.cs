@@ -11,6 +11,9 @@ namespace RadLibrary.Formatting.Abstractions
     /// </summary>
     public interface IObjectFormatter
     {
+        /// <summary>
+        ///     The formatter priority. Required for redefining default formatters.
+        /// </summary>
         public int Priority { get; }
 
         /// <summary>
