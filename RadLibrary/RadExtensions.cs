@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using RadLibrary.Formatting;
 
 #endregion
 
@@ -83,9 +82,9 @@ namespace RadLibrary
         {
             return type.IsValueType ? Activator.CreateInstance(type) : null;
         }
-        
+
         /// <summary>
-        /// Formats string
+        ///     Formats string
         /// </summary>
         /// <param name="s">The string</param>
         /// <param name="dictionary">The dictionary</param>
@@ -100,7 +99,7 @@ namespace RadLibrary
 
             var formatPart = CurrentPart.Out;
             var escapeSymbol = false;
-            
+
             void Write(char ch)
             {
                 switch (formatPart)
@@ -127,7 +126,7 @@ namespace RadLibrary
                     escapeSymbol = true;
                     continue;
                 }
-                
+
                 if (escapeSymbol)
                 {
                     Write(ch);
@@ -142,14 +141,16 @@ namespace RadLibrary
                         continue;
                     case '}':
                         var param = dictionary[sbParameter.ToString()];
-                        var res = string.Format("{0" + (sbAlignment.Length == 0 ? "" : "," + sbAlignment) + (sbFormat.Length == 0 ? "" : ":" + sbFormat) + "}", param);
-                        
+                        var res = string.Format(
+                            "{0" + (sbAlignment.Length == 0 ? "" : "," + sbAlignment) +
+                            (sbFormat.Length == 0 ? "" : ":" + sbFormat) + "}", param);
+
                         sbOut.Append(res);
 
                         sbParameter.Clear();
                         sbAlignment.Clear();
                         sbFormat.Clear();
-                        
+
                         formatPart = CurrentPart.Out;
                         continue;
                     case ',' when formatPart is CurrentPart.Parameter:
@@ -166,8 +167,8 @@ namespace RadLibrary
 
             return sbOut.ToString();
         }
-        
-        enum CurrentPart : byte
+
+        private enum CurrentPart : byte
         {
             Out,
             Parameter,

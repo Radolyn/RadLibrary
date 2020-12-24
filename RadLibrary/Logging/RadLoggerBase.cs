@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using RadLibrary.Logging.Helpers;
 
 #endregion
 
@@ -37,7 +36,7 @@ namespace RadLibrary.Logging
         {
             message ??= "null";
 
-            var dict = new Dictionary<string, object>()
+            var dict = new Dictionary<string, object>
             {
                 {"Name", Settings.Name},
                 {"Level", type},

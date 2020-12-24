@@ -1,7 +1,6 @@
 ﻿#region
 
 using System;
-using RadLibrary.Formatting;
 
 #endregion
 
@@ -44,13 +43,13 @@ namespace RadLibrary.Logging
         /// </summary>
         public string Name;
 
-        /// <summary>
-        ///     The maximum recursion level. Will return "..." on reaching this value
-        /// </summary>
-        public static int MaxRecursion
+        /// <inheritdoc />
+        public bool Equals(LoggerSettings other)
         {
-            get => FormattersStorage.MaxRecursion;
-            set => FormattersStorage.MaxRecursion = value;
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return FormatJson == other.FormatJson && LogFormat == other.LogFormat && Equals(Logger, other.Logger) &&
+                   LoggingLevel == other.LoggingLevel && Name == other.Name;
         }
 
         /// <inheritdoc />
@@ -58,7 +57,7 @@ namespace RadLibrary.Logging
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((LoggerSettings) obj);
         }
 
@@ -70,14 +69,6 @@ namespace RadLibrary.Logging
         public static bool operator !=(LoggerSettings left, LoggerSettings right)
         {
             return !Equals(left, right);
-        }
-
-        /// <inheritdoc />
-        public bool Equals(LoggerSettings other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return FormatJson == other.FormatJson && LogFormat == other.LogFormat && Equals(Logger, other.Logger) && LoggingLevel == other.LoggingLevel && Name == other.Name;
         }
 
         /// <inheritdoc />
