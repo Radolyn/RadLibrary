@@ -150,6 +150,10 @@ namespace RadLibrary.Logging
     public abstract class LoggerBase<T> : LoggerBase
         where T : LoggerSettings
     {
-        public new T Settings { get; set; }
+        public new T Settings
+        {
+            get => base.Settings as T;
+            set => base.Settings = value;
+        }
     }
 }

@@ -3,7 +3,7 @@
     /// <summary>
     ///     The log type
     /// </summary>
-    public enum LogType
+    public enum LogType : byte
     {
         Debug,
         Trace,
