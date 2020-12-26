@@ -16,7 +16,7 @@
     <Copyright>© 2020 Radolyn</Copyright>
     <!-- <PackageLicenseFile>$(SolutionDir)LICENSE</PackageLicenseFile> -->
     <RepositoryUrl>https://github.com/Radolyn/RadLibrary</RepositoryUrl>
-    <PackageVersion>1.5.0</PackageVersion>
+    <PackageVersion>1.6.0</PackageVersion>
     <LangVersion>9</LangVersion>
     <PackageLicenseUrl>https://github.com/Radolyn/RadLibrary/blob/master/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
