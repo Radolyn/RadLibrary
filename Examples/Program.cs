@@ -1,8 +1,10 @@
 ﻿#region
 
+using System;
 using System.Collections.Generic;
 using RadLibrary;
 using RadLibrary.Logging;
+using RadLibrary.RadConsole;
 
 #endregion
 
@@ -14,7 +16,22 @@ namespace Examples
         {
             Utilities.Initialize();
 
-            LoggerTest();
+            // RadConsole.ReadLine(new ReadStyle
+            // {
+            //     Prefix = "Input your name:",
+            //     Postfix = "<<< Good name!",
+            //     UnderlineInput = true
+            // }, new DefaultPredictionEngine());
+            // var s = RadConsole.ReadLine(new ReadStyle
+            // {
+            //     Prefix = "Input your name:",
+            //     Postfix = "<<< Good name!"
+            // }, new DefaultPredictionEngine());
+
+            RadConsole.Write("[fffaaa][b:00ffaa]msg[b:reset][framed]asdsa");
+
+            // Console.WriteLine(s);
+            Console.ReadLine();
         }
 
         private static void LoggerTest()

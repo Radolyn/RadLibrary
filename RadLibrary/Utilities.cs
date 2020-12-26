@@ -20,6 +20,8 @@ namespace RadLibrary
 
         private static Random _random;
 
+        private static ConsoleEventDelegate _handler;
+
         /// <summary>
         ///     Checks whether the current system is Windows or not
         /// </summary>
@@ -32,13 +34,26 @@ namespace RadLibrary
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern int AllocConsole();
 
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool SetConsoleCtrlHandler(ConsoleEventDelegate callback, bool add);
+
         /// <summary>
         ///     Initializes Colorizer and FormattersStorage
         /// </summary>
-        public static void Initialize()
+        /// <param name="registerColorResetEvent">Do we need to reset colors on CTRL + C event?</param>
+        public static void Initialize(bool registerColorResetEvent = true)
         {
             Colorizer.Initialize();
             FormattersStorage.AddDefault();
+
+            if (!registerColorResetEvent) return;
+
+            _handler = eventType =>
+            {
+                if (eventType == 0 || eventType == 2) Console.Write(Font.Reset + Foreground.Reset + Background.Reset);
+                return false;
+            };
+            SetConsoleCtrlHandler(_handler, true);
         }
 
         /// <summary>
@@ -93,5 +108,7 @@ namespace RadLibrary
 
             return _random.Next(start, end);
         }
+
+        private delegate bool ConsoleEventDelegate(int eventType);
     }
 }

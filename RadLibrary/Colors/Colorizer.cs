@@ -18,7 +18,7 @@ namespace RadLibrary.Colors
         private const uint DisableNewlineAutoReturn = 0x0008;
         private static bool _isInitialized;
 
-        private static readonly Regex _colorsRegex =
+        private static readonly Regex ColorsRegex =
             new Regex("\x1b\\[\\d{2};2;\\d{1,3};\\d{1,3};\\d{1,3}m", RegexOptions.Compiled);
 
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -52,6 +52,7 @@ namespace RadLibrary.Colors
                     $"Failed to set output console mode, error code: {Marshal.GetLastWin32Error()}");
 
             AppDomain.CurrentDomain.ProcessExit += (sender, args) => Console.Write(Font.Reset);
+            AppDomain.CurrentDomain.DomainUnload += (sender, args) => Console.Write(Font.Reset);
 
             _isInitialized = true;
         }
@@ -179,7 +180,7 @@ namespace RadLibrary.Colors
         /// <returns>De colorized string</returns>
         public static string DeColorize(this string s)
         {
-            return _colorsRegex.Replace(s, "").Remove(Font.Reset);
+            return ColorsRegex.Replace(s, "").Remove(Font.Reset);
         }
 
         /// <summary>

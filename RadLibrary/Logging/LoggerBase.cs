@@ -152,7 +152,7 @@ namespace RadLibrary.Logging
     {
         public new T Settings
         {
-            get => base.Settings as T;
+            get => (T) base.Settings;
             set => base.Settings = value;
         }
     }
