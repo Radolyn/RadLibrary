@@ -10,19 +10,15 @@ All-In-One library
 
 - Customizable logger
   - Prints dictionaries and lists like in ```Python```
-  - Integrated with ```Configuration Manager```
-  - Thread-safe (**almost**)
 - Colorful console support
   - Custom colors (**HEX string->Color class convert support** through ```Colorizer```)
   - ESC colors access through ```Font, Background & Foreground``` classes
-  - ```Console``` wrapper for ease of use (```ColorfulConsole```)
+  - ```Console``` wrapper for ease of use (```RadConsole```)
   - Colorful **input**
-  - Colorful **progress bar** with custom animations
 - Configuration manager
   - Comments support
   - Scheme support
 - Formatters
-  - AppConfiguration
   - Any types of Enumerables
   - Exception
   - String
@@ -39,45 +35,12 @@ Initialize library using `Utilities.Initialize()`
 ### Write line to the console
 
 ```csharp
-ColorfulConsole.WriteLine("[#fffff]{CoolPrefix} [aaaff]Some colorful text");
+RadConsole.WriteLine("[#fffff]{CoolPrefix} [aaaff]Some colorful text");
 
-ColorfulConsole.WriteLine("[00ffcc]{CoolPrefix} [#ffff66]Some colorful text");
+RadConsole.WriteLine("[00ffcc]{CoolPrefix} [#ffff66]Some colorful text");
 ```
 
 ![Sample image](images/colorful_console.png)
-
-### Progress bar
-
-```csharp
-var bar = new ColorfulProgressBar(0, 1, 100);
-
-var wc = new WebClient();
-wc.DownloadProgressChanged += (sender, args) =>
-{
-  bar.Total = args.TotalBytesToReceive;
-  bar.Update(args.BytesReceived);
-};
-wc.DownloadFileCompleted += (sender, args) =>
-{
-  bar.Finish();
-  ColorfulConsole.WriteAt("Done!" + " ".Repeat(Console.WindowWidth), 4);
-};
-
-var style = new DefaultStyle(50)
-            {Prefix = "Download progress:", FillColor = Color.BlueViolet, PrefixColor = Color.Goldenrod};
-bar.Style = style;
-
-// Not required
-bar.Update(0);
-
-ColorfulConsole.WriteLine(Environment.NewLine.Repeat(4) + "Downloading...");
-
-wc.DownloadFileAsync(new Uri("https://speed.hetzner.de/1GB.bin"), "test.bin");
-
-Console.ReadLine();
-```
-
-![Sample image](images/colorfuldownload_console.png)
 
 ## Logging
 
@@ -153,6 +116,4 @@ config["key"].SetValue('a');
 config["url"] = "https://radolyn.com";
 
 config.Save();
-
-logger.Info(config);
 ```

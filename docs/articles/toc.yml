@@ -2,5 +2,7 @@
   href: intro.md
 - name: Logging
   href: logging.md
+- name: RadConsole
+  href: radconsole.md
 - name: Configuration
   href: configuration.md
