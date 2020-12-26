@@ -701,6 +701,8 @@ namespace RadLibrary.RadConsole
         /// <param name="args">The objects</param>
         public static void Write(string format, params object[] args)
         {
+            args ??= new object[] {null};
+
             format = ParseColors(format);
 
             Console.Write(string.Format(FormattersStorage.FormatProvider, format, args));
@@ -714,6 +716,47 @@ namespace RadLibrary.RadConsole
         public static void WriteLine(string format, params object[] args)
         {
             Write(format + Environment.NewLine, args);
+        }
+
+        /// <summary>
+        ///     Writes the text representation of the specified value or values to the standard output stream.
+        /// </summary>
+        /// <param name="args">The objects</param>
+        public static void Write(params object[] args)
+        {
+            args ??= new object[] {null};
+
+            for (var i = 0; i < args.Length; i++)
+                if (args[i] is not null && args[i] is string)
+                    args[i] = ParseColors(args[i].ToString());
+
+            // "{.} "
+            var format = new StringBuilder(args.Length * 4);
+
+            for (var i = 0; i < args.Length; i++) format.Append("{" + i + "} ");
+
+            Write(format.ToString(0, format.Length - 1), args);
+        }
+
+        /// <summary>
+        ///     Writes the specified data, followed by the current line terminator, to the standard output stream.
+        /// </summary>
+        /// <param name="args">The objects</param>
+        public static void WriteLine(params object[] args)
+        {
+            args ??= new object[] {null};
+
+            for (var i = 0; i < args.Length; i++)
+                if (args[i] is not null && args[i] is string)
+                    args[i] = ParseColors(args[i].ToString());
+
+            // "{.} "
+            var format = new StringBuilder(args.Length * 4);
+
+            for (var i = 0; i < args.Length; i++) format.Append("{" + i + "} ");
+
+            Write(format.ToString(0, format.Length - 1) + Environment.NewLine,
+                args); // todo: this method is the same as Write except Environment.NewLine
         }
 
         /// <summary>

@@ -1,7 +1,11 @@
 ﻿#region
 
 using System.Collections.Generic;
+using System.Linq;
 using RadLibrary;
+using RadLibrary.Configuration.Managers.IniManager;
+using RadLibrary.Configuration.Scheme;
+using RadLibrary.Formatting;
 using RadLibrary.Logging;
 using Console = RadLibrary.RadConsole.RadConsole;
 
@@ -15,10 +19,23 @@ namespace Examples
         {
             Utilities.Initialize();
 
-            Console.WriteLine("[ffaa22]Some text.[reset]\nNow I'm default!\n[red]And... Now red!\n{0}", "Some arg text");
+            Loggers();
+            RadConsole();
+            Configs();
         }
 
-        private static void LoggerTest()
+        private static void Configs()
+        {
+            var manager = new IniManager("config.ini");
+
+            manager.EnsureScheme(typeof(Config));
+
+            Console.WriteLine(manager["password"].Value);
+            Console.WriteLine(manager["someField"].Value);
+            Console.WriteLine(manager["someProperty"].Value);
+        }
+
+        private static void Loggers()
         {
             var settings = new LoggerSettings
             {
@@ -29,7 +46,7 @@ namespace Examples
 
             logger.Info("IEnumerable formatting test:");
 
-            for (var i = 0; i < 100; i++)
+            for (var i = 0; i < 5; i++)
             {
                 var list = new List<string>
                 {
@@ -53,25 +70,45 @@ namespace Examples
             }
         }
 
-        // private static void ColorfulConsoleTest()
-        // {
-        //     ColorfulConsole.WriteLine(new List<string>
-        //     {
-        //         "asdsads",
-        //         "asddad"
-        //     });
-        //
-        //     ColorfulConsole.WriteLine(new HashSet<string>
-        //     {
-        //         "asdsads",
-        //         "asddad"
-        //     });
-        //
-        //     ColorfulConsole.WriteLine("[fff123]{0}", new HashSet<string>
-        //     {
-        //         "asdsads",
-        //         "asddad"
-        //     }.Select(x => x));
-        // }
+        private static void RadConsole()
+        {
+            Console.WriteLine("[ffaa22]Some text.[reset]\nNow I'm default!\n[red]And... Now red!\n{0}",
+                "Some arg text");
+
+            Console.WriteLine(new List<string>
+            {
+                "asdsads",
+                "asddad"
+            });
+
+            Console.WriteLine(new HashSet<string>
+            {
+                "asdsads",
+                "asddad"
+            });
+
+            var s = string.Format(FormattersStorage.FormatProvider, "{0}", new HashSet<string>
+            {
+                "asdsads",
+                "asddad"
+            });
+
+            Console.WriteLine("[fff123]{0}", new HashSet<string>
+            {
+                "asdsads",
+                "asddad"
+            }.Select(x => x));
+
+            Console.WriteLine("[fff123]{0}", null);
+        }
+
+        private class Config
+        {
+            [SchemeSection] public string SomeField = "Field";
+
+            [SchemeSection("password")] public string SomePassword;
+
+            [SchemeSection] public string SomeProperty = "Property";
+        }
     }
 }
