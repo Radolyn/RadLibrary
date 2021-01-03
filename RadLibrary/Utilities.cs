@@ -37,16 +37,22 @@ namespace RadLibrary
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool SetConsoleCtrlHandler(ConsoleEventDelegate callback, bool add);
 
+        private static bool _isInitialized;
+
         /// <summary>
         ///     Initializes Colorizer and FormattersStorage
         /// </summary>
         /// <param name="registerColorResetEvent">Do we need to reset colors on CTRL + C event?</param>
         public static void Initialize(bool registerColorResetEvent = true)
         {
-            Colorizer.Initialize();
-            FormattersStorage.AddDefault();
+            if (!_isInitialized)
+            {
+                Colorizer.Initialize();
+                FormattersStorage.AddDefault();
+                _isInitialized = true;
+            }
 
-            if (!registerColorResetEvent || !IsWindows) return;
+            if (!registerColorResetEvent || !IsWindows || _handler != null) return;
 
             _handler = eventType =>
             {

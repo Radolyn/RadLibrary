@@ -21,22 +21,24 @@ namespace RadLibrary.RadConsole
                 case "":
                     return "";
                 case "n":
+                case "no":
                     return "no";
-                case "ye":
                 case "y":
+                case "ye":
+                case "yes":
                     return "yes";
                 default:
                     return PredictHistory(input) ?? PredictPath(input);
             }
         }
 
-        protected static string PredictHistory(string input)
+        protected virtual string PredictHistory(string input)
         {
             var history = RadConsole.History.Where(s => s.StartsWith(input, StringComparison.Ordinal));
             return history.FirstOrDefault();
         }
 
-        protected static string PredictPath(string input)
+        protected virtual string PredictPath(string input)
         {
             try
             {

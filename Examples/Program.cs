@@ -2,7 +2,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using RadLibrary;
 using RadLibrary.Configuration.Managers.IniManager;
 using RadLibrary.Configuration.Scheme;
 using RadLibrary.Formatting;
@@ -17,7 +16,8 @@ namespace Examples
     {
         private static void Main(string[] args)
         {
-            Utilities.Initialize();
+            // Don't forget to call this if you're not on .NET 5
+            // Utilities.Initialize();
 
             Loggers();
             RadConsole();
