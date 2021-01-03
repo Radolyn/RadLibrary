@@ -154,8 +154,10 @@ namespace RadLibrary.Configuration.Managers.IniManager
 
                 var section = _sections.FirstOrDefault(x => x.Key == attr.Key);
 
-                Type paramType;
-                object defaultValue;
+                Type paramType = null;
+                object defaultValue = null;
+
+                // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
                 switch (member.MemberType)
                 {
                     case MemberTypes.Field:
@@ -167,10 +169,6 @@ namespace RadLibrary.Configuration.Managers.IniManager
                         var property = (PropertyInfo) member;
                         paramType = property.PropertyType;
                         defaultValue = property.GetValue(instance);
-                        break;
-                    default:
-                        paramType = null;
-                        defaultValue = null;
                         break;
                 }
 

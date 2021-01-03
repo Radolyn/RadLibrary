@@ -1,5 +1,6 @@
 ﻿#region
 
+using System;
 using System.IO;
 using System.Linq;
 using RadLibrary.Configuration.Managers.IniManager;
@@ -57,7 +58,7 @@ namespace RadLibrary.Tests
         [Fact]
         public void SchemeTest()
         {
-            const string file = "test3.ini";
+            const string file = "test3.1.ini";
 
             File.WriteAllText(file, "key1 = false\nkey2 = 1338\n");
 
@@ -71,15 +72,114 @@ namespace RadLibrary.Tests
             Assert.Equal("127.0.0.1", config["ip"].Value);
         }
 
+        [Fact]
+        public void SchemePartialTest()
+        {
+            const string file = "test3.2.ini";
+
+            File.WriteAllText(file, "port = 1332\nproperty = -20\nkey2 = 1338\n");
+
+            var config = new IniManager(file);
+            config.Load();
+
+            config.EnsureScheme(typeof(Config));
+
+            Assert.Equal(ulong.MaxValue, config["count"].ValueAs<ulong>());
+            Assert.Equal(1332, config["port"].ValueAs<int>());
+            Assert.Equal(default, config["property"].ValueAs<ushort>());
+            Assert.Equal("127.0.0.1", config["ip"].Value);
+        }
+
+        [Fact]
+        public void SchemeNullTest()
+        {
+            const string file = "test4.ini";
+
+            File.WriteAllText(file, "key1 = false\nkey2 = 1338\n");
+
+            var config = new IniManager(file);
+            config.Load();
+
+            Assert.Throws<ArgumentNullException>(() => config.EnsureScheme(null));
+        }
+
+        [Fact]
+        public void SchemeInvalidTest()
+        {
+            const string file = "test5.ini";
+
+            File.WriteAllText(file, "key1 = false\nkey2 = 1338\n");
+
+            var config = new IniManager(file);
+            config.Load();
+
+            Assert.Throws<ArgumentException>(() => config.EnsureScheme(typeof(InvalidConfig)));
+        }
+
+        [Fact]
+        public void DuplicateTest()
+        {
+            const string file = "test6.ini";
+
+            File.WriteAllText(file, "key1 = false\nkey2 = 1338\nkey2 = 228");
+
+            var config = new IniManager(file, false);
+            Assert.Throws<ArgumentException>(() => config.Load());
+        }
+
+        [Fact]
+        public void IniSectionTest()
+        {
+            const string file = "test7.ini";
+
+            File.WriteAllText(file, "key1 = false\nkey2 = 1338\n");
+
+            var config = new IniManager(file);
+            config.Load();
+
+            config["key1"].SetValue("1122");
+            config["key1"].SetValue(321);
+
+            Assert.Throws<NotSupportedException>(() => config["key1"].SetValue(config["key2"]));
+            Assert.Throws<NotSupportedException>(() => config["key1"]["key3"]);
+
+            Assert.Equal(config["key1"].Value, config["key1"].ToString());
+
+            // implicit operators test
+
+            IniSection section1 = "aaaa";
+            IniSection section2 = true;
+            IniSection section3 = 321;
+        }
+
+        public class InvalidConfig
+        {
+            public InvalidConfig(object arg)
+            {
+            }
+        }
+
         public class Config
         {
             [SchemeSection] public string Ip = "127.0.0.1";
 
-            [SchemeSection] public int Port { get; set; }
+            [SchemeSection("port")] public ushort Port { get; set; }
+
+            [SchemeSection("property", Comment = "asd")]
+            public ushort SomeProperty { get; set; }
 
             [SchemeSection] public bool Connect { get; set; }
 
             [SchemeSection] public ulong Count { get; set; } = ulong.MaxValue;
+
+            public void SomeMethod()
+            {
+                // *does something*
+            }
+        }
+
+        public struct TestStruct
+        {
         }
     }
 }

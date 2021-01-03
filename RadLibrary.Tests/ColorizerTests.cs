@@ -28,8 +28,15 @@ namespace RadLibrary.Tests
             foreach (var (hex, rgb) in hexStrings)
             {
                 var colorized = "test".Colorize(hex);
+                var colorized2 = "test".ColorizeBackground(hex);
+                var colorized3 = Colorizer.GetBackgroundColorizationString(Colorizer.HexToColor(hex)) + "test";
 
-                foreach (var rgbColor in rgb.Split(", ")) Assert.Contains(rgbColor, colorized);
+                foreach (var rgbColor in rgb.Split(", "))
+                {
+                    Assert.Contains(rgbColor, colorized);
+                    Assert.Contains(rgbColor, colorized2);
+                    Assert.Contains(rgbColor, colorized3);
+                }
             }
         }
 

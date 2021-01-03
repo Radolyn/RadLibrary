@@ -1,6 +1,10 @@
 ﻿#if NET5_0
+#region
 
+using System;
 using System.Runtime.CompilerServices;
+
+#endregion
 
 namespace RadLibrary
 {
@@ -9,7 +13,14 @@ namespace RadLibrary
         [ModuleInitializer]
         internal static void Initialize()
         {
-            Utilities.Initialize(false);
+            try
+            {
+                Utilities.Initialize(false);
+            }
+            catch
+            {
+                Console.WriteLine("Failed to initialize RadLibrary");
+            }
         }
     }
 }

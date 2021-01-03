@@ -22,6 +22,8 @@ namespace RadLibrary
 
         private static ConsoleEventDelegate _handler;
 
+        private static bool _isInitialized;
+
         /// <summary>
         ///     Checks whether the current system is Windows or not
         /// </summary>
@@ -36,8 +38,6 @@ namespace RadLibrary
 
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool SetConsoleCtrlHandler(ConsoleEventDelegate callback, bool add);
-
-        private static bool _isInitialized;
 
         /// <summary>
         ///     Initializes Colorizer and FormattersStorage
