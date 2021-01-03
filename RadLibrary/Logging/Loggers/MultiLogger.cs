@@ -13,23 +13,9 @@ namespace RadLibrary.Logging.Loggers
     ///     pass all loggers that you want to log in.
     ///     If you want to change settings, it'll change settings of all loggers that you passed in.
     /// </summary>
-    public class MultiLogger : LoggerBase
+    public class MultiLogger : LoggerBase<MultiLoggerSettings>
     {
         private IEnumerable<LoggerBase> _loggers;
-
-        /// <inheritdoc />
-        public sealed override LoggerSettings Settings
-        {
-            get => base.Settings;
-            set
-            {
-                base.Settings = value;
-
-                if (_loggers == null) return;
-
-                foreach (var logger in _loggers) logger.Settings = value;
-            }
-        }
 
         /// <inheritdoc />
         public override void DirectLog(LogType type, string message)
@@ -40,10 +26,10 @@ namespace RadLibrary.Logging.Loggers
         /// <inheritdoc />
         public override void Initialize()
         {
-            if (Settings is not MultiLoggerSettings settings || settings.Loggers?.Any() == false)
+            if (Settings.Loggers?.Any() == false)
                 throw new ArgumentException("No loggers provided");
 
-            _loggers = settings.Loggers;
+            _loggers = Settings.Loggers;
         }
     }
 
@@ -66,6 +52,61 @@ namespace RadLibrary.Logging.Loggers
         public MultiLoggerSettings(IEnumerable<LoggerBase> loggers)
         {
             Loggers = loggers;
+        }
+
+        /// <inheritdoc />
+        public override bool FormatJson
+        {
+            get => base.FormatJson;
+            set
+            {
+                base.FormatJson = value;
+
+                if (Loggers == null) return;
+                foreach (var logger in Loggers) logger.Settings.FormatJson = value;
+            }
+        }
+
+        /// <inheritdoc />
+        public override string LogFormat
+        {
+            get => base.LogFormat;
+            set
+            {
+                base.LogFormat = value;
+
+                if (Loggers == null) return;
+                foreach (var logger in Loggers) logger.Settings.LogFormat = value;
+            }
+        }
+
+        /// <inheritdoc />
+        public override Type Logger { get; set; } = typeof(MultiLogger);
+
+        /// <inheritdoc />
+        public override LogType LoggingLevel
+        {
+            get => base.LoggingLevel;
+            set
+            {
+                base.LoggingLevel = value;
+
+                if (Loggers == null) return;
+                foreach (var logger in Loggers) logger.Settings.LoggingLevel = value;
+            }
+        }
+
+        /// <inheritdoc />
+        public override string Name
+        {
+            get => base.Name;
+            set
+            {
+                base.Name = value;
+
+                if (Loggers == null) return;
+                foreach (var logger in Loggers) logger.Settings.Name = value;
+            }
         }
     }
 }

@@ -34,13 +34,12 @@ namespace RadLibrary.Logging
         /// <summary>
         ///     The trace message
         /// </summary>
-        /// <param name="message">The format (will be formatted with string.Format) or message</param>
+        /// <param name="format">The format (will be formatted with string.Format) or message</param>
         /// <param name="args">The arguments to pass in string.Format</param>
-        [StringFormatMethod("message")]
-        public void Trace(string message, params object[] args)
+        [StringFormatMethod("format")]
+        public void Trace(string format, params object[] args)
         {
-            DirectLog(LogType.Trace,
-                args.Length == 0 ? message : string.Format(FormattersStorage.FormatProvider, message, args));
+            DirectLog(LogType.Trace, ParseArguments(format, args));
         }
 
         /// <summary>
@@ -55,13 +54,12 @@ namespace RadLibrary.Logging
         /// <summary>
         ///     The debug message
         /// </summary>
-        /// <param name="message">The format (will be formatted with string.Format) or message</param>
+        /// <param name="format">The format (will be formatted with string.Format) or message</param>
         /// <param name="args">The arguments to pass in string.Format</param>
-        [StringFormatMethod("message")]
-        public void Debug(string message, params object[] args)
+        [StringFormatMethod("format")]
+        public void Debug(string format, params object[] args)
         {
-            DirectLog(LogType.Debug,
-                args.Length == 0 ? message : string.Format(FormattersStorage.FormatProvider, message, args));
+            DirectLog(LogType.Debug, ParseArguments(format, args));
         }
 
         /// <summary>
@@ -76,13 +74,12 @@ namespace RadLibrary.Logging
         /// <summary>
         ///     The information message
         /// </summary>
-        /// <param name="message">The format (will be formatted with string.Format) or message</param>
+        /// <param name="format">The format (will be formatted with string.Format) or message</param>
         /// <param name="args">The arguments to pass in string.Format</param>
-        [StringFormatMethod("message")]
-        public void Info(string message, params object[] args)
+        [StringFormatMethod("format")]
+        public void Info(string format, params object[] args)
         {
-            DirectLog(LogType.Info,
-                args.Length == 0 ? message : string.Format(FormattersStorage.FormatProvider, message, args));
+            DirectLog(LogType.Info, ParseArguments(format, args));
         }
 
         /// <summary>
@@ -97,13 +94,12 @@ namespace RadLibrary.Logging
         /// <summary>
         ///     The warning message
         /// </summary>
-        /// <param name="message">The format (will be formatted with string.Format) or message</param>
+        /// <param name="format">The format (will be formatted with string.Format) or message</param>
         /// <param name="args">The arguments to pass in string.Format</param>
-        [StringFormatMethod("message")]
-        public void Warn(string message, params object[] args)
+        [StringFormatMethod("format")]
+        public void Warn(string format, params object[] args)
         {
-            DirectLog(LogType.Warn,
-                args.Length == 0 ? message : string.Format(FormattersStorage.FormatProvider, message, args));
+            DirectLog(LogType.Warn, ParseArguments(format, args));
         }
 
         /// <summary>
@@ -118,13 +114,12 @@ namespace RadLibrary.Logging
         /// <summary>
         ///     The error message
         /// </summary>
-        /// <param name="message">The format (will be formatted with string.Format) or message</param>
+        /// <param name="format">The format (will be formatted with string.Format) or message</param>
         /// <param name="args">The arguments to pass in string.Format</param>
-        [StringFormatMethod("message")]
-        public void Error(string message, params object[] args)
+        [StringFormatMethod("format")]
+        public void Error(string format, params object[] args)
         {
-            DirectLog(LogType.Error,
-                args.Length == 0 ? message : string.Format(FormattersStorage.FormatProvider, message, args));
+            DirectLog(LogType.Error, ParseArguments(format, args));
         }
 
         /// <summary>
@@ -139,13 +134,18 @@ namespace RadLibrary.Logging
         /// <summary>
         ///     The fatal message
         /// </summary>
-        /// <param name="message">The format (will be formatted with string.Format) or message</param>
+        /// <param name="format">The format (will be formatted with string.Format) or message</param>
         /// <param name="args">The arguments to pass in string.Format</param>
-        [StringFormatMethod("message")]
-        public void Fatal(string message, params object[] args)
+        [StringFormatMethod("format")]
+        public void Fatal(string format, params object[] args)
         {
-            DirectLog(LogType.Fatal,
-                args.Length == 0 ? message : string.Format(FormattersStorage.FormatProvider, message, args));
+            DirectLog(LogType.Fatal, ParseArguments(format, args));
+        }
+
+        private static string ParseArguments(string format, params object[] args)
+        {
+            args ??= new object[] {null};
+            return args.Length == 0 ? format : string.Format(FormattersStorage.FormatProvider, format, args);
         }
 
         private static string ParseArguments(params object[] args)
@@ -157,7 +157,7 @@ namespace RadLibrary.Logging
     public abstract class LoggerBase<T> : LoggerBase
         where T : LoggerSettings
     {
-        public new T Settings
+        public new virtual T Settings
         {
             get => (T) base.Settings;
             set => base.Settings = value;

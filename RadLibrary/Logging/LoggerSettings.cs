@@ -20,35 +20,35 @@ namespace RadLibrary.Logging
         /// <summary>
         ///     Format json-like messages?
         /// </summary>
-        public bool FormatJson = true;
+        public virtual bool FormatJson { get; set; } = true;
 
         /// <summary>
         ///     The log format. Available variables: {Time}, {Name}, {Level}, {Message}.
         ///     Supports all string.Format features (alignment, formatting)
         /// </summary>
-        public string LogFormat = "[{Time:HH\\:mm\\:ss\\:fffff} {Name,20} {Level,5}] {Message}";
+        public virtual string LogFormat { get; set; } = "[{Time:HH\\:mm\\:ss\\:fffff} {Name,20} {Level,5}] {Message}";
 
         /// <summary>
         ///     The logger type (use typeof(RadLoggerBase))
         /// </summary>
-        public Type Logger;
+        public virtual Type Logger { get; set; }
 
         /// <summary>
-        ///     The logging level
+        ///     The minimal logging level
         /// </summary>
-        public LogType LoggingLevel = LogType.Info;
+        public virtual LogType LoggingLevel { get; set; } = LogType.Info;
 
         /// <summary>
         ///     The logger name
         /// </summary>
-        public string Name;
+        public virtual string Name { get; set; }
 
         /// <inheritdoc />
         public bool Equals(LoggerSettings other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return FormatJson == other.FormatJson && LogFormat == other.LogFormat && Equals(Logger, other.Logger) &&
+            return FormatJson == other.FormatJson && LogFormat == other.LogFormat && Logger == other.Logger &&
                    LoggingLevel == other.LoggingLevel && Name == other.Name;
         }
 

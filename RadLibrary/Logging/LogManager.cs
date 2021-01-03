@@ -49,10 +49,21 @@ namespace RadLibrary.Logging
         }
 
         /// <summary>
+        ///     Creates console logger with specified name
+        /// </summary>
+        /// <param name="name">The logger name</param>
+        /// <param name="args">The logger settings</param>
+        /// <returns>The console logger</returns>
+        public static LoggerBase GetLogger(string name, LoggerSettings args)
+        {
+            return GetLogger<ConsoleLogger>(name, args);
+        }
+
+        /// <summary>
         ///     Creates logger with specified type and name
         /// </summary>
         /// <param name="name">The logger name</param>
-        /// <typeparam name="TLogger"></typeparam>
+        /// <typeparam name="TLogger">Logger type</typeparam>
         /// <returns>The T logger</returns>
         public static LoggerBase GetLogger<TLogger>(string name) where TLogger : LoggerBase
         {
@@ -64,11 +75,11 @@ namespace RadLibrary.Logging
         /// </summary>
         /// <param name="name">The logger name</param>
         /// <param name="args">The logger settings</param>
-        /// <typeparam name="TLogger"></typeparam>
+        /// <typeparam name="TLogger">Logger type</typeparam>
         /// <returns>The T logger</returns>
         public static LoggerBase GetLogger<TLogger>(string name, LoggerSettings args) where TLogger : LoggerBase
         {
-            args ??= new LoggerSettings();
+            args ??= GetSettingsInstance(typeof(TLogger));
 
             args.Name = name;
             args.Logger = typeof(TLogger);
@@ -88,7 +99,7 @@ namespace RadLibrary.Logging
         /// <summary>
         ///     Creates logger with the name of calling class and specified arguments
         /// </summary>
-        /// <param name="args">RadLoggerBase's arguments</param>
+        /// <param name="args">Logger's arguments</param>
         /// <returns>The console logger</returns>
         public static LoggerBase GetClassLogger(LoggerSettings args)
         {
@@ -98,18 +109,18 @@ namespace RadLibrary.Logging
         /// <summary>
         ///     Creates logger with the name of calling class and specified arguments
         /// </summary>
-        /// <param name="args">RadLoggerBase's arguments</param>
-        /// <typeparam name="TLogger">RadLoggerBase type</typeparam>
+        /// <param name="args">Logger's arguments</param>
+        /// <typeparam name="TLogger">Logger type</typeparam>
         /// <returns>The T logger</returns>
         public static LoggerBase GetClassLogger<TLogger>(LoggerSettings args = null) where TLogger : LoggerBase
         {
-            args ??= new LoggerSettings();
+            args ??= GetSettingsInstance(typeof(TLogger));
 
             // get namespace
             var method = GetPreviousFrame().GetMethod();
 
             args.Name = method?.DeclaringType?.FullName;
-            args.Logger = typeof(TLogger);
+            args.Logger ??= typeof(TLogger);
 
             return CreateLogger(args);
         }
@@ -126,7 +137,7 @@ namespace RadLibrary.Logging
         /// <summary>
         ///     Creates logger with the name of calling method and specified arguments
         /// </summary>
-        /// <param name="args">RadLoggerBase's arguments</param>
+        /// <param name="args">LoggerBase's arguments</param>
         /// <returns>The console logger</returns>
         public static LoggerBase GetMethodLogger(LoggerSettings args)
         {
@@ -136,18 +147,18 @@ namespace RadLibrary.Logging
         /// <summary>
         ///     Creates logger with the name of calling method and specified arguments
         /// </summary>
-        /// <param name="args">RadLoggerBase's arguments</param>
-        /// <typeparam name="TLogger">RadLoggerBase type</typeparam>
+        /// <param name="args">Logger's arguments</param>
+        /// <typeparam name="TLogger">Logger type</typeparam>
         /// <returns>The T logger</returns>
         public static LoggerBase GetMethodLogger<TLogger>(LoggerSettings args = null) where TLogger : LoggerBase
         {
-            args ??= new LoggerSettings();
+            args ??= GetSettingsInstance(typeof(TLogger));
 
             // get method name
             var method = GetPreviousFrame().GetMethod();
 
             args.Name = method?.DeclaringType?.FullName + "." + method?.Name;
-            args.Logger = typeof(TLogger);
+            args.Logger ??= typeof(TLogger);
 
             return CreateLogger(args);
         }
@@ -184,15 +195,16 @@ namespace RadLibrary.Logging
 
         private static LoggerBase CreateLogger(LoggerSettings settings)
         {
+            if (settings == null)
+                throw new ArgumentNullException(nameof(settings), "Settings cannot be null");
+
             var predicate = Loggers.Find(x => x.Settings.Equals(settings));
 
             if (predicate != null)
                 return predicate;
 
-            VerifySettings(settings);
-
             var logger = (LoggerBase) Activator.CreateInstance(settings.Logger);
-            logger.Settings = settings;
+            logger!.Settings = settings;
 
             logger.Initialize();
 
@@ -201,13 +213,15 @@ namespace RadLibrary.Logging
             return logger;
         }
 
-        private static void VerifySettings(LoggerSettings settings)
+        private static LoggerSettings GetSettingsInstance(Type type)
         {
-            if (settings == null)
-                throw new ArgumentNullException(nameof(settings), "Settings cannot be null");
+            if (!typeof(LoggerBase).IsAssignableFrom(type))
+                throw new ArgumentException($"{type.FullName} is not assignable to LoggerBase");
 
-            if (!typeof(LoggerBase).IsAssignableFrom(settings.Logger))
-                throw new ArgumentException($"{settings.Logger?.FullName} is not assignable to RadLoggerBase");
+            if (type?.BaseType?.IsGenericType != true)
+                return new LoggerSettings();
+
+            return (LoggerSettings) Activator.CreateInstance(type.BaseType.GetGenericArguments()[0]);
         }
 
         private static StackFrame GetPreviousFrame()

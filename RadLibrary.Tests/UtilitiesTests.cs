@@ -65,5 +65,30 @@ namespace RadLibrary.Tests
             Assert.Equal(default, res2);
             Assert.Equal(default, res3);
         }
+
+        [Fact]
+        public void InitializeTest()
+        {
+            // ReSharper disable once RedundantArgumentDefaultValue
+            Utilities.Initialize(true);
+        }
+
+        [Fact]
+        public void AllocateConsoleTest()
+        {
+            Utilities.AllocateConsole();
+        }
+
+        [Fact]
+        public void RandomTest()
+        {
+            Utilities.RandomBool();
+            Utilities.RandomBool();
+            Utilities.RandomBool();
+
+            Utilities.RandomInt();
+            Utilities.RandomInt();
+            Utilities.RandomInt();
+        }
     }
 }

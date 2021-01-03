@@ -26,7 +26,7 @@ namespace RadLibrary.Logging.Loggers
         {
             var name = DateTime.Now.ToString("HH_mm_") + Settings.Name + ".txt";
 
-            if (Settings == null)
+            if (Settings.FileName == null)
                 _fileStream = new StreamWriter(new FileStream(name, FileMode.OpenOrCreate, FileAccess.Write,
                     FileShare.Read));
             else
@@ -66,5 +66,8 @@ namespace RadLibrary.Logging.Loggers
             FileName = fileName;
             FileMode = fileMode;
         }
+
+        /// <inheritdoc />
+        public override Type Logger { get; set; } = typeof(FileLogger);
     }
 }

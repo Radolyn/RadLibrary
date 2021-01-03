@@ -18,7 +18,7 @@ namespace RadLibrary
     {
         private const int StdOutputHandle = -11;
 
-        private static Random _random;
+        private static readonly Random Random = new();
 
         private static ConsoleEventDelegate _handler;
 
@@ -67,14 +67,19 @@ namespace RadLibrary
         /// </summary>
         /// <param name="encoding">The encoding</param>
         /// <param name="clearConsole">If set to true, console will be cleared after allocation</param>
-        public static void AllocateConsole(Encoding encoding = null, bool clearConsole = true)
+        /// <remarks>If called not on Windows or with attached debugger, will return true instantly</remarks>
+        /// <returns>Console allocated or not</returns>
+        public static bool AllocateConsole(Encoding encoding = null, bool clearConsole = true)
         {
             if (!IsWindows || Debugger.IsAttached)
-                return;
+                return true;
 
             encoding ??= Encoding.UTF8;
 
-            AllocConsole();
+            var res = AllocConsole();
+
+            if (res == 0)
+                return false;
 
             var stdHandle = GetStdHandle(StdOutputHandle);
             var fileHandle = new SafeFileHandle(stdHandle, true);
@@ -85,6 +90,8 @@ namespace RadLibrary
 
             if (clearConsole)
                 Console.Clear();
+
+            return true;
         }
 
         /// <summary>
@@ -110,9 +117,16 @@ namespace RadLibrary
         /// <returns>Random integer</returns>
         public static int RandomInt(int start = int.MinValue, int end = int.MaxValue)
         {
-            _random ??= new Random();
+            return Random.Next(start, end);
+        }
 
-            return _random.Next(start, end);
+        /// <summary>
+        ///     Returns random boolean
+        /// </summary>
+        /// <returns>Random boolean</returns>
+        public static bool RandomBool()
+        {
+            return Random.NextDouble() > 0.5;
         }
 
         private delegate bool ConsoleEventDelegate(int eventType);
