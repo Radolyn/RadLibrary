@@ -22,6 +22,9 @@ namespace Examples
             Loggers();
             RadConsole();
             Configs();
+
+            Console.ReadLine();
+            Console.WriteLine(@"\[\]");
         }
 
         private static void Configs()
@@ -100,7 +103,7 @@ namespace Examples
             }.Select(x => x));
 
             Console.WriteLine("[fff123]{0}", null);
-            
+
             Console.WriteLine("[#fffff]{CoolPrefix} [aaaff]Some colorful text");
 
             Console.WriteLine("[00ffcc]{CoolPrefix} [#ffff66]Some colorful text");

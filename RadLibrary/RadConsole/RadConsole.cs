@@ -788,11 +788,17 @@ namespace RadLibrary.RadConsole
                     continue;
                 }
 
-                if (escapeSymbol)
+                if (escapeSymbol && ch is '[' or ']')
                 {
                     WriteSb(ch);
                     escapeSymbol = false;
                     continue;
+                }
+
+                if (escapeSymbol)
+                {
+                    escapeSymbol = false;
+                    WriteSb('\\');
                 }
 
                 switch (ch)
