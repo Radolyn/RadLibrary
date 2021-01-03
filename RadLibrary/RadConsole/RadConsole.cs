@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
+using JetBrains.Annotations;
 using RadLibrary.Colors;
 using RadLibrary.Formatting;
 
@@ -699,6 +700,7 @@ namespace RadLibrary.RadConsole
         /// </summary>
         /// <param name="format">The format</param>
         /// <param name="args">The objects</param>
+        [StringFormatMethod("format")]
         public static void Write(string format, params object[] args)
         {
             args ??= new object[] {null};
@@ -713,6 +715,7 @@ namespace RadLibrary.RadConsole
         /// </summary>
         /// <param name="format">The format</param>
         /// <param name="args">The objects</param>
+        [StringFormatMethod("format")]
         public static void WriteLine(string format, params object[] args)
         {
             Write(format + Environment.NewLine, args);

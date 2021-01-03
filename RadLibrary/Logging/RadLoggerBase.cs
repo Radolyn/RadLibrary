@@ -12,7 +12,7 @@ namespace RadLibrary.Logging
     public abstract class RadLoggerBase<T> : LoggerBase<T>
         where T : LoggerSettings
     {
-        private readonly Regex _jsonRegex = new Regex(@"(({)|(\[)).*\s*:\s*.*((})|(\]))", RegexOptions.Compiled);
+        private readonly Regex _jsonRegex = new(@"(({)|(\[)).*\s*:\s*.*((})|(\]))", RegexOptions.Compiled);
 
         /// <summary>
         ///     The log action

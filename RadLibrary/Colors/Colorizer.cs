@@ -19,7 +19,7 @@ namespace RadLibrary.Colors
         private static bool _isInitialized;
 
         private static readonly Regex ColorsRegex =
-            new Regex("\x1b\\[\\d{2};2;\\d{1,3};\\d{1,3};\\d{1,3}m", RegexOptions.Compiled);
+            new("\x1b\\[\\d{2};2;\\d{1,3};\\d{1,3};\\d{1,3}m", RegexOptions.Compiled);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);

@@ -46,7 +46,7 @@ namespace RadLibrary
             Colorizer.Initialize();
             FormattersStorage.AddDefault();
 
-            if (!registerColorResetEvent) return;
+            if (!registerColorResetEvent || !IsWindows) return;
 
             _handler = eventType =>
             {

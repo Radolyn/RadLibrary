@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
     <ApplicationIcon />
     <OutputType>Library</OutputType>
     <StartupObject />
@@ -16,9 +15,14 @@
     <Copyright>© 2020 Radolyn</Copyright>
     <!-- <PackageLicenseFile>$(SolutionDir)LICENSE</PackageLicenseFile> -->
     <RepositoryUrl>https://github.com/Radolyn/RadLibrary</RepositoryUrl>
-    <PackageVersion>1.6.0</PackageVersion>
+    <PackageVersion>1.6.1</PackageVersion>
     <LangVersion>9</LangVersion>
     <PackageLicenseUrl>https://github.com/Radolyn/RadLibrary/blob/master/LICENSE</PackageLicenseUrl>
+    <TargetFrameworks>net5.0;netcoreapp3.1;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2020.3.0" />
+  </ItemGroup>
 
 </Project>

@@ -17,10 +17,10 @@ namespace RadLibrary.Formatting
     /// </summary>
     public static class FormattersStorage
     {
-        private static readonly List<IObjectFormatter> Formatters = new List<IObjectFormatter>();
+        private static readonly List<IObjectFormatter> Formatters = new();
 
         private static readonly ConcurrentDictionary<Type, IObjectFormatter> CachedFormatters =
-            new ConcurrentDictionary<Type, IObjectFormatter>();
+            new();
 
         private static readonly IObjectFormatter NullFormatter = new NullFormatter();
 

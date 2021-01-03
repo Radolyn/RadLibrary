@@ -16,7 +16,7 @@ namespace RadLibrary.Logging
     /// </summary>
     public static class LogManager
     {
-        private static readonly List<LoggerBase> Loggers = new List<LoggerBase>();
+        private static readonly List<LoggerBase> Loggers = new();
 
         /// <summary>
         ///     Adds exceptions handler
