@@ -128,9 +128,10 @@ namespace RadLibrary.Tests
         public void AssertMultiLoggerSettings()
         {
             var fileLogger = LogManager.GetLogger<FileLogger>("FileLogger2");
-            var consoleLogger = LogManager.GetLogger("FileLogger3");
+            var consoleLogger = LogManager.GetLogger("ConsoleLogger3");
             var logger =
-                LogManager.GetLogger(new MultiLoggerSettings(new List<LoggerBase> {fileLogger, consoleLogger}));
+                LogManager.GetLogger(new MultiLoggerSettings(new List<LoggerBase> {fileLogger, consoleLogger})
+                    {Name = "MultiLogger12"});
 
             logger.Settings.Name = "1338";
             logger.Settings.FormatJson = false;
@@ -152,7 +153,7 @@ namespace RadLibrary.Tests
             logger = LogManager.GetLogger("1");
             logger = LogManager.GetLogger<NullLogger>("2");
             logger = LogManager.GetLogger<NullLogger>("2");
-            logger = LogManager.GetLogger(new FileLoggerSettings("asd.txt"));
+            logger = LogManager.GetLogger(new FileLoggerSettings("asd.txt") {Name = "3223"});
             logger = LogManager.GetLogger("asdasdsda", new FileLoggerSettings("asd.txt"));
 
             logger = LogManager.GetMethodLogger();

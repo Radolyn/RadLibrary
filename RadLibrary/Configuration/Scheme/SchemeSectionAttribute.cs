@@ -7,7 +7,7 @@ using System;
 namespace RadLibrary.Configuration.Scheme
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public class SchemeSectionAttribute : Attribute
+    public sealed class SchemeSectionAttribute : Attribute
     {
         public SchemeSectionAttribute()
         {

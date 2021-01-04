@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using JetBrains.Annotations;
 
 #endregion
 
@@ -33,6 +34,7 @@ namespace RadLibrary.Logging
                 Log(type, message, Format(type, message));
         }
 
+        [NotNull]
         private string Format(LogType type, string message)
         {
             message ??= "null";
@@ -47,8 +49,8 @@ namespace RadLibrary.Logging
 
             message = message.Replace("\r\n", "\n");
 
-            if (_jsonRegex.IsMatch(message) && Settings.FormatJson)
-                message = FormatJson(message);
+            if (Settings.FormatJson && _jsonRegex.IsMatch(message))
+                message = FormatJson(message) ?? message;
 
             var res = Settings.LogFormat.FormatWith(dict);
 
@@ -63,8 +65,12 @@ namespace RadLibrary.Logging
             return messages;
         }
 
-        private static string FormatJson(string json)
+        [CanBeNull]
+        private static string FormatJson([CanBeNull] string json)
         {
+            if (string.IsNullOrWhiteSpace(json))
+                return json;
+
             // https://stackoverflow.com/a/57100143
             var indentation = 0;
             var quoteCount = 0;
@@ -87,9 +93,10 @@ namespace RadLibrary.Logging
                 let closeChar = (ch == '}' || ch == ']') && unquoted
                     ? Environment.NewLine + indent.Repeat(--indentation) + ch
                     : ch.ToString()
-                select colon ?? noSpace ?? lineBreak ?? (
+                select colon ?? noSpace;
+            /*  ?? lineBreak ?? (
                     openChar.Length > 1 ? openChar : closeChar
-                );
+                ); */
 
             return string.Concat(result);
         }

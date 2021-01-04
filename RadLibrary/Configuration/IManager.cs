@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 #endregion
 
@@ -16,6 +17,7 @@ namespace RadLibrary.Configuration
         /// <summary>
         ///     All root sections
         /// </summary>
+        [ItemNotNull]
         IEnumerable<T> Sections { get; }
 
         /// <summary>
@@ -23,21 +25,22 @@ namespace RadLibrary.Configuration
         ///     <example>config["key"] = "value";</example>
         /// </summary>
         /// <param name="key">The key</param>
-        T this[string key] { get; set; }
+        [NotNull]
+        T this[[NotNull] string key] { get; set; }
 
         /// <summary>
         ///     Get section by key
         /// </summary>
         /// <param name="section">The key</param>
         /// <returns>The section</returns>
-        T GetSection(string section);
+        T GetSection([NotNull] string section);
 
         /// <summary>
         ///     Set section by key
         /// </summary>
         /// <param name="key">The key</param>
         /// <param name="section">The section</param>
-        void SetSection(string key, T section);
+        void SetSection([NotNull] string key, [NotNull] T section);
 
         /// <summary>
         ///     Load configuration in memory
@@ -53,6 +56,6 @@ namespace RadLibrary.Configuration
         ///     Ensure config scheme
         /// </summary>
         /// <param name="type">The config scheme</param>
-        void EnsureScheme(Type type);
+        void EnsureScheme([NotNull] Type type);
     }
 }

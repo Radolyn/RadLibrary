@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using JetBrains.Annotations;
 using RadLibrary.Logging.Loggers;
 
 #endregion
@@ -22,7 +23,7 @@ namespace RadLibrary.Logging
         ///     Adds exceptions handler to app
         /// </summary>
         /// <param name="logger">The custom logger</param>
-        public static void AddExceptionsHandler(LoggerBase logger = null)
+        public static void AddExceptionsHandler([CanBeNull] LoggerBase logger = null)
         {
             if (logger != null)
                 AppDomain.CurrentDomain.UnhandledException += (sender, args) => logger.Error(args.ExceptionObject);
@@ -43,7 +44,8 @@ namespace RadLibrary.Logging
         /// </summary>
         /// <param name="name">The logger name</param>
         /// <returns>The console logger</returns>
-        public static LoggerBase GetLogger(string name)
+        [NotNull]
+        public static LoggerBase GetLogger([NotNull] string name)
         {
             return GetLogger<ConsoleLogger>(name);
         }
@@ -54,7 +56,8 @@ namespace RadLibrary.Logging
         /// <param name="name">The logger name</param>
         /// <param name="args">Logger's arguments</param>
         /// <returns>The console logger</returns>
-        public static LoggerBase GetLogger(string name, LoggerSettings args)
+        [NotNull]
+        public static LoggerBase GetLogger([NotNull] string name, [CanBeNull] LoggerSettings args)
         {
             return GetLogger<ConsoleLogger>(name, args);
         }
@@ -65,7 +68,8 @@ namespace RadLibrary.Logging
         /// <param name="name">The logger name</param>
         /// <typeparam name="TLogger">Logger type</typeparam>
         /// <returns>The T logger</returns>
-        public static LoggerBase GetLogger<TLogger>(string name) where TLogger : LoggerBase
+        [NotNull]
+        public static LoggerBase GetLogger<TLogger>([NotNull] string name) where TLogger : LoggerBase
         {
             return GetLogger<TLogger>(name, null);
         }
@@ -77,7 +81,9 @@ namespace RadLibrary.Logging
         /// <param name="args">Logger's arguments</param>
         /// <typeparam name="TLogger">Logger type</typeparam>
         /// <returns>The T logger</returns>
-        public static LoggerBase GetLogger<TLogger>(string name, LoggerSettings args) where TLogger : LoggerBase
+        [NotNull]
+        public static LoggerBase GetLogger<TLogger>([NotNull] string name, [CanBeNull] LoggerSettings args)
+            where TLogger : LoggerBase
         {
             args ??= GetSettingsInstance(typeof(TLogger));
 
@@ -91,6 +97,7 @@ namespace RadLibrary.Logging
         ///     Creates logger with the name of calling class
         /// </summary>
         /// <returns>The console logger</returns>
+        [NotNull]
         public static LoggerBase GetClassLogger()
         {
             return GetClassLogger<ConsoleLogger>();
@@ -101,7 +108,8 @@ namespace RadLibrary.Logging
         /// </summary>
         /// <param name="args">Logger's arguments</param>
         /// <returns>The console logger</returns>
-        public static LoggerBase GetClassLogger(LoggerSettings args)
+        [NotNull]
+        public static LoggerBase GetClassLogger([CanBeNull] LoggerSettings args)
         {
             return GetClassLogger<ConsoleLogger>(args);
         }
@@ -112,7 +120,9 @@ namespace RadLibrary.Logging
         /// <param name="args">Logger's arguments</param>
         /// <typeparam name="TLogger">Logger type</typeparam>
         /// <returns>The T logger</returns>
-        public static LoggerBase GetClassLogger<TLogger>(LoggerSettings args = null) where TLogger : LoggerBase
+        [NotNull]
+        public static LoggerBase GetClassLogger<TLogger>([CanBeNull] LoggerSettings args = null)
+            where TLogger : LoggerBase
         {
             args ??= GetSettingsInstance(typeof(TLogger));
 
@@ -129,6 +139,7 @@ namespace RadLibrary.Logging
         ///     Creates logger with the name of calling method
         /// </summary>
         /// <returns>The console logger</returns>
+        [NotNull]
         public static LoggerBase GetMethodLogger()
         {
             return GetMethodLogger<ConsoleLogger>();
@@ -139,7 +150,8 @@ namespace RadLibrary.Logging
         /// </summary>
         /// <param name="args">Logger's arguments</param>
         /// <returns>The console logger</returns>
-        public static LoggerBase GetMethodLogger(LoggerSettings args)
+        [NotNull]
+        public static LoggerBase GetMethodLogger([CanBeNull] LoggerSettings args)
         {
             return GetMethodLogger<ConsoleLogger>(args);
         }
@@ -150,7 +162,9 @@ namespace RadLibrary.Logging
         /// <param name="args">Logger's arguments</param>
         /// <typeparam name="TLogger">Logger type</typeparam>
         /// <returns>The T logger</returns>
-        public static LoggerBase GetMethodLogger<TLogger>(LoggerSettings args = null) where TLogger : LoggerBase
+        [NotNull]
+        public static LoggerBase GetMethodLogger<TLogger>([CanBeNull] LoggerSettings args = null)
+            where TLogger : LoggerBase
         {
             args ??= GetSettingsInstance(typeof(TLogger));
 
@@ -168,7 +182,8 @@ namespace RadLibrary.Logging
         /// </summary>
         /// <param name="args">Logger's arguments</param>
         /// <returns>The logger</returns>
-        public static LoggerBase GetLogger(LoggerSettings args)
+        [NotNull]
+        public static LoggerBase GetLogger([NotNull] LoggerSettings args)
         {
             return CreateLogger(args);
         }
@@ -178,7 +193,8 @@ namespace RadLibrary.Logging
         /// </summary>
         /// <param name="name">The name</param>
         /// <returns>The loggers</returns>
-        public static IEnumerable<LoggerBase> GetLoggersByName(string name)
+        [NotNull]
+        public static IEnumerable<LoggerBase> GetLoggersByName([NotNull] string name)
         {
             return Loggers.FindAll(x => x.Settings.Name == name);
         }
@@ -188,15 +204,20 @@ namespace RadLibrary.Logging
         /// </summary>
         /// <param name="name">The name</param>
         /// <returns>The logger</returns>
-        public static LoggerBase GetLoggerByName(string name)
+        [CanBeNull]
+        public static LoggerBase GetLoggerByName([NotNull] string name)
         {
             return Loggers.Find(x => x.Settings.Name == name);
         }
 
-        private static LoggerBase CreateLogger(LoggerSettings settings)
+        [NotNull]
+        private static LoggerBase CreateLogger([NotNull] LoggerSettings settings)
         {
             if (settings == null)
                 throw new ArgumentNullException(nameof(settings), "Settings cannot be null");
+
+            if (string.IsNullOrWhiteSpace(settings.Name))
+                throw new ArgumentNullException(nameof(settings.Name), "Name cannot be empty");
 
             var predicate = Loggers.Find(x => x.Settings.Equals(settings));
 
@@ -213,10 +234,11 @@ namespace RadLibrary.Logging
             return logger;
         }
 
-        private static LoggerSettings GetSettingsInstance(Type type)
+        [CanBeNull]
+        private static LoggerSettings GetSettingsInstance([NotNull] Type type)
         {
             if (!typeof(LoggerBase).IsAssignableFrom(type))
-                throw new ArgumentException($"{type.FullName} is not assignable to LoggerBase");
+                throw new ArgumentException($"{type?.FullName} is not assignable to LoggerBase");
 
             if (type?.BaseType?.IsGenericType != true)
                 return new LoggerSettings();
@@ -224,11 +246,12 @@ namespace RadLibrary.Logging
             return (LoggerSettings) Activator.CreateInstance(type.BaseType.GetGenericArguments()[0]);
         }
 
+        [NotNull]
         private static StackFrame GetPreviousFrame()
         {
             var stack = new StackTrace();
             var current = typeof(LogType).Module;
-            var frame = stack.GetFrames()?.First(x => x.GetMethod().Module != current);
+            var frame = stack.GetFrames().First(x => x.GetMethod()?.Module != current);
 
             return frame;
         }

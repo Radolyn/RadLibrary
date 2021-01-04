@@ -1,7 +1,13 @@
-﻿namespace RadLibrary.RadConsole
+﻿#region
+
+using JetBrains.Annotations;
+
+#endregion
+
+namespace RadLibrary.RadConsole
 {
     public interface IPredictionEngine
     {
-        public string Predict(string input);
+        public string Predict([CanBeNull] string input);
     }
 }

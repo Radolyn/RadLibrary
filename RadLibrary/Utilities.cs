@@ -6,6 +6,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using JetBrains.Annotations;
 using Microsoft.Win32.SafeHandles;
 using RadLibrary.Colors;
 using RadLibrary.Formatting;
@@ -99,7 +100,7 @@ namespace RadLibrary
         /// </summary>
         /// <param name="name">The name</param>
         /// <param name="action">Action that will be invoked if there's already one instance running</param>
-        public static void OnlyOneInstance(string name, Action action = null)
+        public static void OnlyOneInstance(string name, [CanBeNull] Action action = null)
         {
             var mutex = new Mutex(true, name);
 

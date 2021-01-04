@@ -18,6 +18,7 @@ namespace RadLibrary.RadConsole
         {
             switch (input)
             {
+                case null:
                 case "":
                     return "";
                 case "n":

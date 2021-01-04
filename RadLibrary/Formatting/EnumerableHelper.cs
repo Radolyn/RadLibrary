@@ -2,6 +2,7 @@
 
 using System.Collections;
 using System.Text;
+using JetBrains.Annotations;
 
 #endregion
 
@@ -9,7 +10,7 @@ namespace RadLibrary.Formatting
 {
     internal static class EnumerableHelper
     {
-        public static void ParseEnumerable(StringBuilder sb, IEnumerable enumerable)
+        public static void ParseEnumerable([NotNull] StringBuilder sb, [NotNull] IEnumerable enumerable)
         {
             foreach (var o in enumerable)
             {

@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using JetBrains.Annotations;
 
 #endregion
 
@@ -8,7 +9,7 @@ namespace RadLibrary.Configuration.Managers.IniManager
 {
     public class IniSection : IConfigurationSection
     {
-        public IniSection(string key, string value, string comment, bool valueQuoted)
+        public IniSection([NotNull] string key, string value, string comment, bool valueQuoted)
         {
             Key = key;
             Value = value;
@@ -45,6 +46,7 @@ namespace RadLibrary.Configuration.Managers.IniManager
         }
 
         /// <inheritdoc />
+        [CanBeNull]
         public TU ValueAs<TU>() where TU : new()
         {
             return (TU) Convert.ChangeType(Value, typeof(TU));
@@ -56,16 +58,19 @@ namespace RadLibrary.Configuration.Managers.IniManager
             return Value;
         }
 
+        [NotNull]
         public static implicit operator IniSection(string val)
         {
             return new("", val, null, false);
         }
 
+        [NotNull]
         public static implicit operator IniSection(int val)
         {
             return new("", val.ToString(), null, false);
         }
 
+        [NotNull]
         public static implicit operator IniSection(bool val)
         {
             return val.ToString();

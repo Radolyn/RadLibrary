@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 using JetBrains.Annotations;
@@ -188,7 +187,7 @@ namespace RadLibrary.RadConsole
         ///     Sets the <see cref="Error" /> property to the specified <see cref="TextWriter" /> object.
         /// </summary>
         /// <param name="newError">A stream that is the new standard error output.</param>
-        public static void SetError(TextWriter newError)
+        public static void SetError([NotNull] TextWriter newError)
         {
             Console.SetError(newError);
         }
@@ -197,7 +196,7 @@ namespace RadLibrary.RadConsole
         ///     Sets the <see cref="Error" /> property to the specified <see cref="TextWriter" /> object.
         /// </summary>
         /// <param name="newIn">A stream that is the new standard input.</param>
-        public static void SetIn(TextReader newIn)
+        public static void SetIn([NotNull] TextReader newIn)
         {
             Console.SetIn(newIn);
         }
@@ -463,7 +462,7 @@ namespace RadLibrary.RadConsole
         /// </summary>
         /// <param name="readStyle">The read style</param>
         /// <returns>The next line of characters from the input stream</returns>
-        public static string ReadLine(ReadStyle readStyle)
+        public static string ReadLine([NotNull] ReadStyle readStyle)
         {
             return ReadLine(readStyle, DefaultPredictionEngine);
         }
@@ -474,7 +473,7 @@ namespace RadLibrary.RadConsole
         /// </summary>
         /// <param name="predictionEngine">The prediction engine</param>
         /// <returns>The next line of characters from the input stream</returns>
-        public static string ReadLine(IPredictionEngine predictionEngine)
+        public static string ReadLine([CanBeNull] IPredictionEngine predictionEngine)
         {
             return ReadLine(ReadStyle, predictionEngine);
         }
@@ -486,7 +485,7 @@ namespace RadLibrary.RadConsole
         /// <param name="prefix">The prefix</param>
         /// <param name="usePredictionEngine">Use default prediction engine or not</param>
         /// <returns>The next line of characters from the input stream</returns>
-        public static string ReadLine(string prefix, bool usePredictionEngine = true)
+        public static string ReadLine([CanBeNull] string prefix, bool usePredictionEngine = true)
         {
             return ReadLine(new ReadStyle
             {
@@ -500,7 +499,7 @@ namespace RadLibrary.RadConsole
         /// <param name="readStyle">The read style</param>
         /// <param name="predictionEngine">The prediction engine</param>
         /// <returns>The next line of characters from the input stream</returns>
-        public static string ReadLine(ReadStyle readStyle, IPredictionEngine predictionEngine)
+        public static string ReadLine([NotNull] ReadStyle readStyle, [CanBeNull] IPredictionEngine predictionEngine)
         {
             var sb = new StringBuilder();
 
@@ -679,7 +678,7 @@ namespace RadLibrary.RadConsole
         ///     Writes the text representation of the specified value or values to the standard output stream.
         /// </summary>
         /// <param name="message">The message</param>
-        public static void Write(string message)
+        public static void Write([CanBeNull] string message)
         {
             message = ParseColors(message);
 
@@ -690,7 +689,7 @@ namespace RadLibrary.RadConsole
         ///     Writes the specified data, followed by the current line terminator, to the standard output stream.
         /// </summary>
         /// <param name="message">The message</param>
-        public static void WriteLine(string message)
+        public static void WriteLine([CanBeNull] string message)
         {
             Write(message + Environment.NewLine);
         }
@@ -701,7 +700,7 @@ namespace RadLibrary.RadConsole
         /// <param name="format">The format</param>
         /// <param name="args">The objects</param>
         [StringFormatMethod("format")]
-        public static void Write(string format, params object[] args)
+        public static void Write([NotNull] string format, [CanBeNull] params object[] args)
         {
             args ??= new object[] {null};
 
@@ -716,7 +715,7 @@ namespace RadLibrary.RadConsole
         /// <param name="format">The format</param>
         /// <param name="args">The objects</param>
         [StringFormatMethod("format")]
-        public static void WriteLine(string format, params object[] args)
+        public static void WriteLine([NotNull] string format, [CanBeNull] params object[] args)
         {
             Write(format + Environment.NewLine, args);
         }
@@ -725,7 +724,7 @@ namespace RadLibrary.RadConsole
         ///     Writes the text representation of the specified value or values to the standard output stream.
         /// </summary>
         /// <param name="args">The objects</param>
-        public static void Write(params object[] args)
+        public static void Write([CanBeNull] params object[] args)
         {
             args ??= new object[] {null};
 
@@ -745,7 +744,7 @@ namespace RadLibrary.RadConsole
         ///     Writes the specified data, followed by the current line terminator, to the standard output stream.
         /// </summary>
         /// <param name="args">The objects</param>
-        public static void WriteLine(params object[] args)
+        public static void WriteLine([CanBeNull] params object[] args)
         {
             args ??= new object[] {null};
 
@@ -767,8 +766,12 @@ namespace RadLibrary.RadConsole
         /// </summary>
         /// <param name="message">The message</param>
         /// <returns>The converted message</returns>
-        public static string ParseColors(string message)
+        [CanBeNull]
+        public static string ParseColors([CanBeNull] string message)
         {
+            if (string.IsNullOrWhiteSpace(message))
+                return message;
+
             var sb = new StringBuilder(message.Length / 2);
             var colorSb = new StringBuilder(10);
 
@@ -833,7 +836,7 @@ namespace RadLibrary.RadConsole
             return sb + Font.Reset;
         }
 
-        private static void HandleColor(string color, StringBuilder sb)
+        private static void HandleColor(string color, [NotNull] StringBuilder sb)
         {
             var background = color.StartsWith("b:", StringComparison.Ordinal);
 
@@ -960,7 +963,8 @@ namespace RadLibrary.RadConsole
         /// <summary>
         ///     Gets input history
         /// </summary>
-        public static ReadOnlyCollection<string> History => InputHistory.AsReadOnly();
+        [NotNull]
+        public static IEnumerable<string> History => InputHistory.AsReadOnly();
 
         private static readonly List<string> InputHistory = new();
         private static readonly DefaultPredictionEngine DefaultPredictionEngine = new();

@@ -60,6 +60,10 @@ namespace RadLibrary.Tests
         [Fact]
         public void WriteToConsoleTest()
         {
+            object obj = null;
+            // ReSharper disable once ExpressionIsAlwaysNull
+            Console.WriteLine(obj);
+
             Console.WriteLine("123");
 
             Console.WriteLine("[red]123");

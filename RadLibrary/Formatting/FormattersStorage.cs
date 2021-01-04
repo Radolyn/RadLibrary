@@ -5,6 +5,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using JetBrains.Annotations;
 using RadLibrary.Formatting.Abstractions;
 using RadLibrary.Formatting.Formatters;
 
@@ -60,8 +61,10 @@ namespace RadLibrary.Formatting
         ///     Adds formatter
         /// </summary>
         /// <param name="formatter">The formatter instance</param>
-        public static void AddFormatter(IObjectFormatter formatter)
+        public static void AddFormatter([NotNull] IObjectFormatter formatter)
         {
+            if (formatter == null) throw new ArgumentNullException(nameof(formatter));
+
             if (!Formatters.Contains(formatter))
                 Formatters.Add(formatter);
         }
@@ -70,7 +73,7 @@ namespace RadLibrary.Formatting
         ///     Adds all available formatters from specified assembly
         /// </summary>
         /// <param name="assembly">The assembly</param>
-        public static void AddFormatters(Assembly assembly)
+        public static void AddFormatters([NotNull] Assembly assembly)
         {
             var type = typeof(IObjectFormatter);
 
@@ -84,7 +87,7 @@ namespace RadLibrary.Formatting
         /// </summary>
         /// <param name="obj">The object</param>
         /// <returns>The formatter</returns>
-        public static IObjectFormatter GetCustomFormatter(object obj)
+        public static IObjectFormatter GetCustomFormatter([CanBeNull] object obj)
         {
             if (obj == null)
                 return NullFormatter;
@@ -123,7 +126,7 @@ namespace RadLibrary.Formatting
         /// </summary>
         /// <param name="obj">The object</param>
         /// <returns>The formatted string</returns>
-        public static string GetCustomFormatterResult(object obj)
+        public static string GetCustomFormatterResult([CanBeNull] object obj)
         {
             var formatter = GetCustomFormatter(obj);
             return formatter.Format(obj);

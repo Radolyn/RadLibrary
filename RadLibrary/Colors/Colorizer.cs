@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using JetBrains.Annotations;
 
 #endregion
 
@@ -64,6 +65,7 @@ namespace RadLibrary.Colors
         /// <param name="g">The green color value</param>
         /// <param name="b">The blue color value</param>
         /// <returns>Prefix for string colorization</returns>
+        [NotNull]
         public static string GetColorizationString(uint r, uint g, uint b)
         {
             return _isInitialized ? $"\x1b[38;2;{r};{g};{b}m" : "";
@@ -74,6 +76,7 @@ namespace RadLibrary.Colors
         /// </summary>
         /// <param name="color">The color</param>
         /// <returns>Prefix for string colorization</returns>
+        [NotNull]
         public static string GetColorizationString(Color color)
         {
             return GetColorizationString(color.R, color.G, color.B);
@@ -86,6 +89,7 @@ namespace RadLibrary.Colors
         /// <param name="g">The green color value</param>
         /// <param name="b">The blue color value</param>
         /// <returns>Prefix for string background colorization</returns>
+        [NotNull]
         public static string GetBackgroundColorizationString(uint r, uint g, uint b)
         {
             return _isInitialized ? $"\x1b[48;2;{r};{g};{b}m" : "";
@@ -96,6 +100,7 @@ namespace RadLibrary.Colors
         /// </summary>
         /// <param name="color">The color</param>
         /// <returns>Prefix for string background colorization</returns>
+        [NotNull]
         public static string GetBackgroundColorizationString(Color color)
         {
             return GetBackgroundColorizationString(color.R, color.G, color.B);
@@ -109,7 +114,8 @@ namespace RadLibrary.Colors
         /// <param name="g">Green color</param>
         /// <param name="b">Blue color</param>
         /// <returns>Colorized string</returns>
-        public static string Colorize(this string str, uint r, uint g, uint b)
+        [NotNull]
+        public static string Colorize([NotNull] this string str, uint r, uint g, uint b)
         {
             var colorized = GetColorizationString(r, g, b) + str;
             return !str.EndsWith(Font.Reset, StringComparison.Ordinal) ? colorized + Font.Reset : colorized;
@@ -121,7 +127,8 @@ namespace RadLibrary.Colors
         /// <param name="str">The string</param>
         /// <param name="color">The color</param>
         /// <returns>Colorized string</returns>
-        public static string Colorize(this string str, Color color)
+        [NotNull]
+        public static string Colorize([NotNull] this string str, Color color)
         {
             return color.IsEmpty ? str : Colorize(str, color.R, color.G, color.B);
         }
@@ -132,7 +139,8 @@ namespace RadLibrary.Colors
         /// <param name="str">The string</param>
         /// <param name="hex">The color in hex</param>
         /// <returns>Colorized string</returns>
-        public static string Colorize(this string str, string hex)
+        [NotNull]
+        public static string Colorize([NotNull] this string str, [NotNull] string hex)
         {
             return Colorize(str, HexToColor(hex));
         }
@@ -145,7 +153,8 @@ namespace RadLibrary.Colors
         /// <param name="g">Green color</param>
         /// <param name="b">Blue color</param>
         /// <returns>Colorized string</returns>
-        public static string ColorizeBackground(this string str, uint r, uint g, uint b)
+        [NotNull]
+        public static string ColorizeBackground([NotNull] this string str, uint r, uint g, uint b)
         {
             var colorized = GetBackgroundColorizationString(r, g, b) + str;
             return !str.EndsWith(Font.Reset, StringComparison.Ordinal) ? colorized + Font.Reset : colorized;
@@ -157,7 +166,8 @@ namespace RadLibrary.Colors
         /// <param name="str">The string</param>
         /// <param name="color">The color</param>
         /// <returns>Colorized string</returns>
-        public static string ColorizeBackground(this string str, Color color)
+        [NotNull]
+        public static string ColorizeBackground([NotNull] this string str, Color color)
         {
             return ColorizeBackground(str, color.R, color.G, color.B);
         }
@@ -168,7 +178,8 @@ namespace RadLibrary.Colors
         /// <param name="str">The string</param>
         /// <param name="hex">The color in hex</param>
         /// <returns>Colorized string</returns>
-        public static string ColorizeBackground(this string str, string hex)
+        [NotNull]
+        public static string ColorizeBackground([NotNull] this string str, [NotNull] string hex)
         {
             return ColorizeBackground(str, HexToColor(hex));
         }
@@ -178,7 +189,8 @@ namespace RadLibrary.Colors
         /// </summary>
         /// <param name="s">The string</param>
         /// <returns>De colorized string</returns>
-        public static string DeColorize(this string s)
+        [NotNull]
+        public static string DeColorize([NotNull] this string s)
         {
             return ColorsRegex.Replace(s, "");
         }
@@ -190,7 +202,7 @@ namespace RadLibrary.Colors
         /// <returns>
         ///     <see cref="Color" />
         /// </returns>
-        public static Color HexToColor(string hex)
+        public static Color HexToColor([NotNull] string hex)
         {
             hex = hex.Replace("#", "");
 

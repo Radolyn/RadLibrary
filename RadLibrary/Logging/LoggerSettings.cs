@@ -8,6 +8,13 @@ namespace RadLibrary.Logging
 {
     public class LoggerSettings : IEquatable<LoggerSettings>
     {
+        public LoggerSettings(){}
+
+        public LoggerSettings(string name)
+        {
+            Name = name;
+        }
+        
         // todo: optimize
         /// <summary>
         ///     The environment-set logging level
