@@ -6,3 +6,5 @@
   href: radconsole.md
 - name: Configuration
   href: configuration.md
+- name: Utilities
+  href: utilities.md

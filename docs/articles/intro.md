@@ -12,6 +12,6 @@ If you're OK with these, welcome :)
 
 ## First steps
 
-Somewhere in the start of your app, you have to call `Utilities.Initialize()` in order to enable colors in console + initialize formatters storage.
+If you're on .NET 5, you don't need to initialize anything, just write the code! Otherwise, call `Utilities.Initialize()` somewhere in `Main()`
 
-Take a look at module specific articles!
+Take a look at module specific articles or RadLibrary.Tests!
