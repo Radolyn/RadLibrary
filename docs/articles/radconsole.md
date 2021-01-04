@@ -10,4 +10,4 @@ var s = Console.ReadLine("Your name:");
 Console.WriteLine("[fffaaa]Your name is {0}!", s);
 ```
 
-You can check all available methods at @"RadLibrary.RadConsole.RadConsole"
+You can check all available methods at <xref href="RadLibrary.RadConsole.RadConsole" altProperty="RadConsole"/>

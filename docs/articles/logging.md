@@ -8,8 +8,8 @@ Example of getting logger with name of current class:
 var logger = LogManager.GetClassLogger();
 ```
 
-You can check all available methods at @"RadLibrary.Logging.LoggerBase"
+You can check all available methods at <xref href="RadLibrary.Logging.LoggerBase" altProperty="LoggerBase"/>
 
-If you want to configure logger, use @"RadLibrary.Logging.LoggerSettings"
+If you want to configure logger, use <xref href="RadLibrary.Logging.LoggerSettings" altProperty="LoggerSettings"/>
 
-All available methods for creating logger are defined in @"RadLibrary.Logging.LogManager"
+All available methods for creating logger are defined in <xref href="RadLibrary.Logging.LogManager" altProperty="LogManager"/>

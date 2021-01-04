@@ -30,4 +30,4 @@ Useful for Windows Forms or WPF apps
 Utilities.AllocateConsole();
 ```
 
-You can check all available methods at @"RadLibrary.RadExtensions" or @"RadLibrary.Utilities"
+You can check all available methods at <xref href="RadLibrary.RadExtensions" altProperty="RadExtensions"/> or <xref href="RadLibrary.Utilities" altProperty="Utilities"/>
