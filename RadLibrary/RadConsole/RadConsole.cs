@@ -800,8 +800,15 @@ namespace RadLibrary.RadConsole
 
                 if (escapeSymbol)
                 {
-                    escapeSymbol = false;
                     WriteSb('\\');
+
+                    if (ch != '\\')
+                    {
+                        WriteSb(ch);
+                        escapeSymbol = false;
+                    }
+
+                    continue;
                 }
 
                 switch (ch)
@@ -823,7 +830,7 @@ namespace RadLibrary.RadConsole
                 }
             }
 
-            return sb.ToString();
+            return sb + Font.Reset;
         }
 
         private static void HandleColor(string color, StringBuilder sb)

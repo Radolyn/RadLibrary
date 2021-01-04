@@ -19,7 +19,7 @@ namespace RadLibrary.Colors
         private static bool _isInitialized;
 
         private static readonly Regex ColorsRegex =
-            new("\x1b\\[\\d{2};2;\\d{1,3};\\d{1,3};\\d{1,3}m", RegexOptions.Compiled);
+            new("(\x1b\\[\\d{2};2;\\d{1,3};\\d{1,3};\\d{1,3}m)|(\x1b\\[\\d{1,3}m)", RegexOptions.Compiled);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
@@ -180,7 +180,7 @@ namespace RadLibrary.Colors
         /// <returns>De colorized string</returns>
         public static string DeColorize(this string s)
         {
-            return ColorsRegex.Replace(s, "").Remove(Font.Reset);
+            return ColorsRegex.Replace(s, "");
         }
 
         /// <summary>
