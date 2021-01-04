@@ -23,12 +23,22 @@ All-In-One library
   - Exception
   - String
   - __Custom__
+- Utilities
+  - Dynamic console allocation for GUI apps
+  - Only one app instance
+  - Easy to use random (int, bool) + random item from collection
 
 ## Getting started
 
 Install RadLibrary in your project through [NuGet package](https://www.nuget.org/packages/RadLibrary/) ```RadLibrary```
 
+If you're on .NET 5, you don't need to initialize anything, just write the code! Otherwise, call `Utilities.Initialize()` somewhere in `Main()`
+
+## Documentation
+
 **Check documentation at [our site](https://radolyn.com/docs/RadLibrary/)**
+
+## Samples
 
 ![Sample image](.github/colorful_console.png)
 
