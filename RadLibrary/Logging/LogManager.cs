@@ -12,14 +12,14 @@ using RadLibrary.Logging.Loggers;
 namespace RadLibrary.Logging
 {
     /// <summary>
-    ///     LoggerBase creator and configurator
+    ///     Logger creator and configurator
     /// </summary>
     public static class LogManager
     {
         private static readonly List<LoggerBase> Loggers = new();
 
         /// <summary>
-        ///     Adds exceptions handler
+        ///     Adds exceptions handler to app
         /// </summary>
         /// <param name="logger">The custom logger</param>
         public static void AddExceptionsHandler(LoggerBase logger = null)
@@ -52,7 +52,7 @@ namespace RadLibrary.Logging
         ///     Creates console logger with specified name
         /// </summary>
         /// <param name="name">The logger name</param>
-        /// <param name="args">The logger settings</param>
+        /// <param name="args">Logger's arguments</param>
         /// <returns>The console logger</returns>
         public static LoggerBase GetLogger(string name, LoggerSettings args)
         {
@@ -74,7 +74,7 @@ namespace RadLibrary.Logging
         ///     Creates logger with specified type, name and arguments
         /// </summary>
         /// <param name="name">The logger name</param>
-        /// <param name="args">The logger settings</param>
+        /// <param name="args">Logger's arguments</param>
         /// <typeparam name="TLogger">Logger type</typeparam>
         /// <returns>The T logger</returns>
         public static LoggerBase GetLogger<TLogger>(string name, LoggerSettings args) where TLogger : LoggerBase
@@ -137,7 +137,7 @@ namespace RadLibrary.Logging
         /// <summary>
         ///     Creates logger with the name of calling method and specified arguments
         /// </summary>
-        /// <param name="args">LoggerBase's arguments</param>
+        /// <param name="args">Logger's arguments</param>
         /// <returns>The console logger</returns>
         public static LoggerBase GetMethodLogger(LoggerSettings args)
         {
@@ -166,11 +166,11 @@ namespace RadLibrary.Logging
         /// <summary>
         ///     Creates logger with specified settings
         /// </summary>
-        /// <param name="settings">Settings</param>
+        /// <param name="args">Logger's arguments</param>
         /// <returns>The logger</returns>
-        public static LoggerBase GetLogger(LoggerSettings settings)
+        public static LoggerBase GetLogger(LoggerSettings args)
         {
-            return CreateLogger(settings);
+            return CreateLogger(args);
         }
 
         /// <summary>
