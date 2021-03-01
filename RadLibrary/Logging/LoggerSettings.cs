@@ -8,13 +8,6 @@ namespace RadLibrary.Logging
 {
     public class LoggerSettings : IEquatable<LoggerSettings>
     {
-        public LoggerSettings(){}
-
-        public LoggerSettings(string name)
-        {
-            Name = name;
-        }
-        
         // todo: optimize
         /// <summary>
         ///     The environment-set logging level
@@ -23,6 +16,15 @@ namespace RadLibrary.Logging
             (Enum.TryParse<LogType>(Environment.GetEnvironmentVariable("LOGGING_LEVEL"), out _)
                 ? Environment.GetEnvironmentVariable("LOGGING_LEVEL")
                 : "Info") ?? "Info", true);
+
+        public LoggerSettings()
+        {
+        }
+
+        public LoggerSettings(string name)
+        {
+            Name = name;
+        }
 
         /// <summary>
         ///     Format json-like messages?

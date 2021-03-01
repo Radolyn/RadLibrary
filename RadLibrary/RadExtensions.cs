@@ -173,6 +173,66 @@ namespace RadLibrary
             return sbOut.ToString();
         }
 
+        /// <summary>
+        ///     Returns a value indicating whether a specified substring occurs within this <see cref="StringBuilder" />.
+        /// </summary>
+        /// <param name="sb">The <see cref="StringBuilder" /></param>
+        /// <param name="value">The string to seek</param>
+        /// <returns><c>true</c> if found; otherwise <c>false</c></returns>
+        public static bool Contains(this StringBuilder sb, string value)
+        {
+            if (sb.Length == 0 || string.IsNullOrEmpty(value))
+                return false;
+
+            if (sb.Length < value.Length)
+                return false;
+
+            var foundLength = 0;
+
+            for (var i = 0; i < sb.Length; i++)
+            {
+                if (sb[i] == value[foundLength])
+                    foundLength++;
+                else
+                    foundLength = 0;
+
+                if (foundLength == value.Length)
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        ///     Determines whether the beginning of this <see cref="StringBuilder" /> instance matches the specified string.
+        /// </summary>
+        /// <param name="sb">The <see cref="StringBuilder" /></param>
+        /// <param name="value">The string to seek</param>
+        /// <returns><c>true</c> if starts with specified string; otherwise <c>false</c></returns>
+        public static bool StartsWith(this StringBuilder sb, string value)
+        {
+            if (sb.Length == 0 || string.IsNullOrEmpty(value))
+                return false;
+
+            if (sb.Length < value.Length)
+                return false;
+
+            var foundLength = 0;
+
+            for (var i = 0; i < sb.Length; i++)
+            {
+                if (sb[i] == value[i])
+                    ++foundLength;
+                else
+                    return false;
+
+                if (foundLength == value.Length)
+                    return true;
+            }
+
+            return false;
+        }
+
         private enum CurrentPart : byte
         {
             Out,

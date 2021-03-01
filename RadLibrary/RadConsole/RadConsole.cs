@@ -510,20 +510,27 @@ namespace RadLibrary.RadConsole
             var startOffset = 0;
 
             var savedInput = "";
-            var savedInputCounter = 0;
+            var savedInputIndex = 0;
             var previousSize = 0;
 
-            string pred;
+            var pred = "";
 
             while (true)
             {
                 var input = Console.ReadKey();
-                pred = predictionEngine?.Predict(sb.ToString()) ?? "";
+                var newPred = predictionEngine?.Predict(sb.ToString()) ??
+                              (sb.StartsWith(readStyle.DefaultValue) ? readStyle.DefaultValue : "") ?? "";
+
+                if (newPred.Length > sb.Length && pred.Length > newPred.Length)
+                    previousSize = newPred.Length + 6;
+                else
+                    previousSize = sb.Length;
+
+                pred = newPred;
 
                 if (input.Key == ConsoleKey.Enter)
                     break;
 
-                previousSize = sb.Length;
 
                 switch (input.Key)
                 {
@@ -575,7 +582,7 @@ namespace RadLibrary.RadConsole
                     // history
                     case ConsoleKey.UpArrow:
 
-                        if (InputHistory.Count <= savedInputCounter)
+                        if (InputHistory.Count <= savedInputIndex)
                             break;
 
                         if (string.IsNullOrEmpty(savedInput))
@@ -584,24 +591,24 @@ namespace RadLibrary.RadConsole
                         previousSize = sb.Length;
 
                         sb.Clear();
-                        sb.Append(InputHistory[savedInputCounter++]);
+                        sb.Append(InputHistory[savedInputIndex++]);
 
                         startOffset = sb.Length;
 
                         break;
                     case ConsoleKey.DownArrow:
 
-                        if (savedInputCounter == 0)
+                        if (savedInputIndex == 0)
                             break;
 
-                        if (savedInputCounter == 1)
+                        if (savedInputIndex == 1)
                         {
                             previousSize = sb.Length;
 
                             sb.Clear();
                             sb.Append(savedInput);
 
-                            --savedInputCounter;
+                            --savedInputIndex;
 
                             startOffset = sb.Length;
 
@@ -609,7 +616,7 @@ namespace RadLibrary.RadConsole
                         }
 
                         sb.Clear();
-                        sb.Append(InputHistory[savedInputCounter--]);
+                        sb.Append(InputHistory[savedInputIndex--]);
 
                         startOffset = sb.Length;
 

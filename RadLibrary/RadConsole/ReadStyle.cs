@@ -9,6 +9,7 @@ namespace RadLibrary.RadConsole
 {
     public class ReadStyle
     {
+        public string DefaultValue = null;
         public Color InputColor = Color.Azure;
         [CanBeNull] public string Postfix = "<<<";
         public Color PostfixColor = Color.WhiteSmoke;
