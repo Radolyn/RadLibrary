@@ -6,6 +6,7 @@ using RadLibrary.Configuration.Managers.IniManager;
 using RadLibrary.Configuration.Scheme;
 using RadLibrary.Formatting;
 using RadLibrary.Logging;
+using RadLibrary.RadConsole;
 using Console = RadLibrary.RadConsole.RadConsole;
 
 #endregion
@@ -20,11 +21,14 @@ namespace Examples
             // RadUtilities.Initialize();
 
             // Loggers();
-            // RadConsole();
+            RadConsole();
             // Configs();
 
             Console.WriteLine(@"\[\]");
-            var s = Console.ReadLine();
+
+            var readStyle = new ReadStyle {UnderlinePrediction = true};
+
+            var s = Console.ReadLine(readStyle);
             Console.WriteLine(s);
         }
 
@@ -108,6 +112,46 @@ namespace Examples
             Console.WriteLine("[#fffff]{CoolPrefix} [aaaff]Some colorful text");
 
             Console.WriteLine("[00ffcc]{CoolPrefix} [#ffff66]Some colorful text");
+
+            object obj = null;
+            // ReSharper disable once ExpressionIsAlwaysNull
+            Console.WriteLine(obj);
+
+            Console.WriteLine("123");
+
+            Console.WriteLine("[red]123");
+            Console.WriteLine("[f00]123");
+            Console.WriteLine("[fff000]123");
+            Console.WriteLine("[underline][bold][blink][italic][framed]123");
+            Console.WriteLine("123");
+
+            var colors = "black blue green purple red white yellow".Split(' ');
+
+            var foreground = colors.Aggregate("", (current, item) => current + $"[{item}]");
+            Console.WriteLine(foreground + "test str");
+
+            var background = colors.Aggregate("", (current, item) => current + $"[b:{item}]");
+            Console.WriteLine(background + "test str");
+
+            var brightForeground = colors.Aggregate("", (current, item) => current + $"[bright{item}]");
+            Console.WriteLine(brightForeground + "test str");
+
+            var brightBackground = colors.Aggregate("", (current, item) => current + $"[b:bright{item}]");
+            Console.WriteLine(brightBackground + "test str");
+
+            Console.Write(foreground + "test str");
+
+            Console.WriteLine(foreground + "{0}", "111");
+
+            var list = new List<string>
+            {
+                "yes?",
+                "no!"
+            };
+
+            Console.Write(list);
+
+            Console.WriteLine(list);
         }
 
         private class Config

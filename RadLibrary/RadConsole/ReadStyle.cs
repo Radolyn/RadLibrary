@@ -17,10 +17,17 @@ namespace RadLibrary.RadConsole
         public virtual Color PrefixColor { get; set; } = Color.WhiteSmoke;
         public virtual bool UnderlineInput { get; set; } = false;
         public virtual bool UnderlinePrediction { get; set; } = false;
+
         public virtual Color InputColor { get; set; } = Color.Azure;
         public virtual Color PredictionColor { get; set; } = Color.Goldenrod;
 
         public string ColorizedPrefix => Prefix?.Colorize(PrefixColor) + " ";
         public string ColorizedPostfix => " " + Postfix?.Colorize(PostfixColor);
+
+        /// <inheritdoc />
+        public string InputDecorations => UnderlineInput ? Font.UnderlineOffFont : "";
+
+        /// <inheritdoc />
+        public string PredictionDecorations => UnderlinePrediction ? Font.UnderlineFont : "";
     }
 }
