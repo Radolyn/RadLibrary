@@ -28,8 +28,11 @@ namespace Examples
 
             var readStyle = new ReadStyle {UnderlinePrediction = true};
 
-            var s = Console.ReadLine(readStyle);
-            Console.WriteLine(s);
+            var s = Console.Read.Line(readStyle);
+            var b = Console.Read.Boolean(readStyle);
+            var i = Console.Read.Integer(readStyle);
+
+            Console.WriteLine("\"{0}\" {1} {2}", s, b, i);
         }
 
         private static void Configs()

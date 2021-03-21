@@ -1,14 +1,18 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.IO;
 using System.Text;
 using JetBrains.Annotations;
 using RadLibrary.Colors;
 
+#endregion
+
 namespace RadLibrary.RadConsole
 {
     public static partial class RadConsole
     {
-                #region Console Events
+        #region Console Events
 
         /// <summary>
         ///     Occurs when the Control modifier key (Ctrl) and either the C console key (C) or the Break key are pressed

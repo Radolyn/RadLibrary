@@ -6,7 +6,7 @@ using System.Linq;
 
 #endregion
 
-namespace RadLibrary.RadConsole
+namespace RadLibrary.RadConsole.Engines
 {
     /// <summary>
     ///     Default prediction engine. Predicts paths, "yes" or "no" and history
@@ -35,7 +35,7 @@ namespace RadLibrary.RadConsole
 
         protected virtual string PredictHistory(string input)
         {
-            var history = RadConsole.History.Where(s => s.StartsWith(input, StringComparison.Ordinal));
+            var history = RadConsole.Read.History.Where(s => s.StartsWith(input, StringComparison.Ordinal));
             return history.FirstOrDefault();
         }
 

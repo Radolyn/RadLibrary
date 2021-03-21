@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using RadLibrary.Colors;
 using RadLibrary.Formatting;
-using RadLibrary.RadConsole;
+using RadLibrary.RadConsole.Engines;
 using Xunit;
 using Xunit.Abstractions;
 using Console = RadLibrary.RadConsole.RadConsole;
