@@ -34,7 +34,7 @@ namespace RadLibrary.Colors
         /// <exception cref="Win32Exception">If failed to set color mode</exception>
         public static void Initialize()
         {
-            if (_isInitialized || !Utilities.IsWindows || Console.IsOutputRedirected)
+            if (_isInitialized || !RadUtilities.IsWindows || Console.IsOutputRedirected)
             {
                 _isInitialized = true;
                 return;
@@ -42,7 +42,7 @@ namespace RadLibrary.Colors
 
             // todo: support for old terminals ($COLORTERM)
 
-            var iStdOut = Utilities.GetStdHandle(StdOutputHandle);
+            var iStdOut = RadUtilities.GetStdHandle(StdOutputHandle);
             if (!GetConsoleMode(iStdOut, out var outConsoleMode))
                 throw new Win32Exception(
                     $"Failed to get output console mode, error code: {Marshal.GetLastWin32Error()}");

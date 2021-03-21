@@ -28,7 +28,7 @@ namespace RadLibrary.Tests
         {
             const string s = "Some cool information";
 
-            var fileName = "testLog" + Utilities.RandomInt();
+            var fileName = "testLog" + RadUtilities.RandomInt();
 
             var logger = LogManager.GetLogger<FileLogger>("TestLogger", new FileLoggerSettings(fileName));
 
@@ -173,7 +173,7 @@ namespace RadLibrary.Tests
             var consoleLogger = LogManager.GetLogger("Logger");
             var nullLogger = LogManager.GetLogger<NullLogger>("Logger");
             var fileLogger =
-                LogManager.GetLogger<FileLogger>("Logger", new FileLoggerSettings("log" + Utilities.RandomInt()));
+                LogManager.GetLogger<FileLogger>("Logger", new FileLoggerSettings("log" + RadUtilities.RandomInt()));
 
             return LogManager.GetLogger<MultiLogger>("Logger",
                 new MultiLoggerSettings(consoleLogger, nullLogger, fileLogger));

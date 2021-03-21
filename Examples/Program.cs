@@ -17,14 +17,15 @@ namespace Examples
         private static void Main(string[] args)
         {
             // Don't forget to call this if you're not on .NET 5
-            // Utilities.Initialize();
+            // RadUtilities.Initialize();
 
-            Loggers();
-            RadConsole();
-            Configs();
+            // Loggers();
+            // RadConsole();
+            // Configs();
 
-            Console.ReadLine();
             Console.WriteLine(@"\[\]");
+            var s = Console.ReadLine();
+            Console.WriteLine(s);
         }
 
         private static void Configs()

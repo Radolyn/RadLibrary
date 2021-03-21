@@ -234,7 +234,7 @@ namespace RadLibrary.RadConsole
         ///     Gets the position of the cursor.
         /// </summary>
         /// <returns>The row and column position of the cursor.</returns>
-        public static (int, int) GetCursorPosition()
+        public static (int Top, int Left) GetCursorPosition()
         {
             return (Console.CursorTop, Console.CursorLeft);
         }
@@ -462,7 +462,7 @@ namespace RadLibrary.RadConsole
         /// </summary>
         /// <param name="readStyle">The read style</param>
         /// <returns>The next line of characters from the input stream</returns>
-        public static string ReadLine([NotNull] ReadStyle readStyle)
+        public static string ReadLine([NotNull] IReadStyle readStyle)
         {
             return ReadLine(readStyle, DefaultPredictionEngine);
         }
@@ -499,184 +499,163 @@ namespace RadLibrary.RadConsole
         /// <param name="readStyle">The read style</param>
         /// <param name="predictionEngine">The prediction engine</param>
         /// <returns>The next line of characters from the input stream</returns>
-        public static string ReadLine([NotNull] ReadStyle readStyle, [CanBeNull] IPredictionEngine predictionEngine)
+        public static string ReadLine([NotNull] IReadStyle readStyle, [CanBeNull] IPredictionEngine predictionEngine)
         {
-            var sb = new StringBuilder();
+            // print prefix
+            Write(readStyle.ColorizedPrefix);
 
-            Console.Write(readStyle.Prefix + " ");
+            var line = new StringBuilder();
+            var startPosition = GetCursorPosition();
 
-            var (startTop, startLeft) = GetCursorPosition();
+            var currentPosition = 0;
+            var biggestInput = 0;
 
-            var startOffset = 0;
+            var currentHistory = -1;
+            var savedInputBeforeHistory = "";
 
-            var savedInput = "";
-            var savedInputIndex = 0;
-            var previousSize = 0;
+            var prediction = "";
 
-            var pred = "";
+            var stop = false;
 
-            while (true)
+            while (!stop)
             {
-                var input = Console.ReadKey();
-                var newPred = predictionEngine?.Predict(sb.ToString()) ??
-                              (sb.StartsWith(readStyle.DefaultValue) ? readStyle.DefaultValue : "") ?? "";
+                var key = Console.ReadKey(true);
 
-                if (newPred.Length > sb.Length && pred.Length > newPred.Length)
-                    previousSize = newPred.Length + 6;
-                else
-                    previousSize = sb.Length;
-
-                pred = newPred;
-
-                if (input.Key == ConsoleKey.Enter)
-                    break;
-
-
-                switch (input.Key)
+                switch (key.Key)
                 {
-                    // auto-completion
+                    // if key is arrow
+                    case >= ConsoleKey.LeftArrow and <= ConsoleKey.DownArrow:
+                        ProcessArrows(key, ref currentPosition, ref currentHistory, ref savedInputBeforeHistory, line);
+                        break;
                     case ConsoleKey.Tab:
-
-                        if (string.IsNullOrEmpty(pred) || sb.Length > pred.Length || sb.ToString() == pred)
-                            break;
-
-                        sb.Clear();
-                        sb.Append(pred);
-
-                        startOffset = pred.Length;
-
+                        ProcessPrediction(prediction, ref currentPosition, line);
                         break;
-                    // navigation
-                    case ConsoleKey.LeftArrow:
-
-                        if (startOffset > 0 && sb.Length >= startOffset)
-                            --startOffset;
-
-                        break;
-                    case ConsoleKey.RightArrow:
-
-                        if (sb.Length > startOffset)
-                            ++startOffset;
-
-                        break;
-                    case ConsoleKey.PageUp:
-
-                        startOffset = 0;
-
-                        break;
-                    case ConsoleKey.PageDown:
-
-                        startOffset = sb.Length;
-
-                        break;
-                    // editing
                     case ConsoleKey.Backspace:
-
-                        if (startOffset == 0)
-                            break;
-
-                        sb.Remove(startOffset - 1, 1);
-                        --startOffset;
-
+                        ProcessBackspace(line, ref currentPosition);
                         break;
-                    // history
-                    case ConsoleKey.UpArrow:
-
-                        if (InputHistory.Count <= savedInputIndex)
-                            break;
-
-                        if (string.IsNullOrEmpty(savedInput))
-                            savedInput = sb.ToString();
-
-                        previousSize = sb.Length;
-
-                        sb.Clear();
-                        sb.Append(InputHistory[savedInputIndex++]);
-
-                        startOffset = sb.Length;
-
-                        break;
-                    case ConsoleKey.DownArrow:
-
-                        if (savedInputIndex == 0)
-                            break;
-
-                        if (savedInputIndex == 1)
-                        {
-                            previousSize = sb.Length;
-
-                            sb.Clear();
-                            sb.Append(savedInput);
-
-                            --savedInputIndex;
-
-                            startOffset = sb.Length;
-
-                            break;
-                        }
-
-                        sb.Clear();
-                        sb.Append(InputHistory[savedInputIndex--]);
-
-                        startOffset = sb.Length;
-
+                    case ConsoleKey.Enter:
+                        stop = true;
                         break;
                     default:
-
-                        sb.Insert(startOffset, input.KeyChar);
-                        ++startOffset;
-
+                        line.Insert(currentPosition, key.KeyChar);
+                        ++currentPosition;
                         break;
                 }
 
-                ReDraw(sb, pred, startOffset, startLeft, startTop, previousSize, readStyle);
+                prediction = predictionEngine?.Predict(line.ToString());
+
+                // todo: optimize biggest input
+
+                if (biggestInput < prediction?.Length)
+                    biggestInput = prediction.Length;
+
+                if (biggestInput < line.Length)
+                    biggestInput = line.Length;
+
+                UpdateScreen(startPosition, readStyle, currentPosition, biggestInput, prediction, line);
             }
 
-            if (pred.Length > sb.Length)
-                previousSize = pred.Length;
+            UpdateScreen(startPosition, readStyle, line.Length, biggestInput, prediction, line);
 
-            startOffset = sb.Length;
-            ReDraw(sb, "", startOffset, startLeft, startTop, previousSize, readStyle);
+            Write(readStyle.ColorizedPostfix);
 
-            Console.WriteLine(" " + readStyle.Postfix);
+            WriteLine();
 
-            var s = sb.ToString();
-            InputHistory.Add(s);
+            var res = line.ToString();
+            InputHistory.Add(res);
 
-            return s;
+            return res;
         }
 
-        private static void ReDraw(StringBuilder sb, string pred, int startOffset, int startLeft, int startTop,
-            int previousSize, ReadStyle readStyle)
+        private static void ProcessArrows(ConsoleKeyInfo key, ref int currentPosition, ref int currentHistory,
+            ref string savedInputBeforeHistory,
+            StringBuilder line)
+        {
+            if (key.Key is ConsoleKey.LeftArrow && currentPosition != 0)
+                --currentPosition;
+            if (key.Key is ConsoleKey.RightArrow && currentPosition != line.Length)
+                ++currentPosition;
+
+            void SetLine(string s, ref int currentPosition)
+            {
+                line.Clear();
+                line.Append(s);
+                currentPosition = s.Length;
+            }
+
+            if (key.Key is ConsoleKey.UpArrow)
+            {
+                if (currentHistory == -1) savedInputBeforeHistory = line.ToString();
+                if (currentHistory == InputHistory.Count - 1)
+                    return;
+
+                ++currentHistory;
+                SetLine(InputHistory[currentHistory], ref currentPosition);
+            }
+
+            if (key.Key is ConsoleKey.DownArrow)
+            {
+                if (currentHistory == 0)
+                {
+                    SetLine(savedInputBeforeHistory, ref currentPosition);
+                    --currentHistory;
+                    return;
+                }
+
+                if (currentHistory == -1)
+                    return;
+
+                --currentHistory;
+                SetLine(InputHistory[currentHistory], ref currentPosition);
+            }
+        }
+
+        private static void ProcessPrediction(string prediction, ref int currentPosition, StringBuilder line)
+        {
+            line.Clear();
+            line.Append(prediction);
+
+            currentPosition = line.Length;
+        }
+
+        private static void ProcessBackspace(StringBuilder line, ref int currentPosition)
+        {
+            if (currentPosition == 0)
+                return;
+
+            line.Remove(currentPosition - 1, 1);
+            --currentPosition;
+        }
+
+        private static void UpdateScreen((int Top, int Left) startPosition, IReadStyle readStyle, int currentPosition,
+            int biggestInput,
+            string prediction, StringBuilder line)
         {
             CursorVisible = false;
 
-            // prediction
-            SetCursorPosition(startLeft, startTop);
+            SetCursorPosition(startPosition.Left, startPosition.Top);
 
-            if (readStyle.UnderlinePrediction)
-                Console.Write(Font.UnderlineFont);
+            Write(" ".Repeat(biggestInput));
 
-            Console.Write(pred.Colorize(readStyle.PredictionColor));
+            SetCursorPosition(startPosition.Left, startPosition.Top);
 
+            Write(prediction.Colorize(readStyle.PredictionColor));
 
-            // input
-            SetCursorPosition(startLeft, startTop);
+            SetCursorPosition(startPosition.Left, startPosition.Top);
 
-            if (readStyle.UnderlineInput)
-                Console.Write(Font.UnderlineFont);
+            var part1 = line.ToString(0, currentPosition);
+            Write(part1.Colorize(readStyle.InputColor));
 
-            Console.Write(sb.ToString().Colorize(readStyle.InputColor) +
-                          (pred.Length > previousSize ? "" : " ".Repeat(previousSize)));
+            if (part1.Length != line.Length)
+            {
+                var part2 = line.ToString(currentPosition, line.Length - currentPosition);
 
-            SetCursorPosition(startLeft, startTop);
+                var currentPos = GetCursorPosition();
 
+                Write(part2.Colorize(readStyle.InputColor));
 
-            // $$$ean$$$ $$$merti
-            var leftEnd = (startLeft + startOffset) % Console.BufferWidth;
-            var topEnd = (startLeft + startOffset) / Console.BufferWidth + startTop;
-
-            SetCursorPosition(leftEnd, topEnd);
+                SetCursorPosition(currentPos.Left, currentPos.Top);
+            }
 
             CursorVisible = true;
         }
@@ -748,6 +727,14 @@ namespace RadLibrary.RadConsole
         }
 
         /// <summary>
+        ///     Writes current line terminator to the standard output stream.
+        /// </summary>
+        public static void WriteLine()
+        {
+            Console.WriteLine();
+        }
+
+        /// <summary>
         ///     Writes the specified data, followed by the current line terminator, to the standard output stream.
         /// </summary>
         /// <param name="args">The objects</param>
@@ -795,7 +782,7 @@ namespace RadLibrary.RadConsole
 
             foreach (var ch in message)
             {
-                if (!escapeSymbol && ch == '\\')
+                if (!escapeSymbol && ch is '\\')
                 {
                     escapeSymbol = true;
                     continue;
@@ -824,6 +811,14 @@ namespace RadLibrary.RadConsole
                 switch (ch)
                 {
                     case '[':
+                        if (colorPart)
+                        {
+                            sb.Append('[');
+                            sb.Append(colorSb);
+
+                            colorSb.Clear();
+                        }
+
                         colorPart = true;
                         break;
                     case ']':
@@ -840,6 +835,12 @@ namespace RadLibrary.RadConsole
                 }
             }
 
+            if (colorSb.Length != 0)
+            {
+                sb.Append('[');
+                sb.Append(colorSb);
+            }
+
             return sb + Font.Reset;
         }
 
@@ -850,107 +851,36 @@ namespace RadLibrary.RadConsole
             if (background)
                 color = color.Remove(0, 2).ToLower();
 
-            switch (color)
+            var s = color switch
             {
-                case "reset": // reset
-                    sb.Append(background
-                        ? Background.Reset
-                        : Foreground.Reset);
-                    break;
-                case "underline": // underline
-                    sb.Append(Font.UnderlineFont);
-                    break;
-                case "bold": // bold
-                    sb.Append(Font.BoldFont);
-                    break;
-                case "blink": // blink
-                    sb.Append(Font.SlowBlinkFont);
-                    break;
-                case "italic": // italic
-                    sb.Append(Font.ItalicFont);
-                    break;
-                case "framed": // framed
-                    sb.Append(Font.FramedFont);
-                    break;
+                "reset" => background ? Background.Reset : Foreground.Reset,
+                "underline" => Font.UnderlineFont,
+                "bold" => Font.BoldFont,
+                "blink" => Font.SlowBlinkFont,
+                "italic" => Font.ItalicFont,
+                "framed" => Font.FramedFont,
                 // $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-                case "black":
-                    sb.Append(background
-                        ? Background.Black
-                        : Foreground.Black);
-                    break;
-                case "blue":
-                    sb.Append(background
-                        ? Background.Blue
-                        : Foreground.Blue);
-                    break;
-                case "green":
-                    sb.Append(background
-                        ? Background.Green
-                        : Foreground.Green);
-                    break;
-                case "purple":
-                    sb.Append(background
-                        ? Background.Purple
-                        : Foreground.Purple);
-                    break;
-                case "red":
-                    sb.Append(background
-                        ? Background.Red
-                        : Foreground.Red);
-                    break;
-                case "white":
-                    sb.Append(background
-                        ? Background.White
-                        : Foreground.White);
-                    break;
-                case "yellow":
-                    sb.Append(background
-                        ? Background.Yellow
-                        : Foreground.Yellow);
-                    break;
+                "black" => background ? Background.Black : Foreground.Black,
+                "blue" => background ? Background.Blue : Foreground.Blue,
+                "green" => background ? Background.Green : Foreground.Green,
+                "purple" => background ? Background.Purple : Foreground.Purple,
+                "red" => background ? Background.Red : Foreground.Red,
+                "white" => background ? Background.White : Foreground.White,
+                "yellow" => background ? Background.Yellow : Foreground.Yellow,
                 // $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-                case "brightblack":
-                    sb.Append(background
-                        ? Background.BrightBlack
-                        : Foreground.BrightBlack);
-                    break;
-                case "brightblue":
-                    sb.Append(background
-                        ? Background.BrightBlue
-                        : Foreground.BrightBlue);
-                    break;
-                case "brightgreen":
-                    sb.Append(background
-                        ? Background.BrightGreen
-                        : Foreground.BrightGreen);
-                    break;
-                case "brightpurple":
-                    sb.Append(background
-                        ? Background.BrightPurple
-                        : Foreground.BrightPurple);
-                    break;
-                case "brightred":
-                    sb.Append(background
-                        ? Background.BrightRed
-                        : Foreground.BrightRed);
-                    break;
-                case "brightwhite":
-                    sb.Append(background
-                        ? Background.BrightWhite
-                        : Foreground.BrightWhite);
-                    break;
-                case "brightyellow":
-                    sb.Append(background
-                        ? Background.BrightYellow
-                        : Foreground.BrightYellow);
-                    break;
-                // $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-                default:
-                    sb.Append(background
-                        ? Colorizer.GetBackgroundColorizationString(Colorizer.HexToColor(color))
-                        : Colorizer.GetColorizationString(Colorizer.HexToColor(color)));
-                    break;
-            }
+                "brightblack" => background ? Background.BrightBlack : Foreground.BrightBlack,
+                "brightblue" => background ? Background.BrightBlue : Foreground.BrightBlue,
+                "brightgreen" => background ? Background.BrightGreen : Foreground.BrightGreen,
+                "brightpurple" => background ? Background.BrightPurple : Foreground.BrightPurple,
+                "brightred" => background ? Background.BrightRed : Foreground.BrightRed,
+                "brightwhite" => background ? Background.BrightWhite : Foreground.BrightWhite,
+                "brightyellow" => background ? Background.BrightYellow : Foreground.BrightYellow,
+                _ => background // todo: if failed (Exception), just append [string] to sb
+                    ? Colorizer.GetBackgroundColorizationString(Colorizer.HexToColor(color))
+                    : Colorizer.GetColorizationString(Colorizer.HexToColor(color))
+            };
+
+            sb.Append(s);
         }
 
         #endregion
@@ -960,7 +890,7 @@ namespace RadLibrary.RadConsole
         /// <summary>
         ///     Gets or sets style for <see cref="ReadLine()" />
         /// </summary>
-        public static ReadStyle ReadStyle { get; set; } = new();
+        public static IReadStyle ReadStyle { get; set; } = new ReadStyle();
 
         /// <summary>
         ///     Gets or sets prediction engine for <see cref="ReadLine()" />
@@ -973,7 +903,7 @@ namespace RadLibrary.RadConsole
         [NotNull]
         public static IEnumerable<string> History => InputHistory.AsReadOnly();
 
-        private static readonly List<string> InputHistory = new();
+        private static readonly List<string> InputHistory = new() {"1", "2"};
         private static readonly DefaultPredictionEngine DefaultPredictionEngine = new();
 
         #endregion

@@ -16,7 +16,7 @@ namespace RadLibrary.Tests
             const string s = "R@d0l^И";
 
             var s2 = s.Repeat(2);
-            var s3 = s.Repeat((long) 2);
+            var s3 = s.Repeat(2);
             var s4 = "".Repeat(2);
 
             Assert.Equal("R@d0l^ИR@d0l^И", s2);
@@ -70,25 +70,25 @@ namespace RadLibrary.Tests
         public void InitializeTest()
         {
             // ReSharper disable once RedundantArgumentDefaultValue
-            Utilities.Initialize(true);
+            RadUtilities.Initialize(true);
         }
 
         [Fact]
         public void AllocateConsoleTest()
         {
-            Utilities.AllocateConsole();
+            RadUtilities.AllocateConsole();
         }
 
         [Fact]
         public void RandomTest()
         {
-            Utilities.RandomBool();
-            Utilities.RandomBool();
-            Utilities.RandomBool();
+            RadUtilities.RandomBool();
+            RadUtilities.RandomBool();
+            RadUtilities.RandomBool();
 
-            Utilities.RandomInt();
-            Utilities.RandomInt();
-            Utilities.RandomInt();
+            RadUtilities.RandomInt();
+            RadUtilities.RandomInt();
+            RadUtilities.RandomInt();
         }
     }
 }

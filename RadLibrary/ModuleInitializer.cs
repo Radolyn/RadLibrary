@@ -16,7 +16,7 @@ namespace RadLibrary
         {
             try
             {
-                Utilities.Initialize(false);
+                RadUtilities.Initialize(false);
             }
             catch
             {

@@ -104,6 +104,18 @@ namespace RadLibrary.Tests
         }
 
         [Fact]
+        public void ColorHandlingTest()
+        {
+            const string s = "This text IS red";
+
+            var res = Console.ParseColors($"[red]{s}");
+            var res2 = Console.ParseColors($"[b:red]{s}");
+
+            Assert.Equal($"{Foreground.Red}{s}", res);
+            Assert.Equal($"{Background.Red}{s}", res2);
+        }
+
+        [Fact]
         public void EscapeTest()
         {
             var s = Console.ParseColors("\\[\\\\]");

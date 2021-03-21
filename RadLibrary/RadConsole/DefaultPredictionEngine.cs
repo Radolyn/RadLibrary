@@ -46,7 +46,8 @@ namespace RadLibrary.RadConsole
                 input = input.Replace("\"", "");
                 var current = Directory.GetFileSystemEntries(Environment.CurrentDirectory);
 
-                var inCurrent = current.Where(s => Path.GetFileName(s).Contains(input)).ToArray();
+                var inCurrent = current
+                    .Where(s => Path.GetFileName(s).StartsWith(input, StringComparison.OrdinalIgnoreCase)).ToArray();
                 if (inCurrent.Length != 0)
                     return Path.GetFileName(inCurrent[0]);
 

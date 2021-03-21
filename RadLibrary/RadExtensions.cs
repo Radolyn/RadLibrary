@@ -20,19 +20,11 @@ namespace RadLibrary
         /// <returns>Random item</returns>
         public static T RandomItem<T>([NotNull] this IEnumerable<T> enumerable)
         {
-            var array = enumerable as List<T> ?? enumerable.ToList();
-            return array.Count == 0 ? default : array[Utilities.RandomInt(0, array.Count)];
-        }
+            var collection = enumerable is ICollection<T> coll ? coll : enumerable.ToList();
 
-        /// <summary>
-        ///     Repeats string specified amount of times
-        /// </summary>
-        /// <param name="s">The string</param>
-        /// <param name="times">The count</param>
-        /// <returns>The string</returns>
-        public static string Repeat(this string s, int times)
-        {
-            return s.Repeat((long) times);
+            return collection.Count == 0
+                ? default
+                : collection.ElementAt(RadUtilities.RandomInt(0, collection.Count));
         }
 
         /// <summary>
