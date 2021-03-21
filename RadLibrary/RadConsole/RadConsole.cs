@@ -206,7 +206,7 @@ namespace RadLibrary.RadConsole
 
         private static void HandleColor(string color, [NotNull] StringBuilder sb)
         {
-            var background = color.StartsWith("b:", StringComparison.Ordinal);
+            var background = color.StartsWith("b:", StringComparison.OrdinalIgnoreCase);
 
             if (background)
                 color = color.Remove(0, 2).ToLower();

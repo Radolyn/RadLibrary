@@ -18,6 +18,9 @@ namespace RadLibrary.RadConsole
 
         private readonly List<string> _inputHistory = new() {"1", "2"};
 
+        /// <summary>
+        ///     Used in <see cref="Boolean()" />
+        /// </summary>
         public readonly HashSet<string> FalseBooleans = new()
         {
             "false",
@@ -29,6 +32,9 @@ namespace RadLibrary.RadConsole
             "нет"
         };
 
+        /// <summary>
+        ///     Used in <see cref="Boolean()" />
+        /// </summary>
         public readonly HashSet<string> TrueBooleans = new()
         {
             "true",
@@ -60,6 +66,11 @@ namespace RadLibrary.RadConsole
         [NotNull]
         public IEnumerable<string> History => _inputHistory.AsReadOnly();
 
+        /// <summary>
+        ///     Reads the next integer from the standard input stream with specified read style.
+        /// </summary>
+        /// <param name="readStyle">The read style</param>
+        /// <returns>The next integer from the input stream</returns>
         public int Integer([NotNull] IReadStyle readStyle)
         {
             int res;
@@ -70,11 +81,20 @@ namespace RadLibrary.RadConsole
             return res;
         }
 
+        /// <summary>
+        ///     Reads the next integer from the standard input stream with default read style.
+        /// </summary>
+        /// <returns>The next integer from the input stream</returns>
         public int Integer()
         {
             return Integer(ReadStyle);
         }
 
+        /// <summary>
+        ///     Reads the next boolean from the standard input stream with specified read style.
+        /// </summary>
+        /// <param name="readStyle">The read style</param>
+        /// <returns>The next boolean from the input stream</returns>
         public bool Boolean([NotNull] IReadStyle readStyle)
         {
             while (true)
@@ -90,6 +110,10 @@ namespace RadLibrary.RadConsole
             }
         }
 
+        /// <summary>
+        ///     Reads the next boolean from the standard input stream with default read style.
+        /// </summary>
+        /// <returns>The next boolean from the input stream</returns>
         public bool Boolean()
         {
             return Boolean(ReadStyle);

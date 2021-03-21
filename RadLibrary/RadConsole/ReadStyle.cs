@@ -10,18 +10,41 @@ namespace RadLibrary.RadConsole
 {
     public class ReadStyle : IReadStyle
     {
-        public virtual string DefaultValue { get; set; } = null;
-        [CanBeNull] public virtual string Postfix { get; set; } = "<<<";
+        /// <summary>
+        ///     The postfix
+        /// </summary>
+        [CanBeNull]
+        public virtual string Postfix { get; set; } = "<<<";
+
+        /// <summary>
+        ///     The postfix color
+        /// </summary>
         public virtual Color PostfixColor { get; set; } = Color.WhiteSmoke;
-        [CanBeNull] public virtual string Prefix { get; set; } = ">>>";
+
+        /// <summary>
+        ///     The prefix
+        /// </summary>
+        [CanBeNull]
+        public virtual string Prefix { get; set; } = ">>>";
+
+        /// <summary>
+        ///     The prefix color
+        /// </summary>
         public virtual Color PrefixColor { get; set; } = Color.WhiteSmoke;
+
         public virtual bool UnderlineInput { get; set; } = false;
         public virtual bool UnderlinePrediction { get; set; } = false;
 
+        /// <inheritdoc />
         public virtual Color InputColor { get; set; } = Color.Azure;
+
+        /// <inheritdoc />
         public virtual Color PredictionColor { get; set; } = Color.Goldenrod;
 
+        /// <inheritdoc />
         public string ColorizedPrefix => Prefix?.Colorize(PrefixColor) + " ";
+
+        /// <inheritdoc />
         public string ColorizedPostfix => " " + Postfix?.Colorize(PostfixColor);
 
         /// <inheritdoc />

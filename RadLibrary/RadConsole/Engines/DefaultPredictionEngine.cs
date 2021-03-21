@@ -9,33 +9,19 @@ using System.Linq;
 namespace RadLibrary.RadConsole.Engines
 {
     /// <summary>
-    ///     Default prediction engine. Predicts paths, "yes" or "no" and history
+    ///     Default prediction engine. Predicts paths and history.
     /// </summary>
     public class DefaultPredictionEngine : IPredictionEngine
     {
         /// <inheritdoc />
         public virtual string Predict(string input)
         {
-            switch (input)
-            {
-                case null:
-                case "":
-                    return "";
-                case "n":
-                case "no":
-                    return "no";
-                case "y":
-                case "ye":
-                case "yes":
-                    return "yes";
-                default:
-                    return PredictHistory(input) ?? PredictPath(input);
-            }
+            return PredictHistory(input) ?? PredictPath(input);
         }
 
         protected virtual string PredictHistory(string input)
         {
-            var history = RadConsole.Read.History.Where(s => s.StartsWith(input, StringComparison.Ordinal));
+            var history = RadConsole.Read.History.Where(s => s.StartsWith(input, StringComparison.OrdinalIgnoreCase));
             return history.FirstOrDefault();
         }
 

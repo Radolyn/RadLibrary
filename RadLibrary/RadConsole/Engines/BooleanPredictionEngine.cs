@@ -6,11 +6,14 @@ using JetBrains.Annotations;
 
 namespace RadLibrary.RadConsole.Engines
 {
+    /// <summary>
+    ///     Default prediction engine. Predicts boolean strings.
+    /// </summary>
     public class BooleanPredictionEngine : IPredictionEngine
     {
         /// <inheritdoc />
         [NotNull]
-        public string Predict(string input)
+        public virtual string Predict(string input)
         {
             if (input == null)
                 return "";
