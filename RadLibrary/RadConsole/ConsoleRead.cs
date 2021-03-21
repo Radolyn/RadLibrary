@@ -10,6 +10,8 @@ using static RadLibrary.RadConsole.RadConsole;
 
 #endregion
 
+// todo: use ConsoleRead.ReadStyle instead of ReadStyle
+
 namespace RadLibrary.RadConsole
 {
     public sealed class ConsoleRead
@@ -84,6 +86,19 @@ namespace RadLibrary.RadConsole
         /// <summary>
         ///     Reads the next integer from the standard input stream with default read style.
         /// </summary>
+        /// <param name="prefix">The prefix</param>
+        /// <returns>The next integer from the input stream</returns>
+        public int Integer(string prefix)
+        {
+            return Integer(new ReadStyle
+            {
+                Prefix = prefix
+            });
+        }
+
+        /// <summary>
+        ///     Reads the next integer from the standard input stream with default read style.
+        /// </summary>
         /// <returns>The next integer from the input stream</returns>
         public int Integer()
         {
@@ -108,6 +123,19 @@ namespace RadLibrary.RadConsole
                 if (FalseBooleans.Contains(lower))
                     return false;
             }
+        }
+
+        /// <summary>
+        ///     Reads the next boolean from the standard input stream with default read style.
+        /// </summary>
+        /// <param name="prefix">The prefix</param>
+        /// <returns>The next boolean from the input stream</returns>
+        public bool Boolean(string prefix)
+        {
+            return Boolean(new ReadStyle
+            {
+                Prefix = prefix
+            });
         }
 
         /// <summary>

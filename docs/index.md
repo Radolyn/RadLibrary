@@ -15,6 +15,9 @@ All-In-One library
   - ESC colors access through ```Font, Background & Foreground``` classes
   - ```Console``` wrapper for ease of use (```RadConsole```)
   - Colorful **input**
+    - String
+    - Boolean
+    - Integer
 - Configuration manager
   - Comments support
   - Scheme support

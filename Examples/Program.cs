@@ -29,7 +29,7 @@ namespace Examples
             var readStyle = new ReadStyle {UnderlinePrediction = true};
 
             var s = Console.Read.Line(readStyle);
-            var b = Console.Read.Boolean(readStyle);
+            var b = Console.Read.Boolean("Are you sure?");
             var i = Console.Read.Integer(readStyle);
 
             Console.WriteLine("\"{0}\" {1} {2}", s, b, i);
