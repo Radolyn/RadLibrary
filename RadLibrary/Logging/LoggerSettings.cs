@@ -8,14 +8,20 @@ namespace RadLibrary.Logging
 {
     public class LoggerSettings : IEquatable<LoggerSettings>
     {
-        // todo: optimize
-        /// <summary>
-        ///     The environment-set logging level
-        /// </summary>
-        internal static readonly LogType EnvironmentLoggingLevel = (LogType) Enum.Parse(typeof(LogType),
-            (Enum.TryParse<LogType>(Environment.GetEnvironmentVariable("LOGGING_LEVEL"), out _)
-                ? Environment.GetEnvironmentVariable("LOGGING_LEVEL")
-                : "Info") ?? "Info", true);
+        static LoggerSettings()
+        {
+            var env = Environment.GetEnvironmentVariable("LOGGING_LEVEL");
+
+            if (string.IsNullOrWhiteSpace(env))
+                return;
+
+            var success = Enum.TryParse<LogType>(env, out var res);
+
+            if (!success)
+                return;
+
+            EnvironmentLoggingLevel = res;
+        }
 
         public LoggerSettings()
         {
@@ -25,6 +31,11 @@ namespace RadLibrary.Logging
         {
             Name = name;
         }
+
+        /// <summary>
+        ///     The environment-set logging level
+        /// </summary>
+        internal static LogType EnvironmentLoggingLevel { get; }
 
         /// <summary>
         ///     Format json-like messages?

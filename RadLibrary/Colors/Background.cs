@@ -1,5 +1,8 @@
 ﻿namespace RadLibrary.Colors
 {
+    /// <summary>
+    ///     Provides background colors for console
+    /// </summary>
     public static class Background
     {
         /// <summary>

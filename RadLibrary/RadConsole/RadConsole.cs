@@ -115,7 +115,7 @@ namespace RadLibrary.RadConsole
             for (var i = 0; i < args.Length; i++) format.Append("{" + i + "} ");
 
             Write(format.ToString(0, format.Length - 1) + Font.Reset + Environment.NewLine,
-                args); // todo: this method is the same as Write except Environment.NewLine
+                args);
         }
 
         /// <summary>

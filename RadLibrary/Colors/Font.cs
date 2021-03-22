@@ -1,5 +1,8 @@
 ﻿namespace RadLibrary.Colors
 {
+    /// <summary>
+    ///     Provides font styles for console
+    /// </summary>
     public static class Font
     {
         /// <summary>

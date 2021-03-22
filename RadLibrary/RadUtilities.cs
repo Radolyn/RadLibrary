@@ -15,6 +15,9 @@ using RadLibrary.Formatting;
 
 namespace RadLibrary
 {
+    /// <summary>
+    ///     Provides various utilities for app
+    /// </summary>
     public static class RadUtilities
     {
         private const int StdOutputHandle = -11;
@@ -93,10 +96,6 @@ namespace RadLibrary
                 Console.Clear();
 
             return true;
-        }
-
-        public static void HideConsole(bool hide = true)
-        {
         }
 
         /// <summary>

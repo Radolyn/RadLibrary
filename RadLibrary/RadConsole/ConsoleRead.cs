@@ -10,8 +10,6 @@ using static RadLibrary.RadConsole.RadConsole;
 
 #endregion
 
-// todo: use ConsoleRead.ReadStyle instead of ReadStyle
-
 namespace RadLibrary.RadConsole
 {
     /// <summary>

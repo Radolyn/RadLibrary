@@ -8,6 +8,9 @@ using RadLibrary.Formatting;
 
 namespace RadLibrary.Logging
 {
+    /// <summary>
+    ///     Provides basic methods for logger
+    /// </summary>
     public abstract class LoggerBase
     {
         /// <summary>
