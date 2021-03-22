@@ -1,5 +1,6 @@
 ﻿#region
 
+using System;
 using System.Drawing;
 using RadLibrary.Colors;
 
@@ -7,7 +8,12 @@ using RadLibrary.Colors;
 
 namespace RadLibrary.RadConsole
 {
-    public interface IReadStyle
+    /// <summary>
+    ///     User input style
+    /// </summary>
+    /// <seealso cref="ConsoleRead" />
+    /// <seealso cref="RadConsole.Read" />
+    public interface IReadStyle : ICloneable
     {
         /// <summary>
         ///     The prefix
@@ -44,5 +50,11 @@ namespace RadLibrary.RadConsole
         ///     The prediction color
         /// </summary>
         public Color PredictionColor { get; }
+
+        /// <summary>
+        ///     Sets prefix
+        /// </summary>
+        /// <param name="prefix">The prefix</param>
+        void SetPrefix(string prefix);
     }
 }

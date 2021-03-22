@@ -16,6 +16,9 @@ namespace RadLibrary.RadConsole
     /// </summary>
     public static partial class RadConsole
     {
+        /// <summary>
+        ///     Provides methods for reading user input
+        /// </summary>
         public static ConsoleRead Read { get; } = new();
 
         #region RadConsole Methods

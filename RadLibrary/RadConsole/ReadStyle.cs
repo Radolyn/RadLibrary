@@ -42,6 +42,12 @@ namespace RadLibrary.RadConsole
         public virtual Color PredictionColor { get; set; } = Color.Goldenrod;
 
         /// <inheritdoc />
+        public void SetPrefix(string prefix)
+        {
+            Prefix = prefix;
+        }
+
+        /// <inheritdoc />
         public string ColorizedPrefix => Prefix?.Colorize(PrefixColor) + " ";
 
         /// <inheritdoc />
@@ -52,5 +58,11 @@ namespace RadLibrary.RadConsole
 
         /// <inheritdoc />
         public string PredictionDecorations => UnderlinePrediction ? Font.UnderlineFont : "";
+
+        /// <inheritdoc />
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
     }
 }

@@ -14,6 +14,9 @@ using static RadLibrary.RadConsole.RadConsole;
 
 namespace RadLibrary.RadConsole
 {
+    /// <summary>
+    ///     Provides methods for reading user input
+    /// </summary>
     public sealed class ConsoleRead
     {
         private readonly BooleanPredictionEngine _booleanPredictionEngine = new();
@@ -90,10 +93,9 @@ namespace RadLibrary.RadConsole
         /// <returns>The next integer from the input stream</returns>
         public int Integer(string prefix)
         {
-            return Integer(new ReadStyle
-            {
-                Prefix = prefix
-            });
+            var readStyle = (IReadStyle) ReadStyle.Clone();
+            readStyle.SetPrefix(prefix);
+            return Integer(readStyle);
         }
 
         /// <summary>
@@ -132,10 +134,9 @@ namespace RadLibrary.RadConsole
         /// <returns>The next boolean from the input stream</returns>
         public bool Boolean(string prefix)
         {
-            return Boolean(new ReadStyle
-            {
-                Prefix = prefix
-            });
+            var readStyle = (IReadStyle) ReadStyle.Clone();
+            readStyle.SetPrefix(prefix);
+            return Boolean(readStyle);
         }
 
         /// <summary>
@@ -188,10 +189,9 @@ namespace RadLibrary.RadConsole
         /// <returns>The next line of characters from the input stream</returns>
         public string Line([CanBeNull] string prefix, bool usePredictionEngine = true)
         {
-            return Line(new ReadStyle
-            {
-                Prefix = prefix
-            }, usePredictionEngine ? PredictionEngine : null);
+            var readStyle = (IReadStyle) ReadStyle.Clone();
+            readStyle.SetPrefix(prefix);
+            return Line(readStyle, usePredictionEngine ? PredictionEngine : null);
         }
 
         /// <summary>
