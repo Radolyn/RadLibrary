@@ -15,7 +15,7 @@
     <Copyright>© 2020 Radolyn</Copyright>
     <!-- <PackageLicenseFile>$(SolutionDir)LICENSE</PackageLicenseFile> -->
     <RepositoryUrl>https://github.com/Radolyn/RadLibrary</RepositoryUrl>
-    <PackageVersion>1.7.1</PackageVersion>
+    <PackageVersion>1.7.2</PackageVersion>
     <LangVersion>9</LangVersion>
     <PackageLicenseUrl>https://github.com/Radolyn/RadLibrary/blob/master/LICENSE</PackageLicenseUrl>
     <TargetFrameworks>net5.0;netcoreapp3.1;netstandard2.0</TargetFrameworks>
@@ -28,12 +28,11 @@
 
     <PropertyGroup>
         <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-        <NoWarn>$(NoWarn);1591</NoWarn>
     </PropertyGroup>
 
     <PropertyGroup>
-        <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-        <NoWarn>$(NoWarn);CA1416;CS7035</NoWarn>
+        <NoWarn>$(NoWarn);1591;CA1416;CS7035</NoWarn>
+        <DefineConstants>JETBRAINS_ANNOTATIONS</DefineConstants>
     </PropertyGroup>
 
 </Project>
