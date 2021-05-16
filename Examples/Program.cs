@@ -33,6 +33,10 @@ namespace Examples
             var i = Console.Read.Integer(readStyle);
 
             Console.WriteLine("\"{0}\" {1} {2}", s, b, i);
+            
+            Console.Read.Line();
+            Console.Read.Line();
+            Console.Read.Line();
         }
 
         private static void Configs()

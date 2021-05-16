@@ -19,7 +19,7 @@ namespace RadLibrary.RadConsole
     {
         private readonly BooleanPredictionEngine _booleanPredictionEngine = new();
 
-        private readonly List<string> _inputHistory = new() {"1", "2"};
+        private readonly List<string> _inputHistory = new();
 
         /// <summary>
         ///     Used in <see cref="Boolean()" />
@@ -67,7 +67,7 @@ namespace RadLibrary.RadConsole
         ///     Gets input history
         /// </summary>
         [NotNull]
-        public IEnumerable<string> History => _inputHistory.AsReadOnly();
+        public IReadOnlyCollection<string> History => _inputHistory.AsReadOnly();
 
         /// <summary>
         ///     Reads the next integer from the standard input stream with specified read style.
@@ -261,7 +261,7 @@ namespace RadLibrary.RadConsole
             WriteLine();
 
             var res = line.ToString();
-            _inputHistory.Add(res);
+            _inputHistory.Insert(0, res);
 
             return res;
         }
